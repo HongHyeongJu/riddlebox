@@ -39,11 +39,23 @@ dependencies {
     //쿼리 파라미터 로그 남기기
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 
+    // Spring Security
+    // Spring Security의 기본적인 기능을 포함하며, 웹 보안과 인증/인가 메커니즘을 구현할 수 있도록 지원
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    //OAuth 2.0 인증 서버 기능을 위한 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
+    //외부 OAuth 2.0 제공자(예: 구글, 페이스북)를 이용한 인증을 구현
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    //Thymeleaf 템플릿 엔진과 Spring Security를 통합하기 위한 추가 라이브러리
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+
 
     //test 롬복 사용
     testCompileOnly 'org.projectlombok:lombok'
@@ -71,8 +83,5 @@ clean {
 
 
 
-/*    implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    implementation 'org.springframework.boot:spring-boot-starter-security'*/
-//    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
 //    runtimeOnly 'com.h2database:h2'
