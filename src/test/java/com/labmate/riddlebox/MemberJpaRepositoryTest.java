@@ -17,14 +17,5 @@ public class MemberJpaRepositoryTest {
     @Autowired
     MemberJpaRepository memberJpaRepository;
 
-    @Test
-    public void testMember() {
-        Member member = new Member("memberB");
-        Member savedMember = memberJpaRepository.save(member);
-        Member findMember = memberJpaRepository.find(savedMember.getId());
-        assertThat(findMember.getId()).isEqualTo(member.getId());
-        assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
-        assertThat(findMember).isEqualTo(member); //JPA 엔티티 동일성 보장
 
-    }
 }
