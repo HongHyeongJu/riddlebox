@@ -2,6 +2,7 @@ package com.labmate.riddlebox.enumpackage;
 
 public enum UserRole {
 
+    BLACKLIST(50),
     PLAYER(100),
     MANAGER(200),
     ADMIN(300);

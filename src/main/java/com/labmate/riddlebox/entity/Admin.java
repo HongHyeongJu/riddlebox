@@ -1,9 +1,12 @@
 package com.labmate.riddlebox.entity;
 
+import com.labmate.riddlebox.enumpackage.InquiryStatus;
 import com.labmate.riddlebox.enumpackage.UserRole;
 import com.labmate.riddlebox.enumpackage.UserStatus;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,13 +16,12 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 //기본 생성자를 제공하며, 이 생성자의 접근 수준을 protected로 설정하는 것을 의미(JPA 스펙에 따르면, 모든 엔티티는 기본 생성자를 가지고 있어야함)
-//@ToString(of = {"id", "username", "age"})  //"team"쓰면 무한루프 빠진다 조심
-public class Member extends BaseEntity {
+public class Admin extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
-    private Long id;  //회원번호
+    @Column(name = "admin_id")
+    private Long id;  //관리자번호
 
     private String username;  //이름
     private String loginId;  //로그인 ID
@@ -30,46 +32,35 @@ public class Member extends BaseEntity {
     private UserRole role;  //권한이름
 
     private String nickname;  //닉네임
-    private String snsProvider;  //sns종류
-    private String snsId;  //소셜 ID
     private LocalDateTime regDate;  //가입일
-    private LocalDateTime lastLoginDate;  //마지막 방문일
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;  //계정 상태
 
-    @OneToMany(mappedBy = "member")
-    private List<GameRecord> gameRecords = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "inquiry")
     private List<Inquiry> inquiries = new ArrayList<>();
 
 
-
     /*   생성자   */
-    public Member(String username, String loginId, String password, String email,
-                  UserRole role, String nickname, String snsProvider, String snsId) {
+    public Admin(String username, String loginId, String password, String email, UserRole role, String nickname) {
         this.username = username;
         this.loginId = loginId;
         this.password = password;
         this.email = email;
         this.role = role;
         this.nickname = nickname;
-        this.snsProvider = snsProvider;
-        this.snsId = snsId;
-        this.regDate = LocalDateTime.now(); // 가입일은 현재 시간으로 설정
-        this.status = UserStatus.ACTIVE; // 초기 상태 설정
-        this.gameRecords = new ArrayList<>();
-        this.inquiries = new ArrayList<>();
+        this.regDate = LocalDateTime.now(); // 현재 시간으로 설정
+        this.status = UserStatus.ACTIVE; // 기본 상태 설정
     }
 
 
     /*    변경 메서드    */
-    //사용자 정보 변경 메서드
-    public void updateMemberInfo(String newPassword, String newNickname) {
-        if (!isValidNickname(newNickname)) {
+    //관리자 정보 변경 메서드
+    public void updateAdminInfo(String newUsername, String newPassword, String newNickname) {
+        if (!isValidNickname(nickname)) {
             throw new IllegalArgumentException("중복 닉네임");
         }
+        this.username = newUsername;
         this.password = newPassword;
         this.nickname = newNickname;
     }
@@ -80,17 +71,9 @@ public class Member extends BaseEntity {
         return true;
     }
 
-    //사용자 권한 변경 메서드
-    public void updateMemberRole(UserRole newRole) {
-        //사용자 역할은 매니저 이상이 될 수 없음
-        if (!(newRole.getAuthority() < UserRole.MANAGER.getAuthority())) {
-            this.role = newRole;
-        }
-    }
-
-    //마지막 로그인 변경 메서드
-    public void updateLastLoginDate() {
-        this.lastLoginDate = LocalDateTime.now();
+    //관리자 권한 변경 메서드
+    public void updateAdminRole(UserRole newRole) {
+        this.role = newRole;
     }
 
     //상태 변경
@@ -103,4 +86,9 @@ public class Member extends BaseEntity {
         changeStatus(UserStatus.DELETED);
     }
 
+
 }
+
+
+
+
