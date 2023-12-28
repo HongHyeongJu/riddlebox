@@ -37,7 +37,7 @@ public class Admin extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus status;  //계정 상태
 
-    @OneToMany(mappedBy = "inquiry")
+    @OneToMany(mappedBy = "admin")
     private List<Inquiry> inquiries = new ArrayList<>();
 
 

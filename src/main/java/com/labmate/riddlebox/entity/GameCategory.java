@@ -34,7 +34,7 @@ public class GameCategory extends BaseEntity {
 
     private int icon;  //아이콘
 
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "gameCategory")
     private List<Game> games = new ArrayList<>();
 
 
