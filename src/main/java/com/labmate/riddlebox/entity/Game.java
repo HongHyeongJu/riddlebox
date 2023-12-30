@@ -53,6 +53,8 @@ public class Game extends BaseEntity {
     @OneToMany(mappedBy = "game")
     private List<RecommendGame> recommendGames = new ArrayList<>();
 
+    @OneToMany(mappedBy = "game")
+    private List<GameEvent> gameEvents = new ArrayList<>();
 
 
     /*   생성자   */
@@ -79,7 +81,6 @@ public class Game extends BaseEntity {
         gameImages.add(gameImage);
         gameImage.setGame(this);
     }
-
 
 
     /*    변경 메서드    */

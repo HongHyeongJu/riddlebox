@@ -44,7 +44,8 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<Inquiry> inquiries = new ArrayList<>();
 
-
+    @OneToMany(mappedBy = "member")
+    private List<GameEvent> gameEvents = new ArrayList<>();
 
     /*   생성자   */
     public Member(String username, String loginId, String password, String email,
