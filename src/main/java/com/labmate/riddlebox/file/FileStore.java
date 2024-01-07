@@ -13,6 +13,7 @@ import java.util.UUID;
 @Component
 public class FileStore {
 
+    //dir: E:/riddleboxfile/
     @Value("${file.dir}")
     private String fileDir;
 
@@ -21,9 +22,17 @@ public class FileStore {
     private String fileAccessUrl;
 
 
-    public String getFullPath(String filename) {
+    public String getFullPath(String filename, String fileTypeDir) {
+        if("image".equals(fileTypeDir)){
+            return fileDir + "image/" + filename;
+        } else if ("text".equals(fileTypeDir)) {
+            return fileDir + "text/" + filename;
+        } else if ("video".equals(fileTypeDir)) {
+            return fileDir + "video/" + filename;
+        }
         return fileDir + filename;
     }
+
 
     public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles) throws IOException {
 
@@ -43,18 +52,18 @@ public class FileStore {
         }
         String originFileName = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(originFileName);
-        multipartFile.transferTo(new File(getFullPath(storeFileName)));
+        //현재는 image만 저장할 꺼라서 바로 명시해둠
+        multipartFile.transferTo(new File(getFullPath(storeFileName,"image")));
 
         // 파일의 실제 경로와 웹 URL 추가
-        String filePath = getFullPath(storeFileName);
+        String filePath = getFullPath(storeFileName,"image");
         String fileUrl = fileAccessUrl + storeFileName;
 
-        // 파일 타입, 파일 크기
-        String fileType = getExtension(originFileName);
+        // 파일 크기
         Long fileSize = multipartFile.getSize();
 
         return new UploadFile(originFileName, storeFileName,
-                              fileType, filePath, fileSize, fileUrl);
+                              filePath, fileSize, fileUrl);
     }
 
     private String createStoreFileName(String originalFilename) {

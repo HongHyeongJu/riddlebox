@@ -1,9 +1,6 @@
 package com.labmate.riddlebox.entity;
 
-import com.labmate.riddlebox.enumpackage.GameStatus;
-import com.labmate.riddlebox.enumpackage.InquiryStatus;
-import com.labmate.riddlebox.enumpackage.NoticeStatus;
-import com.labmate.riddlebox.enumpackage.UserStatus;
+import com.labmate.riddlebox.enumpackage.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,7 +18,8 @@ public class Notice extends BaseEntity {
     @Column(name = "notice_id")
     private Long id;  //공지사항번호
 
-    private String subject;  //주제
+    @Enumerated(EnumType.STRING)
+    private NoticeCategory category;  //주제
     private String title;  //제목
 
     @Lob  // 긴 텍스트를 위한 애너테이션
@@ -37,8 +35,8 @@ public class Notice extends BaseEntity {
 
 
     /*   생성자   */
-    public Notice(String subject, String title, String content) {
-        this.subject = subject;
+    public Notice(NoticeCategory category, String title, String content) {
+        this.category = category;
         this.title = title;
         this.content = content;
         this.noticeDate = LocalDateTime.now();
@@ -54,8 +52,8 @@ public class Notice extends BaseEntity {
     }
 
     //공지내용 수정
-    public void updateNotice(String newSubject, String newTitle, String newContent) {
-        this.subject = newSubject;
+    public void updateNotice(NoticeCategory newCategory, String newTitle, String newContent) {
+        this.category = newCategory;
         this.title = newTitle;
         this.content = newContent;
     }

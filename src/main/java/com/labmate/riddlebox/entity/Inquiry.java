@@ -24,7 +24,7 @@ public class Inquiry extends BaseEntity {
     private Member member;  //회원번호
 
     @Enumerated(EnumType.STRING)
-    private FaqCategory subject;  //이용문의,계정문의,게임컨텐츠문의,일반문의
+    private FaqCategory faqCategory;  //이용문의,계정문의,게임컨텐츠문의,일반문의
 
     private String question;  //질문
     private String content;  //내용
@@ -44,9 +44,9 @@ public class Inquiry extends BaseEntity {
 
 
     /*   생성자   */
-    public Inquiry(Member member, FaqCategory subject, String question, String content) {
+    public Inquiry(Member member, FaqCategory faqCategory, String question, String content) {
         this.member = member;
-        this.subject = subject;
+        this.faqCategory = faqCategory;
         this.question = question;
         this.content = content;
         this.inquiryAt = LocalDateTime.now(); // 문의 일자를 현재 시간으로 설정
@@ -69,12 +69,12 @@ public class Inquiry extends BaseEntity {
     }
 
     //사용자 문의 내용 수정
-    public void updateInquiry(FaqCategory newSubject, String newQuestion,
+    public void updateInquiry(FaqCategory newFaqCategory, String newQuestion,
                               String newContent) {
 
         //답변 완료된 질문 내용은 수정할 수 없음
         if (status != InquiryStatus.COMPLETED) {
-            this.subject = newSubject;
+            this.faqCategory = newFaqCategory;
             this.question = newQuestion;
             this.content = newContent;
         }

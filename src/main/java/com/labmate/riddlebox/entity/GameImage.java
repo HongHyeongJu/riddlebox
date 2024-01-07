@@ -1,6 +1,7 @@
 package com.labmate.riddlebox.entity;
 
 import com.labmate.riddlebox.enumpackage.GameStatus;
+import com.labmate.riddlebox.enumpackage.ImageType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,7 +23,10 @@ public class GameImage extends BaseEntity {
 
     private String fileOriginName;  //파일원본이름
     private String fileSaveName;  //파일저장이름
-    private String fileType;  //파일타입
+
+    @Enumerated(EnumType.STRING)
+    private ImageType fileType;  //파일타입
+
     private String filePath;  //파일경로
     private Long fileSize;  //파일크기
     private String fileUrl;  //file_url
@@ -33,7 +37,7 @@ public class GameImage extends BaseEntity {
 
 
     /*    생성자    */
-    public GameImage(Game game, String fileOriginName, String fileSaveName, String fileType,
+    public GameImage(Game game, String fileOriginName, String fileSaveName, ImageType fileType,
                      String filePath, Long fileSize, String fileUrl, String description) {
         this.game = game;
         this.fileOriginName = fileOriginName;
@@ -62,7 +66,7 @@ public class GameImage extends BaseEntity {
 
     //게임 이미지 수정 (Game에도 영향)
     public void updateGameContent(String newFileOriginName, String newFileSaveName,
-                                  String newFileType, String newFilePath, Long newFileSize,
+                                  ImageType newFileType, String newFilePath, Long newFileSize,
                                   String newFileUrl, String newDescription,
                                   Game newGame) {
 
