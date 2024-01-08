@@ -5,8 +5,10 @@ import com.labmate.riddlebox.enumpackage.NoticeStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class FaqDto {
 
     private Long id;  //공지사항번호

@@ -5,10 +5,12 @@ import com.labmate.riddlebox.entity.Member;
 import com.labmate.riddlebox.enumpackage.FaqCategory;
 import com.labmate.riddlebox.enumpackage.InquiryStatus;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
 public class InquiryListDto {
 
     private Long id;  //문의번호

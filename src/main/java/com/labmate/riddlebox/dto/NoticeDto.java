@@ -3,10 +3,12 @@ package com.labmate.riddlebox.dto;
 import com.labmate.riddlebox.enumpackage.NoticeStatus;
 import com.labmate.riddlebox.enumpackage.NoticeCategory;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
 public class NoticeDto {
 
     private Long id;  //공지사항번호

@@ -6,12 +6,14 @@ import com.labmate.riddlebox.entity.GameImage;
 import com.labmate.riddlebox.enumpackage.GameLevel;
 import com.labmate.riddlebox.enumpackage.GameStatus;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class GameplayInfoDto {
 
     private Long id;  //게임 번호
