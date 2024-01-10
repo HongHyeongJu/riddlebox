@@ -4,8 +4,9 @@ public enum UserRole {
 
     BLACKLIST(50),
     PLAYER(100),
-    MANAGER(200),
-    ADMIN(300);
+    PAY_PLAYER(200),
+    MANAGER(300),
+    ADMIN(500);
 
     private final int authority;
 

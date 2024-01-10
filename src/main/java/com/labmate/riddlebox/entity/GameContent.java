@@ -6,10 +6,12 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(of = {"id", "question", "answer","status"})  //"team"쓰면 무한루프 빠진다 조심
 public class GameContent extends BaseEntity {
 
     @Id
@@ -22,7 +24,7 @@ public class GameContent extends BaseEntity {
     private Game game;  //게임번호
 
     private String question;  //질문
-    private String answer;  //정답 복수정답시 구분자 @@
+    private String answer;  //정답 복수정답시 구분자-@-  ex) 강아지-개-Dog
 
     @Enumerated(EnumType.STRING)
     private GameStatus status;  //상태

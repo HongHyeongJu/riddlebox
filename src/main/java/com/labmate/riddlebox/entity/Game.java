@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(of = {"id", "title", "description", "gameLevel"})  //"team"쓰면 무한루프 빠진다 조심
 public class Game extends BaseEntity {
 
     @Id
@@ -38,8 +40,8 @@ public class Game extends BaseEntity {
     private int viewCount;  //조회수
 
     private String author;  //작가
-    private LocalDateTime createDate;  //게임생성일
-    private LocalDateTime updateDate;  //게임수정일
+    private LocalDateTime officialReleaseDate;  //정식 공개일
+    private LocalDateTime officialUpdateDate;  //공식 업데이트일
 
     @OneToMany(mappedBy = "game")
     private List<GameRecord> gameRecords = new ArrayList<>();
@@ -65,8 +67,8 @@ public class Game extends BaseEntity {
         this.gameLevel = gameLevel;
         this.author = author;
         this.status = GameStatus.ACTIVE; // 초기 상태 설정
-        this.createDate = LocalDateTime.now(); // 생성일 설정
-        this.updateDate = LocalDateTime.now(); // 수정일 설정
+        this.officialReleaseDate = LocalDateTime.now(); // 생성일 설정
+        this.officialUpdateDate = LocalDateTime.now(); // 수정일 설정
         this.viewCount = 0; // 조회수 초기화
     }
 
@@ -108,10 +110,16 @@ public class Game extends BaseEntity {
         this.gameLevel = newGameLevel;
         this.author = newAuthor;
         this.gameCategory = newGameCategory;
-        this.updateDate = LocalDateTime.now();
-
+        this.officialUpdateDate = LocalDateTime.now();
         newGameCategory.getGames().add(this);
     }
+
+    //게임 생성일, 공개일 수정
+    public void updateGameofficialDate(LocalDateTime newOfficialReleaseDate, LocalDateTime newOfficialUpdateDate){
+        this.officialReleaseDate = newOfficialReleaseDate;
+        this.officialUpdateDate = newOfficialUpdateDate;
+    }
+
 
     //삭제
     public void softDelete() {
