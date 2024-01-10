@@ -19,8 +19,8 @@
         .content-area { /* 컨텐츠 영역 최소 높이 */
             margin-top: 10px;
             border: 2px solid black;
-            width: 700px;
-            min-height: 500px;
+            min-width: 70rem;
+            min-height: 300px;
         }
 
     </style>
@@ -39,7 +39,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-3">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-2">
             <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="#">Home</a>
             </li>
@@ -66,11 +66,18 @@
 </div>
 </nav>
 
-<div class="content-area-container">
-    <div class="content-area" th:insert="${content}">
-        <p>레이아웃 컨텐츠</p>
+
+<div class="container d-flex vh-50 justify-content-center">
+    <div class="cover-content">
+        <div class="content-area row justify-content-center align-self-center " th:insert="${content}">
+            <p>레이아웃 컨텐츠1</p>
+        </div>
+        <div class="content-area row justify-content-center align-self-center " th:insert="${content}">
+            <p>레이아웃 컨텐츠2</p>
+        </div>
     </div>
 </div>
+
 
 <footer class="bg-dark text-white mt-5">
     <div class="container py-4">
