@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html th:fragment="layout (title, content)" xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8">
+
+<head>
+    <title th:replace="${title}">게임01-일러스트</title>
+    <!-- 부트스트랩 CSS 링크 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/css/oneCard.css" rel="stylesheet">
+    <link href="../../static/css/index.css" rel="stylesheet">
+
+    <style>
+
+        #time-bar-container {
+            border: 1px solid #000;
+            background-color: #ddd;
+        }
+
+        #time-bar {
+            height: 20px;
+            background-color: #4CAF50;
+            width: 100%;
+            transition: width 0.05s linear;
+            /* 너비 변화에 대한 부드러운 전환 효과 */
+        }
+
+        .btnRightMargin {
+            margin-right: 30px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<!-- navi -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary  bg-dark border-bottom border-body" data-bs-theme="dark">
+    <div class="container">
+        <a class="navbar-brand" href="#" style="margin-right: 50px;">
+            <img src="../../static/uploads/in-img/RiddleBox.png" alt="Bootstrap" width="30" height="30"
+                 style="margin-right: 10px;">
+            RIDDLE BOX
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-2">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Notice</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">[기억의 조각]</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">[단편 추리]</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">[이모지 퀴즈]</a>
+                </li>
+            </ul>
+            <form class="d-flex" role="search">
+                <input class="form-control me-3 " type="search" placeholder="Search" aria-label="Search"
+                       style="width: 200px;">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            <button type="button" class="btn btn-primary login-btn">Login</button>
+        </div>
+    </div>
+</nav>
+
+<!--중앙 컨텐츠 영역 감싸는 div-->
+<div class="col-lg-8 col-md-12 justify-content-center container" th:switch="${pageType}">
+
+
+    <div th:case="'gameList'">
+        <div class="content-area row justify-content-center align-self-center mt-0 ">
+
+            <div class="container mt-3">
+
+                <div class="position-relative mt-0 p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-12 col-lg-3 text-center text-bg-light p-1">
+                            <p class="m-1">게임이름</p>
+                        </div>
+                        <div class="col-md-12 col-lg-7">
+                            <div id="time-bar-container">
+                                <div id="time-bar" style="height: 40px; background-color: #4CAF50; width: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-2 position-absolute top-50 end-0 translate-middle-y d-flex justify-content-end  ">
+                            <button type="button" class="btn btn-primary  me-0  solveBtn">문제풀기</button>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-12 mb-3 ">
+                        <!-- 첫 번째 큰 div -->
+                        <div class=" bg-light" style="width: 100%;">
+                            <img src="../../static/uploads/in-img/gameSnapshot.jpg" alt="Description" style="width: 100%; height: auto;">
+                        </div>
+                    </div>
+
+                    <div class="col-12 position-relative" style="width: 100%; height: 50px;">
+                        <!-- 두 번째 큰 div -->
+                        <button type="button"
+                                class="btn btn-dark position-absolute top-50 end-0 translate-middle-y btnRightMargin">
+                            나가기
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- footer -->
+<footer class="bg-dark text-white mt-5">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase mb-4">Contact Information</h5>
+
+                <ul class="list-unstyled mb-0">
+                    <li>
+                        <p class="mb-2"><strong>Created by:</strong> LabMate</p>
+                    </li>
+                    <li>
+                        <p class="mb-2"><strong>Email:</strong> riddlebox2024@gmail.com</p>
+                    </li>
+                    <!-- Social media icons -->
+                    <!-- <div>
+                      <a href="#" class="me-2 text-reset">
+                        <i class="fab fa-instagram"> </i>
+                      </a>
+                      <a href="#" class="me-2 text-reset">
+                        <i class="fab fa-linkedin"></i>
+                      </a>
+                    </div> -->
+
+                </ul>
+            </div>
+
+            <div class="col-lg-6 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase mb-4">About the Developer</h5>
+
+
+                <p class="mb-2">Developed with passion using Spring Boot, Java, Bootstrap and MariaDB.</p>
+                <p class="mb-2">&copy; [2024] LabMateRiddleBox. All rights reserved.</p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<script>
+    function startTimer(duration, element) {
+        let start = Date.now();
+        let remainingTime = duration;
+        let timerInterval = setInterval(function () {
+            let elapsed = Date.now() - start;
+            remainingTime = duration - elapsed;
+
+            if (remainingTime <= 0) {
+                clearInterval(timerInterval);
+                element.style.width = '0%';
+            } else {
+                let percentage = (remainingTime / duration) * 100;
+                element.style.width = percentage + '%';
+            }
+        }, 1000);
+    }
+
+    function startTimer(duration, element) {
+        let start = Date.now();
+        let timerInterval = setInterval(function () {
+            let elapsed = Date.now() - start;
+            let remainingTime = duration - elapsed;
+
+            if (remainingTime <= 0) {
+                clearInterval(timerInterval);
+                element.style.width = '0%';
+            } else {
+                let percentage = (remainingTime / duration) * 100;
+                element.style.width = percentage + '%';
+            }
+        }, 50); // 50 밀리초 간격으로 너비 업데이트
+    }
+
+
+    // 상태바 시작
+    startTimer(20000, document.getElementById('time-bar')); // 20초 동안 줄어듦
+
+
+</script>
+
+</body>
+</html>
