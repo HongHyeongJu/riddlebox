@@ -2,7 +2,6 @@ package com.labmate.riddlebox.repository;
 
 import com.labmate.riddlebox.dto.GameListDto;
 import com.labmate.riddlebox.dto.GameSearchCondition;
-import com.labmate.riddlebox.entity.Game;
 
 import java.util.List;
 

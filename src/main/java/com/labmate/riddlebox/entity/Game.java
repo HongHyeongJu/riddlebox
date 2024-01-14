@@ -29,6 +29,8 @@ public class Game extends BaseEntity {
     private GameCategory gameCategory;  //게임 카테고리
 
     private String title;  //제목
+
+    @Lob  // 긴 텍스트를 위한 애너테이션
     private String description;  //설명
 
     @Enumerated(EnumType.STRING)
