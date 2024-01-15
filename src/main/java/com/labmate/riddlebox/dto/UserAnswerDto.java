@@ -9,7 +9,7 @@ public class UserAnswerDto {
 
     private Long gameId;
     private Long gameContentId;
-    private String answer;
+    private String userAnswer;
     private boolean isCorrect;
 
 }

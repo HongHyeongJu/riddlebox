@@ -24,7 +24,7 @@ public class GameContent extends BaseEntity {
     private Game game;  //게임번호
 
     private String question;  //질문
-    private String answer;  //정답 복수정답시 구분자-@-  ex) 강아지-개-Dog
+    private String answer;  //정답 복수정답시 구분자-@-  ex) -강아지-개-Dog-  그리고 일반 답변도 앞뒤로 -붙이기-
 
     @Enumerated(EnumType.STRING)
     private GameStatus status;  //상태
