@@ -60,11 +60,11 @@
 <div class="col-lg-8 col-md-12 justify-content-center container" th:switch="${pageType}">
 
 
-    <div th:case="'index'">
-        <!-- index 페이지용 콘텐츠 -->
+    <div th:case="'homepage'">
+        <!-- 홈페이지용 콘텐츠 -->
         <div class="content-area row justify-content-center align-self-center mt-3 border border-dark">
 
-            <p th:replace="user/common/indexTopContent :: content">indexTopContent</p>
+            <p th:replace="user/common/homepageTopContent :: content">indexTopContent</p>
 <!--            <div class="" style="width: 100%;  overflow: hidden; padding: 0;">-->
 <!--                <img class="media-index-img"  src="../../static/uploads/in-img/indexTop.png" alt="Description">-->
 <!--            </div>-->
@@ -72,17 +72,17 @@
         </div>
         <div class="content-area row justify-content-center align-self-center mt-3 border border-dark">
 
-            <p th:replace="user/common/indexBottomContent :: content">indexBottomContent</p>
+            <p th:replace="user/common/homepageBottomContent :: content">indexBottomContent</p>
 
         </div>
     </div>
 
 
 
-    <div th:case="'gameList'">
+    <div th:case="'else'">
         <div class="content-area row justify-content-center align-self-center mt-3 border border-dark">
 
-            <!-- gameList 페이지용 콘텐츠 -->
+            <!-- 그외에는 div 1개 페이지용 콘텐츠 -->
             <p th:replace="user/game/gameListContent :: content">gameListContent</p>
 
         </div>

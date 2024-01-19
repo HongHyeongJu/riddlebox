@@ -8,11 +8,13 @@ import com.labmate.riddlebox.entity.QGame;
 import com.labmate.riddlebox.enumpackage.GameLevel;
 import com.labmate.riddlebox.enumpackage.GameStatus;
 import com.labmate.riddlebox.repository.GameRepository;
+import com.labmate.riddlebox.util.GameScoreResult;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,8 +28,10 @@ import java.util.List;
 import static com.labmate.riddlebox.entity.QGame.game;
 import static com.labmate.riddlebox.entity.QGameContent.gameContent;
 import static com.labmate.riddlebox.entity.QGameImage.gameImage;
+import static com.labmate.riddlebox.entity.QRecommendGame.recommendGame;
 
 @Service
+//@RequiredArgsConstructor
 public class GameServiceImpl implements GameService  {
 
     private final JPAQueryFactory queryFactory;
@@ -96,8 +100,8 @@ public class GameServiceImpl implements GameService  {
         return gameplayInfoDto;
     }
 
-
-    private GameplayInfoDto getGameplayInfoDto(Long gameId) {
+    @Transactional(readOnly = true)
+    public GameplayInfoDto getGameplayInfoDto(Long gameId) {
         return queryFactory
             .select(new QGameplayInfoDto(game.id, game.gameCategory, game.title, game.description, game.gameLevel,
                                          game.status, game.viewCount, game.author, game.officialReleaseDate, game.officialUpdateDate))
@@ -150,6 +154,51 @@ public class GameServiceImpl implements GameService  {
 
         return new PageImpl<>(results, pageable, total);
     }
+
+
+    @Override
+    public GameScoreResult checkAnswers(List<UserAnswerDto> answers) {  //List 채점
+        int correctCount = 0;
+        for (UserAnswerDto answer : answers) {
+            if (checkAnswer(answer)) {
+                correctCount++;
+            }
+        }
+        return new GameScoreResult(answers.size(), correctCount);
+    }
+
+
+    // TODO: 2024-01-17 현재는 MariaDB 이용하기. 나중에 동시성 문제 고려해서 Redis로 변경하기
+    @Override
+    public boolean checkAnswer(UserAnswerDto answer) {  //단 건 채점
+        //UserAnswerDto: Long gameId; Long gameContentId; String userAnswer; boolean isCorrect;
+
+        //answer의 gameContentId 꺼내서 답변 찾기 -> userAnswer 포함되었는지 확인. isCorrect에 저장
+        long count = queryFactory.selectFrom(gameContent)
+                                  .where(
+                                         gameContent.id.eq(answer.getGameContentId()),
+                                         gameContent.answer.contains(answer.getUserAnswer())
+                                  )
+                                  .fetchCount();
+        // TODO: 2024-01-15 오답 기록을 위한 Table 생성하고 기록 추가하기. gameContentId, 사용자 오답, 시스템컬럼
+
+
+        return count > 0;
+    }
+
+    @Override
+    public List<GameListDto> fetchRecommendedGamesForHomepage() {
+
+        List<GameListDto> results = queryFactory.select(new QGameListDto(game.id,game.gameCategory, game.title, game.gameLevel, gameImage.fileUrl))
+                                                .from(game)
+                                                .innerJoin(game.gameImages, gameImage) // game 엔티티와 gameImage 엔티티를 연결
+                                                .innerJoin(recommendGame).on(game.id.eq(recommendGame.game.id))
+                                                .where()
+                                                .fetch();
+        return null;
+    }
+
+
 
 }
 
