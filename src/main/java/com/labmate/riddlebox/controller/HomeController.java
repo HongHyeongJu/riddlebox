@@ -1,9 +1,7 @@
 package com.labmate.riddlebox.controller;
 
 import com.labmate.riddlebox.dto.GameListDto;
-import com.labmate.riddlebox.entity.Member;
 import com.labmate.riddlebox.service.GameService;
-import com.labmate.riddlebox.web.argumentresolver.Login;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,6 +43,11 @@ public class HomeController {
 
         //추천게임 목록 받기
         List<GameListDto> gameListDtos = gameService.fetchRecommendedGamesForHomepage();
+        System.out.println("gameListDtos.size "+gameListDtos.size());
+
+        for (GameListDto dto :gameListDtos ) {
+            System.out.println(dto.toString());
+        }
 
         //모델에 담기
         model.addAttribute("gameListDtos", gameListDtos);
@@ -52,7 +55,8 @@ public class HomeController {
         model.addAttribute("title", "RiddleBox");
 
         //return index.html
-        return "layout/layoutBase";
+//        return "layout/layoutBase";
+        return "layout_base";
 
     }
 

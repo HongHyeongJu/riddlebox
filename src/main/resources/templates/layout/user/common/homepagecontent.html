@@ -1,0 +1,52 @@
+<!-- homepagetopcontent.html -->
+<div th:fragment="top_content">
+    <div class="" style="width: 100%; overflow: hidden; padding: 0;">
+        <img src="img/indexTop.png" alt="Description"
+             style="width: 100%; height: auto; object-fit: cover;">
+    </div>
+</div>
+
+
+<div th:fragment="bottom_content">
+    <!-- 여기에 홈페이지 아래 추천리스트  -->
+    <div class="gameCard-container container">
+        <div class="gameCard-cards cards">
+
+
+            <!-- th:each를 사용하여 반복 -->
+            <div th:each="gameDto : ${gameListDtos}" class="gameCard-card card position-relative">  <!--게임 ID ${gameDto.id}-->
+                <span class="position-absolute top-0 end-0 gameCard-badge badge rounded-pill bg-danger">99+</span>
+                        <!--게임난이도 ${gameDto.gameLevel}-->
+                        <!--게임카테고리 ${gameDto.gameCategory}-->
+                        <!--<span th:text="${gameDto.gameLevel}" class="position-absolute top-0 end-0  gameCard-badge badge rounded-pill bg-danger">99+</span>-->
+
+                <img src="img/cardImg.png" alt="Game Image">
+                <!-- <img th:src="@{${gameDto.thumbnailUrl}}" alt="Game Image">-->
+
+                <div class="gameCard-card-body mx-auto p-0 d-flex align-items-center">
+                    <h3 th:text="${gameDto.title}" class="gameCard-card-title mx-auto p-0 m-0 px-2">Mystery Quest</h3>
+                </div>
+            </div>
+
+<!--            <div class="gameCard-card card position-relative">
+                &lt;!&ndash;<span class="position-absolute gameCard-badge badge free-badge btn btn-success">Free</span>&ndash;&gt;
+                <span class="position-absolute top-0 end-0  gameCard-badge badge rounded-pill bg-danger">99+</span>
+                <img src="img/cardImg.png" alt="Game Image">
+                <div class="gameCard-card-body mx-auto p-0 d-flex align-items-center">
+                    <h3 class="gameCard-card-title mx-auto p-0 m-0 px-2">Mystery Quest</h3>
+                </div>
+            </div>-->
+
+        </div>
+    </div>
+</div>
+
+
+<div th:fragment="button_content">
+    <button>버튼</button>
+
+</div>
+
+
+
+
