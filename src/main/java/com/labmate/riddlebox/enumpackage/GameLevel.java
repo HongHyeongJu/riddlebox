@@ -3,7 +3,7 @@ package com.labmate.riddlebox.enumpackage;
 public enum GameLevel {
 
     EASY(100),
-    MEDIUM(200),
+    NORMAL(200),
     HARD(300);
 
     private final int level;

@@ -1,0 +1,83 @@
+body { /* 전체 배경색 */
+    background-color: rgb(109, 116, 117);
+    caret-color: transparent; /*커서 깜빡임 줄이기*/
+}
+
+.login-btn { /*로그인버튼*/
+    margin-right: 10px;
+    margin-left: 30px;
+}
+
+.content-area { /* 컨텐츠 영역 최소 높이 */
+    min-width: 70rem;
+    min-height: 300px;
+    /* 기타 스타일 */
+}
+
+.media-index-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+
+/* 전체 화면일 때만 적용되는 스타일 */
+@media (min-width: 992px) { /* 예를 들어 'lg' 브레이크포인트 사용 */
+    .search-form {
+        margin-left: 170px; /* 왼쪽 여백 추가 */
+    }
+}
+
+/* 조금 줄어들면 적용되는 스타일 */
+@media (min-width: 900px) { /* 예를 들어 'lg' 브레이크포인트 사용 */
+    .search-form {
+        margin-left: 30px; /* 왼쪽 여백 추가 */
+    }
+}
+
+
+/* 미디어 쿼리를 사용하여 화면 너비가 768px 미만일 때 스타일 적용 -> 태블릿과 작은 노트북 화면 */
+@media (max-width: 768px) {
+    .gameCard-container {
+        justify-content: space-between; /* 요소들이 화면 너비에 맞게 균등하게 배치됨 */
+    }
+
+    .content-area {
+        min-width: 100%; /* 좁은 화면에서는 최소 너비를 줄임 */
+        min-height: 0;
+    }
+
+    .media-index-img {
+        width: 100%; /* 컨테이너 너비에 맞춤 */
+        height: auto; /* 이미지의 원래 비율을 유지 */
+        object-fit: cover; /* 컨테이너에 맞게 이미지를 자름 */
+    }
+
+    .gameCard-card {
+        margin: 5px; /* 카드 여백 */
+        margin-top: 20px; /* 카드 여백 */
+        margin-right: 5px; /* 카드 여백 */
+        margin-left: 5px; /* 카드 여백 */
+    }
+}
+
+/* 미디어 쿼리를 사용하여 화면 너비가 480px 미만일 때 스타일 적용 -> 세로 모드의 모바일 폰 */
+@media (max-width: 480px) {
+    .content-area {
+        min-width: 30rem; /* 더 좁은 화면에서는 최소 너비를 더 줄임 */
+        justify-content: space-between; /* 요소들이 화면 너비에 맞게 균등하게 배치됨 */
+    }
+
+    .media-index-img {
+        width: 100%; /* 컨테이너 너비에 맞춤 */
+        height: auto; /* 이미지의 원래 비율을 유지 */
+        object-fit: cover; /* 컨테이너에 맞게 이미지를 자름 */
+    }
+
+    .gameCard-card {
+        margin: 5px; /* 카드 여백 */
+        margin-top: 20px; /* 카드 여백 */
+        margin-right: 5px; /* 카드 여백 */
+        margin-left: 5px; /* 카드 여백 */
+    }
+}

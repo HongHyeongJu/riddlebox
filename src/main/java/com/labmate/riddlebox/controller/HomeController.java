@@ -15,6 +15,7 @@ public class HomeController {
 
     @Autowired
     GameService gameService;
+
 //    @GetMapping("/")
 //    public String homeLoginArgumentResolver(@Login Member loginMember, Model model) {
 //
@@ -40,6 +41,7 @@ public class HomeController {
 //            // 로그인하지 않은 경우
 //            return "redirect:/home";
 //        }
+        System.out.println("Homepage");
 
         //추천게임 목록 받기
         List<GameListDto> gameListDtos = gameService.fetchRecommendedGamesForHomepage();

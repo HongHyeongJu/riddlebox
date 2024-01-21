@@ -6,6 +6,7 @@ import com.labmate.riddlebox.enumpackage.GameStatus;
 import com.labmate.riddlebox.enumpackage.InquiryStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberPoint extends BaseEntity {
 

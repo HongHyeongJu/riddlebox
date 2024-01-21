@@ -1,0 +1,87 @@
+.gameCard-container {
+    display: flex;
+    align-items: center;
+     justify-content: flex-start; /* 왼쪽 정렬 */
+    margin: 0;
+}
+
+.gameCard-notebook {
+    width: 140px;
+    height: 300px;
+    background-color: burlywood;
+}
+
+
+.gameCard-cards {
+    display: flex;
+    flex-wrap: wrap; /* 필요시 여러 줄로 나누기 */
+    /*justify-content: space-around; !* 요소들 사이에 공간을 균등하게 배분 *!*/
+    align-items: center; /* 세로 방향 중앙 정렬 */
+}
+
+.gameCard-card {
+    width: 130px;
+    height: 220px;
+    border-radius: 15px;
+    margin: 20px; /* 카드 여백 */
+    margin-right: 10px; /* 카드 여백 */
+    margin-left: 15px; /* 카드 여백 */
+    border: solid 1.5px rgb(161, 161, 161);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    /*background-color: #fff;*/
+    /*overflow: hidden;*/
+    position: absolute;
+    overflow: visible; /* 이 부분이 중요 */
+    transition: transform 0.3s ease;
+    background-color: rgb(14, 42, 77);
+    /* background: url('/이미지캡쳐/카드질감.jpg'); */
+}
+
+.gameCard-card:hover {
+    transform: translateY(-5px) rotate(-3deg);
+}
+
+.gameCard-card img {
+    border-top-left-radius: 15px; /* 상단 왼쪽 모서리 둥글게 */
+    border-top-right-radius: 15px; /* 상단 오른쪽 모서리 둥글게 */
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+
+.gameCard-card-title {
+    font-size: 1.0em;
+    color: #f9f9f9;
+    font-family: '스타일 있는 폰트', sans-serif;
+    text-align: center; /* 텍스트 중앙 정렬 */
+    word-wrap: break-word; /* 긴 단어가 있을 경우 줄바꿈 */
+    line-height: 1.2; /* 줄 간격 조정 */
+}
+
+.gameCard-card-body {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 수평 중앙 정렬 추가 */
+    height: 100px; /* 높이 조정 */
+}
+
+
+.gameCard-badge {
+    transform: translate(30%, -40%); /* 오른쪽 상단으로부터 약간 내리고 오른쪽으로 이동 */
+}
+
+.gameCard-free-badge {
+    transform: translate(230%, 650%);
+}
+
+
+/*body {*/
+/*    font-family: 'Arial', sans-serif;*/
+/*    background-color: #f4f4f4;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    min-height: 100vh;*/
+/*    margin: 0;*/
+/*}*/
