@@ -1,0 +1,48 @@
+.quiz_set_container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.quiz_answer_set {
+    width: 45%;
+    margin-bottom: 15px;
+}
+
+.heart-container {
+    display: flex;
+    align-items: center;
+}
+
+
+.top-container{
+    background-color: #2f3245;
+
+}
+
+.life-cube-container {
+    text-align: center;
+}
+
+
+.life-cube {
+    font-size: 2em; /* 크기 조정 */
+    color: #a06aff; /* 연보라색 */
+}
+
+.fail-cube{
+    color: #5f5f5f;  /* 연보라색 */
+
+}
+
+.custom-font {
+    font-family: 'Roboto', sans-serif;
+}
+
+.level-badge {
+    background-color: #17a2b8;
+    color: white;
+    font-size: 1rem;
+    padding: 5px 10px;
+    border-radius: 5px;
+}

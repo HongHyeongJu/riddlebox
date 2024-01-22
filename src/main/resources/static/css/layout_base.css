@@ -3,6 +3,12 @@ body { /* 전체 배경색 */
     caret-color: transparent; /*커서 깜빡임 줄이기*/
 }
 
+.top_content-img {
+    width: 80%;
+    margin: auto; /* 중앙 정렬 */
+    overflow: hidden;
+}
+
 .login-btn { /*로그인버튼*/
     margin-right: 10px;
     margin-left: 30px;

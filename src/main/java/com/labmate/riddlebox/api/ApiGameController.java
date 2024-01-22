@@ -1,9 +1,7 @@
 package com.labmate.riddlebox.api;
 
-import com.labmate.riddlebox.dto.AnswerResponse;
-import com.labmate.riddlebox.dto.GameListDto;
-import com.labmate.riddlebox.dto.GameSearchCondition;
-import com.labmate.riddlebox.dto.UserAnswerDto;
+import com.labmate.riddlebox.dto.*;
+import com.labmate.riddlebox.entity.GameContent;
 import com.labmate.riddlebox.service.GameService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/games")
@@ -31,6 +31,13 @@ public class ApiGameController {
         return ResponseEntity.ok(games);
     }
 
+
+    @GetMapping("/{gameId}/solve/contents")
+    @ResponseBody
+    public List<String> getGameContentList(@PathVariable("gameId") Long gameId) {
+        List<String> questionList = gameService.getQuestionList(gameId);
+        return questionList;
+    }
 
 
     // 답 단건 제출 및 채점 [3-1]    //스프링시큐리티는 일단 주석처리

@@ -41,22 +41,24 @@ public class WebGameController {
     // 게임 문제 제시 페이지 [1]
     @GetMapping("/{gameId}/story")
     public String getGameStory(@PathVariable("gameId") Long gameId, Model model) {
-        GameplayInfoDto gameplayInfoDto = gameService.findGameInfos(gameId);
-        model.addAttribute("gameInfo", gameplayInfoDto);
+        GameplayInfoDto gameInfo = gameService.findGameInfo(gameId);
+        model.addAttribute("gameInfo", gameInfo);
         model.addAttribute("pageType", "gameStory");
-        model.addAttribute("title","RiddleBox [ "+ gameplayInfoDto.getTitle()+" ]");
+        model.addAttribute("title","RiddleBox [ "+ gameInfo.getTitle()+" ]");
         System.out.println(" [1] 게임 스토리 페이지 ");
-        System.out.println(" title "+gameplayInfoDto.getTitle());
+        System.out.println(" title "+gameInfo.getTitle());
         return "layout_base";
     }
 
     // 게임 문제 풀이 페이지 [2]
     @GetMapping("/{gameId}/solve")
-    public String getGameSolve(@PathVariable Long gameId, Model model) {
-        GameplayInfoDto gameplayInfoDto = gameService.findGameInfos(gameId);
-        model.addAttribute("gameplayInfoDto", gameplayInfoDto);
+    public String getGameSolve(@PathVariable("gameId") Long gameId, Model model) {
+        GameplayInfoDto gameInfo = gameService.findGameInfo(gameId);
+        model.addAttribute("gameInfo", gameInfo);
         model.addAttribute("pageType", "gameSolve");
-        model.addAttribute("title", "RiddleBox [ "+ gameplayInfoDto.getTitle()+"] 문제풀기 ");
+        model.addAttribute("title", "RiddleBox [ "+ gameInfo.getTitle()+"] 문제풀기 ");
+        System.out.println("gameSolve");
+        System.out.println("RiddleBox [ "+ gameInfo.getTitle()+"] 문제풀기 ");
         return "layout_base";
     }
 

@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -66,6 +68,12 @@ public class GameContent extends BaseEntity {
         //새로운 데이터 추가
         newGame.getGameContents().add(this);
     }
+
+    //문제 List만 전달하기
+    public String getQuestion(){
+        return question;
+    }
+
 
 
     //삭제

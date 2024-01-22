@@ -2,7 +2,7 @@ window.onload = function () {
 //테스트
 //     alert('gameStoryPage');
 
-//게임 레벻
+//게임 레벨
     const gameLevel = document.getElementById('gameLevel').textContent;
 
 //게임 타이머

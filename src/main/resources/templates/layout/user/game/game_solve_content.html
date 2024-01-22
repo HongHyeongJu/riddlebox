@@ -1,0 +1,75 @@
+<!-- game_solve_content.html -->
+<div th:fragment="gameSolveContent">
+    <div class="container mt-3">
+
+
+        <div class="content-area row justify-content-center align-self-center mt-0 ">
+
+            <!--시작버튼, 목숨, 난이도-->
+            <div class="top-container container border border-5 mt-2 p-3">
+                <div class="row justify-content-between  align-items-center">
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-primary" id="solveStartBtn">시작하기</button>
+                    </div>
+                    <div class="col-auto">
+                        <div class="life-cube-container">
+
+                            <!--난이도 따라서 life-cube 라벨 개수 조정-->
+                            <div class="life-cube-container">
+                                <!-- EASY 레벨일 경우 5개의 아이콘 -->
+                                <div th:if="${gameInfo.gameLevel == 'EASY'}">
+                                    <i class="fas fa-cube life-cube me-3" th:each="i : ${#numbers.sequence(1, 5)}" th:id="${'lifeCube' + i}"></i>
+                                </div>
+
+                                <!-- NORMAL 레벨일 경우 3개의 아이콘 -->
+                                <div th:if="${gameInfo.gameLevel == 'NORMAL'}">
+                                    <i class="fas fa-cube life-cube me-3" th:each="i : ${#numbers.sequence(1, 3)}" th:id="${'lifeCube' + i}"></i>
+                                </div>
+
+                                <!-- HARD 레벨일 경우 1개의 아이콘 -->
+                                <div th:if="${gameInfo.gameLevel == 'HARD'}">
+                                    <i class="fas fa-cube life-cube me-3" th:each="i : ${#numbers.sequence(1, 1)}" th:id="${'lifeCube' + i}"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <span class="level-badge" th:text="'난이도 ' + ${gameInfo.gameLevel}">난이도 중</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <!--문제 출력 div-->
+            <div class="container border border-5 mt-3" style="height: 500px;">
+
+                <div class="container mt-5">
+                    <div class="quiz_set_container">
+                        <!-- 왼쪽 5개의 질문/정답 세트 -->
+
+                    </div>
+                </div>
+                <div class="container mt-4">
+                    <div class="row" id="question-container">
+                        <!-- 정답과 결과를 여기에 표시합니다. -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!--중도포기-->
+        <div class="container border border-5 mt-5 p-3 d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary">중도포기</button>
+        </div>
+
+    </div>
+</div>
+
+
+<!--<div th:fragment="fragment_test">
+    <h1>fragment TEST</h1>
+
+</div>-->

@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.labmate.riddlebox.entity.QGame.game;
 import static com.labmate.riddlebox.entity.QGameContent.gameContent;
@@ -88,7 +89,7 @@ public class GameServiceImpl implements GameService  {
     //단건 게임 데이터 전달
     //게임 식별자로 게임, 게임컨텐츠, 게임이미지 조회해서 DTO 반환
     @Transactional(readOnly = true)
-    public GameplayInfoDto findGameInfos(Long gameId){
+    public GameplayInfoDto findGameInfo(Long gameId){
         GameplayInfoDto gameplayInfoDto = getGameplayInfoDto(gameId);
         if (gameplayInfoDto == null) {
             throw new EntityNotFoundException("Game not found with ID: " + gameId);
@@ -98,6 +99,12 @@ public class GameServiceImpl implements GameService  {
         gameplayInfoDto.setGameImages(getGameImages(gameId));
 
         return gameplayInfoDto;
+    }
+
+    @Override
+    public List<String> getQuestionList(Long gameId) {
+        GameplayInfoDto findGame = findGameInfo(gameId);
+        return findGame.getGameContents().stream().map(GameContent::getQuestion).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -189,16 +196,27 @@ public class GameServiceImpl implements GameService  {
     @Override
     public List<GameListDto> fetchRecommendedGamesForHomepage() {
 
-        List<GameListDto> results = queryFactory.select(new QGameListDto(game.id,game.gameCategory, game.title, game.gameLevel, gameImage.fileUrl))
-                                                .from(game)
-                                                .innerJoin(game.gameImages, gameImage) // game 엔티티와 gameImage 엔티티를 연결
-                                                .innerJoin(recommendGame).on(game.id.eq(recommendGame.game.id))
-                                                .where()
-                                                .fetch();
-        return null;
+        List<GameListDto> results = queryFactory
+                                        .select(new QGameListDto(
+                                            game.id,
+                                            game.gameCategory,
+                                            game.title,
+                                            game.gameLevel,
+                                            gameImage.fileUrl
+                                        ))
+                                        .from(recommendGame)
+                                        .innerJoin(recommendGame.game, game) // recommendGame과 game을 조인합니다.
+                                        .leftJoin(game.gameImages, gameImage) // game과 gameImage를 조인합니다. 여러 이미지가 있는 경우 추가 처리가 필요할 수 있습니다.
+                                        .fetch();
+
+        return results;
     }
 
-
+/*       List<GameListDto> results = queryFactory.select(new QGameListDto(game.id,game.gameCategory, game.title, game.gameLevel, gameImage.fileUrl))
+                                                .from(game)
+                                                .innerJoin(game.gameImages, gameImage) // game 엔티티와 gameImage 엔티티를 연결
+                                                .innerJoin(game.recommendGames, recommendGame)
+                                                .fetch();*/
 
 }
 
