@@ -13,21 +13,22 @@
                     </div>
                     <div class="col-auto">
                         <div class="life-cube-container">
+                            <!--난이도 따라서 life-cube 라벨 개수 조정          ENUM사용시 .name() -->
+                            <div class="life-cube-container" th:switch="${gameInfo.gameLevel.name()}">
+                                <span th:text="${gameInfo.gameLevel.getLevel}" id="lifeCount" hidden="hidden"></span>
 
-                            <!--난이도 따라서 life-cube 라벨 개수 조정-->
-                            <div class="life-cube-container">
                                 <!-- EASY 레벨일 경우 5개의 아이콘 -->
-                                <div th:if="${gameInfo.gameLevel == 'EASY'}">
+                                <div th:case="'EASY'">
                                     <i class="fas fa-cube life-cube me-3" th:each="i : ${#numbers.sequence(1, 5)}" th:id="${'lifeCube' + i}"></i>
                                 </div>
 
                                 <!-- NORMAL 레벨일 경우 3개의 아이콘 -->
-                                <div th:if="${gameInfo.gameLevel == 'NORMAL'}">
+                                <div th:case="'NORMAL'">
                                     <i class="fas fa-cube life-cube me-3" th:each="i : ${#numbers.sequence(1, 3)}" th:id="${'lifeCube' + i}"></i>
                                 </div>
 
                                 <!-- HARD 레벨일 경우 1개의 아이콘 -->
-                                <div th:if="${gameInfo.gameLevel == 'HARD'}">
+                                <div th:case="'HARD'">
                                     <i class="fas fa-cube life-cube me-3" th:each="i : ${#numbers.sequence(1, 1)}" th:id="${'lifeCube' + i}"></i>
                                 </div>
                             </div>
@@ -41,22 +42,21 @@
             </div>
 
 
+
             <!--문제 출력 div-->
-            <div class="container border border-5 mt-3" style="height: 500px;">
-
-                <div class="container mt-5">
-                    <div class="quiz_set_container">
-                        <!-- 왼쪽 5개의 질문/정답 세트 -->
-
+            <div class="container border border-5 mt-3">
+                <div class="row">
+                    <div class="col-md-6 border border-5 min-height-500" id="left_QA_div" >
+                        <!--5개씩 QA세트 출력-->
+                    </div>
+                    <div class="col-md-6 border border-5 min-height-500" id="right_QA_div" >
+                        <!--5개씩 QA세트 출력-->
                     </div>
                 </div>
-                <div class="container mt-4">
-                    <div class="row" id="question-container">
-                        <!-- 정답과 결과를 여기에 표시합니다. -->
-                    </div>
-                </div>
-
             </div>
+
+
+
         </div>
 
 

@@ -43,8 +43,7 @@ public class ApiGameController {
 
     // 답 단건 제출 및 채점 [3-1]    //스프링시큐리티는 일단 주석처리
     @PostMapping("/submitAnswer")
-    public ResponseEntity<AnswerResponse> submitAnswer(@RequestBody Long gameContentId,
-                                                       @RequestBody String userAnswer,
+    public ResponseEntity<AnswerResponse> submitAnswer(@RequestBody UserAnswerDto userAnswer,
 //                                                       Authentication authentication,
                                                        HttpServletRequest request) {
 //        // 인증 확인
@@ -57,8 +56,8 @@ public class ApiGameController {
         Long memberId = 0L;
 
         //제출 답 채점(서비스에서 오답은 따로 기록해두기)
-        boolean isCorrect = gameService.checkAnswer(gameContentId, userAnswer, memberId);
-
+        boolean isCorrect = gameService.checkAnswer(userAnswer.getGameContentId(), userAnswer.getUserAnswer(), memberId);
+        System.out.println("컨트롤러 submitAnswer isCorrect "+isCorrect);
         //응답하기
         return ResponseEntity.ok().body(new AnswerResponse(isCorrect));
     }

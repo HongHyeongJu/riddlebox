@@ -45,7 +45,7 @@ public class WebGameController {
         GameplayInfoDto gameInfo = gameService.findGameInfo(gameId);
         model.addAttribute("gameInfo", gameInfo);
         model.addAttribute("pageType", "gameStory");
-        model.addAttribute("title","RiddleBox [ "+ gameInfo.getTitle()+" ]");
+        model.addAttribute("title","RiddleBox ["+ gameInfo.getTitle()+" ]");
         System.out.println(" [1] 게임 스토리 페이지 ");
         System.out.println(" title "+gameInfo.getTitle());
         return "layout_base";
@@ -59,7 +59,8 @@ public class WebGameController {
         model.addAttribute("pageType", "gameSolve");
         model.addAttribute("title", "RiddleBox [ "+ gameInfo.getTitle()+"] 문제풀기 ");
         System.out.println("gameSolve");
-        System.out.println("RiddleBox [ "+ gameInfo.getTitle()+"] 문제풀기 ");
+        System.out.println("gameInfo.level "+gameInfo.getGameLevel());
+        System.out.println("RiddleBox ["+ gameInfo.getTitle()+"] 문제풀기 ");
         return "layout_base";
     }
 
