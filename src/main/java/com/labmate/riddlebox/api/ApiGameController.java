@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,11 +33,11 @@ public class ApiGameController {
     }
 
 
-    @GetMapping("/{gameId}/solve/contents")
+    @GetMapping("/{gameId}/getQuestions")
     @ResponseBody
-    public List<String> getGameContentList(@PathVariable("gameId") Long gameId) {
-        List<String> questionList = gameService.getQuestionList(gameId);
-        return questionList;
+    public ResponseEntity<List<Question>> getQuestions(@PathVariable("gameId") Long gameId) {
+        List<Question> questions = gameService.getQuestionList(gameId);
+        return new ResponseEntity<>(questions, HttpStatus.OK);
     }
 
 
@@ -57,8 +58,6 @@ public class ApiGameController {
 
         //제출 답 채점(서비스에서 오답은 따로 기록해두기)
         boolean isCorrect = gameService.checkAnswer(gameContentId, userAnswer, memberId);
-
-
 
         //응답하기
         return ResponseEntity.ok().body(new AnswerResponse(isCorrect));

@@ -3,7 +3,7 @@ package com.labmate.riddlebox.service;
 import com.labmate.riddlebox.dto.GameListDto;
 import com.labmate.riddlebox.dto.GameSearchCondition;
 import com.labmate.riddlebox.dto.GameplayInfoDto;
-import com.labmate.riddlebox.dto.UserAnswerDto;
+import com.labmate.riddlebox.dto.Question;
 import com.labmate.riddlebox.repository.GameRepository;
 import com.labmate.riddlebox.util.GameScoreResult;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -19,7 +19,7 @@ import java.util.Map;
 public interface GameService {
 
     public GameplayInfoDto findGameInfo(Long gameId); //단 건 게임 찾기
-    public List<String> getQuestionList(Long gameId); //단 건 게임 질문리스트
+    public List<Question> getQuestionList(Long gameId); //단 건 게임 질문리스트
 
     public Page<GameListDto> searchGameSimple(GameSearchCondition condition, Pageable pageable); //게임 검색
 

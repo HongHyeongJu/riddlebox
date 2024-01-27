@@ -3,7 +3,6 @@ package com.labmate.riddlebox.controller;
 import com.labmate.riddlebox.dto.GameListDto;
 import com.labmate.riddlebox.dto.GameSearchCondition;
 import com.labmate.riddlebox.dto.GameplayInfoDto;
-import com.labmate.riddlebox.dto.UserAnswerDto;
 import com.labmate.riddlebox.service.GameService;
 import com.labmate.riddlebox.util.GameScoreResult;
 import jakarta.servlet.http.HttpServletRequest;
@@ -80,6 +79,7 @@ public class WebGameController {
     }
 
 
+
     // 답 list 제출 및 채점 [3] (단건은 api controller에서 개별채점)
     @PostMapping("/submitAnswerList")
     public RedirectView showFinalResultV1(@RequestBody Map<Long, String> answers,
@@ -104,6 +104,7 @@ public class WebGameController {
 
         return redirectView;
     }
+
 
 
     // 단건 채점 마지막 [3-2]

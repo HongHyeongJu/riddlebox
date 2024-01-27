@@ -1,6 +1,8 @@
 package com.labmate.riddlebox.service;
 
 import com.labmate.riddlebox.dto.*;
+import com.labmate.riddlebox.dto.QGameListDto;
+import com.labmate.riddlebox.dto.QGameplayInfoDto;
 import com.labmate.riddlebox.entity.GameCategory;
 import com.labmate.riddlebox.entity.GameContent;
 import com.labmate.riddlebox.entity.GameImage;
@@ -9,12 +11,10 @@ import com.labmate.riddlebox.enumpackage.GameLevel;
 import com.labmate.riddlebox.enumpackage.GameStatus;
 import com.labmate.riddlebox.repository.GameRepository;
 import com.labmate.riddlebox.util.GameScoreResult;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -120,12 +121,27 @@ public class GameServiceImpl implements GameService {
         return gameplayInfoDto;
     }
 
-    /*게임의 질문리스트 반환*/
+    /*각 게임의 질문리스트 반환하는 메서드
+    * @param gameId
+    * @return List<Question>  : Question(gameContentId, question, ordering)
+    * */
     @Override
-    public List<String> getQuestionList(Long gameId) {
-        GameplayInfoDto findGame = findGameInfo(gameId);
-        return findGame.getGameContents().stream().map(GameContent::getQuestion).collect(Collectors.toList());
+    public List<Question> getQuestionList(Long gameId) {
+        List<GameContent> gameContents = queryFactory
+                                        .selectFrom(gameContent)
+                                        .where(gameIdEquals(gameId), gameContentIsActive())
+                                        .orderBy(gameContent.ordering.asc()) // ordering 값으로 정렬
+                                        .fetch();
+
+        List<Question> questions = new ArrayList<>();
+        for (GameContent content : gameContents) {
+            Question question = new Question(content.getId(), content.getQuestion());
+            questions.add(question);
+        }
+
+        return questions;
     }
+
 
     @Transactional(readOnly = true)
     public GameplayInfoDto getGameplayInfoDto(Long gameId) {

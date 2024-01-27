@@ -31,6 +31,8 @@ public class GameContent extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private GameStatus status;  //상태
 
+    private Integer ordering;  //문제의 순서를 제어
+
 
 
     /*   생성자   */
@@ -39,6 +41,7 @@ public class GameContent extends BaseEntity {
         this.question = question;
         this.answer = answer;
         this.status = GameStatus.ACTIVE; // 초기 상태 설정
+        this.ordering = 1;
     }
 
     /*    생성 메서드    */

@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberPoint extends BaseEntity {
 
