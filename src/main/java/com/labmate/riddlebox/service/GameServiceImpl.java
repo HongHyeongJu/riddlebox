@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.labmate.riddlebox.entity.QGame.game;
@@ -33,7 +34,7 @@ import static com.labmate.riddlebox.entity.QRecommendGame.recommendGame;
 
 @Service
 //@RequiredArgsConstructor
-public class GameServiceImpl implements GameService  {
+public class GameServiceImpl implements GameService {
 
     private final JPAQueryFactory queryFactory;
     private final GameRepository gameRepository;
@@ -49,33 +50,51 @@ public class GameServiceImpl implements GameService  {
     private BooleanExpression gameIdEquals(Long gameId) {
         return game.id.eq(gameId);
     }
+
     private BooleanExpression gameIsActive() {
         return game.status.eq(GameStatus.ACTIVE);
     }
+
     private BooleanExpression gameContentIsActive() {
         return gameContent.status.eq(GameStatus.ACTIVE);
     }
+
     private BooleanExpression gameImageIsActive() {
         return gameImage.status.eq(GameStatus.ACTIVE);
     }
+
     private BooleanExpression titleContains(String gameTitle) {
-        if (gameTitle == null || gameTitle.isEmpty()) {return null;}
+        if (gameTitle == null || gameTitle.isEmpty()) {
+            return null;
+        }
         return QGame.game.title.containsIgnoreCase(gameTitle);
     }
+
     private BooleanExpression descriptionContains(String gameDescription) {
-        if (gameDescription == null || gameDescription.isEmpty()) {return null;}
+        if (gameDescription == null || gameDescription.isEmpty()) {
+            return null;
+        }
         return QGame.game.description.containsIgnoreCase(gameDescription);
     }
+
     private BooleanExpression gameCategoryEquals(GameCategory gameCategory) {
-        if (gameCategory == null) {return null;}
+        if (gameCategory == null) {
+            return null;
+        }
         return QGame.game.gameCategory.eq(gameCategory);
     }
+
     private BooleanExpression gameLevelEquals(GameLevel gameLevel) {
-        if (gameLevel == null) {return null;}
+        if (gameLevel == null) {
+            return null;
+        }
         return QGame.game.gameLevel.eq(gameLevel);
     }
+
     private BooleanExpression officialReleaseDateBetween(LocalDateTime startDate, LocalDateTime endDate) {
-        if (startDate == null && endDate == null) {return null;}
+        if (startDate == null && endDate == null) {
+            return null;
+        }
         if (startDate != null && endDate == null) {
             return QGame.game.officialReleaseDate.after(startDate).or(QGame.game.officialReleaseDate.eq(startDate));
         }
@@ -87,9 +106,9 @@ public class GameServiceImpl implements GameService  {
 
 
     //단건 게임 데이터 전달
-    //게임 식별자로 게임, 게임컨텐츠, 게임이미지 조회해서 DTO 반환
+    /*게임 식별자로 게임, 게임컨텐츠, 게임이미지 조회해서 DTO 반환*/
     @Transactional(readOnly = true)
-    public GameplayInfoDto findGameInfo(Long gameId){
+    public GameplayInfoDto findGameInfo(Long gameId) {
         GameplayInfoDto gameplayInfoDto = getGameplayInfoDto(gameId);
         if (gameplayInfoDto == null) {
             throw new EntityNotFoundException("Game not found with ID: " + gameId);
@@ -101,6 +120,7 @@ public class GameServiceImpl implements GameService  {
         return gameplayInfoDto;
     }
 
+    /*게임의 질문리스트 반환*/
     @Override
     public List<String> getQuestionList(Long gameId) {
         GameplayInfoDto findGame = findGameInfo(gameId);
@@ -110,64 +130,67 @@ public class GameServiceImpl implements GameService  {
     @Transactional(readOnly = true)
     public GameplayInfoDto getGameplayInfoDto(Long gameId) {
         return queryFactory
-            .select(new QGameplayInfoDto(game.id, game.gameCategory, game.title, game.description, game.gameLevel,
-                                         game.status, game.viewCount, game.author, game.officialReleaseDate, game.officialUpdateDate))
-            .from(game)
-            .where(gameIdEquals(gameId), gameIsActive())
-            .fetchOne();
+                .select(new QGameplayInfoDto(game.id, game.gameCategory, game.title, game.description, game.gameLevel,
+                        game.status, game.viewCount, game.author, game.officialReleaseDate, game.officialUpdateDate))
+                .from(game)
+                .where(gameIdEquals(gameId), gameIsActive())
+                .fetchOne();
     }
 
     private List<GameContent> getGameContents(Long gameId) {
         return queryFactory
-            .selectFrom(gameContent)
-            .where(gameIdEquals(gameId), gameContentIsActive())
-            .fetch();
+                .selectFrom(gameContent)
+                .where(gameIdEquals(gameId), gameContentIsActive())
+                .fetch();
     }
 
     private List<GameImage> getGameImages(Long gameId) {
         return queryFactory
-            .selectFrom(gameImage)
-            .where(gameIdEquals(gameId), gameImageIsActive())
-            .fetch();
+                .selectFrom(gameImage)
+                .where(gameIdEquals(gameId), gameImageIsActive())
+                .fetch();
     }
 
 
-
     //게임 목록 검색(검색 조건, 페이져블)
-    public Page<GameListDto> searchGameSimple(GameSearchCondition condition, Pageable pageable){
-        List<GameListDto> results = queryFactory.select(new QGameListDto(game.id,game.gameCategory, game.title, game.gameLevel, gameImage.fileUrl))
-                                                .from(game)
-                                                .leftJoin(game.gameImages, gameImage)
-                                                .where(
-                                                        titleContains(condition.getTitle()),
-                                                        descriptionContains(condition.getDescription()),
-                                                        gameCategoryEquals(condition.getGameCategory()),
-                                                        gameLevelEquals(condition.getGameLevel()),
-                                                        officialReleaseDateBetween(condition.getOfficialReleaseStartDate(),condition.getOfficialReleaseEndDate())
-                                                )
-                                                .offset(pageable.getOffset())
-                                                .limit(pageable.getPageSize())
-                                                .fetch();
+    public Page<GameListDto> searchGameSimple(GameSearchCondition condition, Pageable pageable) {
+        List<GameListDto> results = queryFactory.select(new QGameListDto(game.id, game.gameCategory, game.title, game.gameLevel, gameImage.fileUrl))
+                .from(game)
+                .leftJoin(game.gameImages, gameImage)
+                .where(
+                        titleContains(condition.getTitle()),
+                        descriptionContains(condition.getDescription()),
+                        gameCategoryEquals(condition.getGameCategory()),
+                        gameLevelEquals(condition.getGameLevel()),
+                        officialReleaseDateBetween(condition.getOfficialReleaseStartDate(), condition.getOfficialReleaseEndDate())
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
         long total = queryFactory.select(game.id)
-                                 .from(game)
-                                 .where(titleContains(condition.getTitle()),
-                                        descriptionContains(condition.getDescription()),
-                                        gameCategoryEquals(condition.getGameCategory()),
-                                        gameLevelEquals(condition.getGameLevel()),
-                                        officialReleaseDateBetween(condition.getOfficialReleaseStartDate(),condition.getOfficialReleaseEndDate())
-                                 )
-                                 .fetchCount();
+                .from(game)
+                .where(titleContains(condition.getTitle()),
+                        descriptionContains(condition.getDescription()),
+                        gameCategoryEquals(condition.getGameCategory()),
+                        gameLevelEquals(condition.getGameLevel()),
+                        officialReleaseDateBetween(condition.getOfficialReleaseStartDate(), condition.getOfficialReleaseEndDate())
+                )
+                .fetchCount();
 
         return new PageImpl<>(results, pageable, total);
     }
 
 
+    /*List 채점*/
     @Override
-    public GameScoreResult checkAnswers(List<UserAnswerDto> answers) {  //List 채점
+    public GameScoreResult checkAnswers(Map<Long, String> answers, Long memberId) {
         int correctCount = 0;
-        for (UserAnswerDto answer : answers) {
-            if (checkAnswer(answer)) {
+        for (Map.Entry<Long, String> entry : answers.entrySet()) {
+            Long gameContentId = entry.getKey();
+            String userAnswer = entry.getValue();
+
+            if (checkAnswer(gameContentId, userAnswer, memberId)) {
                 correctCount++;
             }
         }
@@ -176,38 +199,43 @@ public class GameServiceImpl implements GameService  {
 
 
     // TODO: 2024-01-17 현재는 MariaDB 이용하기. 나중에 동시성 문제 고려해서 Redis로 변경하기
+    /*단건 질문 채점*/
     @Override
-    public boolean checkAnswer(UserAnswerDto answer) {  //단 건 채점
+    public boolean checkAnswer(Long gameContentId, String userAnswer, Long memberId) {
         //UserAnswerDto: Long gameId; Long gameContentId; String userAnswer; boolean isCorrect;
 
         //answer의 gameContentId 꺼내서 답변 찾기 -> userAnswer 포함되었는지 확인. isCorrect에 저장
         long count = queryFactory.selectFrom(gameContent)
-                                  .where(
-                                         gameContent.id.eq(answer.getGameContentId()),
-                                         gameContent.answer.contains(answer.getUserAnswer())
-                                  )
-                                  .fetchCount();
+                .where(
+                        gameContent.id.eq(gameContentId),
+                        gameContent.answer.contains(userAnswer)
+                )
+                .fetchCount();
+        boolean isCorrect = count > 0;
+
         // TODO: 2024-01-15 오답 기록을 위한 Table 생성하고 기록 추가하기. gameContentId, 사용자 오답, 시스템컬럼
+        if (!isCorrect) {
+            // memberId와 오답 정보를 사용하여 오답 기록
+        }
 
-
-        return count > 0;
+        return isCorrect;
     }
 
     @Override
     public List<GameListDto> fetchRecommendedGamesForHomepage() {
 
         List<GameListDto> results = queryFactory
-                                        .select(new QGameListDto(
-                                            game.id,
-                                            game.gameCategory,
-                                            game.title,
-                                            game.gameLevel,
-                                            gameImage.fileUrl
-                                        ))
-                                        .from(recommendGame)
-                                        .innerJoin(recommendGame.game, game) // recommendGame과 game을 조인합니다.
-                                        .leftJoin(game.gameImages, gameImage) // game과 gameImage를 조인합니다. 여러 이미지가 있는 경우 추가 처리가 필요할 수 있습니다.
-                                        .fetch();
+                .select(new QGameListDto(
+                        game.id,
+                        game.gameCategory,
+                        game.title,
+                        game.gameLevel,
+                        gameImage.fileUrl
+                ))
+                .from(recommendGame)
+                .innerJoin(recommendGame.game, game) // recommendGame과 game을 조인합니다.
+                .leftJoin(game.gameImages, gameImage) // game과 gameImage를 조인합니다. 여러 이미지가 있는 경우 추가 처리가 필요할 수 있습니다.
+                .fetch();
 
         return results;
     }
@@ -219,7 +247,6 @@ public class GameServiceImpl implements GameService  {
                                                 .fetch();*/
 
 }
-
 
 
 //나중에 수정일 검색에 사용할 코드

@@ -15,8 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -80,24 +82,32 @@ public class WebGameController {
 
     // 답 list 제출 및 채점 [3] (단건은 api controller에서 개별채점)
     @PostMapping("/submitAnswerList")
-    public String showFinalResultV1(@RequestBody List<UserAnswerDto> answers,
-                                    RedirectAttributes redirectAttributes) {
+    public RedirectView showFinalResultV1(@RequestBody Map<Long, String> answers,
+                                          RedirectAttributes redirectAttributes) {
+
+        //임시 사용자 ID
+        Long memberId = 0L;
 
         //게임결과 List 채점 + 게임 기록 저장
-        GameScoreResult gameScoreResult = gameService.checkAnswers(answers);
+        GameScoreResult gameScoreResult = gameService.checkAnswers(answers, memberId);
 
-        //게임 기록 저장
-        int totalQuestions = gameScoreResult.getTotalQuestions() ;
-        int correctAnswersCount = gameScoreResult.getTotalQuestions() ;
+        // 정보를 리다이렉트 어트리뷰트에 추가합니다.
+        redirectAttributes.addFlashAttribute("totalQuestions", gameScoreResult.getTotalQuestions());
+        redirectAttributes.addFlashAttribute("correctAnswers", gameScoreResult.getCorrectAnswers());
 
-        redirectAttributes.addAttribute("totalQuestions", totalQuestions);
-        redirectAttributes.addAttribute("correctAnswersCount", correctAnswersCount);
-        return "redirect:/game/result";
+
+        //작업 완료 후 리다이렉트할 URL을 지정
+        String redirectUrl = "/game/result";
+
+        // RedirectView를 사용하여 리다이렉션을 설정
+        RedirectView redirectView = new RedirectView(redirectUrl);
+
+        return redirectView;
     }
 
 
     // 단건 채점 마지막 [3-2]
-    @PostMapping("/submitAnswerFinal")
+/*    @PostMapping("/submitAnswerFinal")
     public String showFinalResultV2(@RequestBody UserAnswerDto answer,
                                     HttpServletRequest request,
                                     RedirectAttributes redirectAttributes){
@@ -119,7 +129,7 @@ public class WebGameController {
         redirectAttributes.addAttribute("totalQuestions", totalQuestions);
         redirectAttributes.addAttribute("correctAnswersCount", correctAnswersCount);
         return "redirect:/game/result";
-    }
+    }*/
 
 
 

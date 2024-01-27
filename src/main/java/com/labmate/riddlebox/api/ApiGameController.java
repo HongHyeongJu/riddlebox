@@ -42,8 +42,8 @@ public class ApiGameController {
 
     // 답 단건 제출 및 채점 [3-1]    //스프링시큐리티는 일단 주석처리
     @PostMapping("/submitAnswer")
-    public ResponseEntity<AnswerResponse> submitAnswer(@PathVariable Long gameId,
-                                                       @RequestBody UserAnswerDto answer,
+    public ResponseEntity<AnswerResponse> submitAnswer(@RequestBody Long gameContentId,
+                                                       @RequestBody String userAnswer,
 //                                                       Authentication authentication,
                                                        HttpServletRequest request) {
 //        // 인증 확인
@@ -52,31 +52,16 @@ public class ApiGameController {
 //        }
 //
 //        // 사용자 식별자
-//        String memberId = authentication.getMemberId();
-
+//        Long memberId = authentication.getMemberId();
+        Long memberId = 0L;
 
         //제출 답 채점(서비스에서 오답은 따로 기록해두기)
-//        boolean isCorrect = gameService.checkAnswer(gameId, answer, memberId);
-        boolean isCorrect = gameService.checkAnswer(answer);
+        boolean isCorrect = gameService.checkAnswer(gameContentId, userAnswer, memberId);
 
-        //헤더에서 진행상황 뽑고 누적하기
-        int totalQuestions = Integer.parseInt(request.getHeader("Total-Questions"));
-        int correctAnswersCount = Integer.parseInt(request.getHeader("Correct-Answers-Count"));
-
-        //업데이트
-        totalQuestions++;
-        if (isCorrect) {
-            correctAnswersCount++;
-        }
-
-        // 업데이트된 정보를 응답 헤더에 추가
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Total-Questions", String.valueOf(totalQuestions));
-        headers.add("Correct-Answers-Count", String.valueOf(correctAnswersCount));
 
 
         //응답하기
-        return ResponseEntity.ok().headers(headers).body(new AnswerResponse(isCorrect));
+        return ResponseEntity.ok().body(new AnswerResponse(isCorrect));
     }
 
 

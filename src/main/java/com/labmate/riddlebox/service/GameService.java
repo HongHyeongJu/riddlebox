@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GameService {
 
@@ -22,9 +23,9 @@ public interface GameService {
 
     public Page<GameListDto> searchGameSimple(GameSearchCondition condition, Pageable pageable); //게임 검색
 
-    public GameScoreResult checkAnswers(List<UserAnswerDto> answers);  //게임 List 채점
+    public GameScoreResult checkAnswers(Map<Long, String> answers, Long memberId);  //게임 List 채점
 
-    public boolean checkAnswer(UserAnswerDto answer);  //게임 단 건 채점
+    public boolean checkAnswer(Long gameContentId, String userAnswer, Long memberId);  //게임 단 건 채점
 
     public List<GameListDto> fetchRecommendedGamesForHomepage(); // 첫페이지용 게임 목록 출력
 
