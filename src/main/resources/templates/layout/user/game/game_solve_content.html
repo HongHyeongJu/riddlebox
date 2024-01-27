@@ -1,7 +1,5 @@
 <!-- game_solve_content.html -->
-<div th:fragment="gameSolveContent">
-    <div class="container mt-3">
-
+<div th:fragment="gameSolveContent" class="container mt-3">
 
         <div class="content-area row justify-content-center align-self-center mt-0 ">
 
@@ -15,7 +13,7 @@
                         <div class="life-cube-container">
                             <!--난이도 따라서 life-cube 라벨 개수 조정          ENUM사용시 .name() -->
                             <div class="life-cube-container" th:switch="${gameInfo.gameLevel.name()}">
-                                <span th:text="${gameInfo.gameLevel.getLevel}" id="lifeCount" hidden="hidden"></span>
+                                <span th:text="${gameInfo.gameLevel.name()}" id="lifeCount" hidden="hidden"></span>
 
                                 <!-- EASY 레벨일 경우 5개의 아이콘 -->
                                 <div th:case="'EASY'">
@@ -46,10 +44,10 @@
             <!--문제 출력 div-->
             <div class="container border border-5 mt-3">
                 <div class="row">
-                    <div class="col-md-6 border border-5 min-height-500" id="left_QA_div" >
+                    <div class="col-md-6 border border-5 min-height-600" id="left_QA_div" >
                         <!--5개씩 QA세트 출력-->
                     </div>
-                    <div class="col-md-6 border border-5 min-height-500" id="right_QA_div" >
+                    <div class="col-md-6 border border-5 min-height-600 " id="right_QA_div" >
                         <!--5개씩 QA세트 출력-->
                     </div>
                 </div>
@@ -59,13 +57,12 @@
 
         </div>
 
-
-        <!--중도포기-->
+<!--
+        &lt;!&ndash;중도포기&ndash;&gt;
         <div class="container border border-5 mt-5 p-3 d-flex justify-content-end">
             <button type="button" class="btn btn-secondary">중도포기</button>
-        </div>
+        </div>-->
 
-    </div>
 </div>
 
 

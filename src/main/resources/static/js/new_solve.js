@@ -1,7 +1,23 @@
 window.onload = function () {
 
     /*게임 난이도에 따라서 초기 목숨 개수 설정*/
-    let lifeCount = Number(document.getElementById('lifeCount').textContent);
+    let gameLevel  = document.getElementById('lifeCount').textContent;
+    let lifeCount;
+
+    switch (gameLevel) {
+        case 'EASY':
+            lifeCount = 5;
+            break;
+        case 'MIDDLE':
+            lifeCount = 3;
+            break;
+        case 'HARD':
+            lifeCount = 2;
+            break;
+        default:
+            lifeCount = 0; // 기본값 설정, 또는 오류 처리
+    }
+
 
     /*틀릴때 마다 life-cube 차감(색깔 변화 + 전부 소진시 현재 정답률 가지고 실패결과 페이지로 redirect)*/
     function onWrongAnswerDeleteOneLife() {
@@ -16,7 +32,7 @@ window.onload = function () {
 
         if (lifeCount === 0) {
             // 실패 페이지로 이동 todo : 게임 기회 전부 소모시 어떻게 할것인가.. 일단 페이지 이동
-            window.location.href = '/game/result/fail';
+            window.location.href = '/game/result/fail?totalQuestions=' + totalQuestions +'&correctAnswersCount=' + currentCorrectAnswers;
         }
     }
 
@@ -27,7 +43,7 @@ window.onload = function () {
     console.log('gameLevel2 ' + gameLevel2);
 
     /*공통으로 사용하는 변수 선언: 총 문제수, 정답수, 오답수*/
-    let totalQuestions = 0;
+    let totalQuestions;
     let currentCorrectAnswers = 0;
     let currentIncorrectAnswers = 0;
 
@@ -58,6 +74,7 @@ window.onload = function () {
                     } else {
                         currentIncorrectAnswers++;
                         lifeCount--;
+                        console.log('틀림 '+lifeCount);
                         onWrongAnswerDeleteOneLife();
                     }
 
@@ -93,7 +110,7 @@ window.onload = function () {
             * 그러나 마지막 문제인 경우
             * // 마지막 문제 채점 후...
             * */
-
+            totalQuestions = questions.length;
             for (let index = 0; index < questions.length; index++) {
                 await processQuestion(questions[index], index);
             }
