@@ -32,7 +32,9 @@ window.onload = function () {
 
         if (lifeCount === 0) {
             // 실패 페이지로 이동 todo : 게임 기회 전부 소모시 어떻게 할것인가.. 일단 페이지 이동
-            window.location.href = '/game/result/fail?totalQuestions=' + totalQuestions +'&correctAnswersCount=' + currentCorrectAnswers;
+            setTimeout(() => {
+                window.location.href = '/game/result/fail?totalQuestions=' + totalQuestions + '&correctAnswersCount=' + currentCorrectAnswers;
+            }, 5000); // 5초 딜레이
         }
     }
 
@@ -184,7 +186,7 @@ window.onload = function () {
                 , {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({gameContentId: gameContentId, userAnswer: userAnswer})
+                    body: JSON.stringify({gameContentId: gameContentId, userAnswer: '-'+userAnswer+'-'})
                 });
 
             if (!response.ok) {
