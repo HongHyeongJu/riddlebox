@@ -1,0 +1,38 @@
+<!-- game_solve_content.html -->
+<div th:fragment="gameResultContent" class="container mt-3 d-flex align-items-center justify-content-center">
+
+    <div class="result-card card p-5" style="height: 600px;">
+        <!-- 결과 뱃지 표시 -->
+        <div th:class="${gameResult == 'success' ? 'result-badge-success' : 'result-badge-fail'}">
+            <strong th:text="${gameResult == 'success' ? '해결' : '미해결'}"></strong>
+        </div>
+
+
+        <!-- 정답 수 표시 -->
+        <div class="card answer-count-display">
+            <strong th:text="${correctAnswersCount} + '/' + ${totalQuestions}"></strong>
+        </div>
+
+
+        <!-- 버튼 컨테이너 -->
+        <div class="btn-container">
+            <a th:href="@{/game/{id}/story(id=${gameId})}">
+                <button type="button" class="btn btn-primary">다시하기</button>
+            </a>
+            <a th:href="@{/}">
+                <button type="button" class="btn btn-dark">HOME</button>
+            </a>
+            <a th:href="@{/game/random}">
+                <button type="button" class="btn btn-success">랜덤게임</button>
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!--<div th:fragment="fragment_test">
+    <h1>fragment TEST</h1>
+
+</div>-->

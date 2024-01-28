@@ -1,3 +1,12 @@
+window.onbeforeunload = function () {
+    //사이트에서 나가시겠습니까?
+    //변경사항이 저장되지 않을 수 있습니다.
+    return true;
+    //문제 다 풀면  window.onbeforeunload = null; (페이지 이동 가능 할까말까)
+};
+
+
+
 window.onload = function () {
 
     /*게임 난이도에 따라서 초기 목숨 개수 설정*/
@@ -33,7 +42,7 @@ window.onload = function () {
         if (lifeCount === 0) {
             // 실패 페이지로 이동 todo : 게임 기회 전부 소모시 어떻게 할것인가.. 일단 페이지 이동
             setTimeout(() => {
-                window.location.href = '/game/result/fail?totalQuestions=' + totalQuestions + '&correctAnswersCount=' + currentCorrectAnswers;
+                window.location.href = '/game/' + gameId + '/result?isFail=true&totalQuestions=' + totalQuestions + '&correctAnswersCount=' + currentCorrectAnswers;
             }, 5000); // 5초 딜레이
         }
     }
@@ -119,7 +128,7 @@ window.onload = function () {
 
             // 마지막 문제 처리 후 결과 페이지로 이동
             setTimeout(() => {
-                window.location.href = '/game/result?totalQuestions=' + totalQuestions + '&correctAnswersCount=' + currentCorrectAnswers;
+                window.location.href = '/game/' + gameId + '/result?totalQuestions=' + totalQuestions + '&correctAnswersCount=' + currentCorrectAnswers;
             }, 5000); // 5초 딜레이
 
 
@@ -158,7 +167,7 @@ window.onload = function () {
         answerInput.id = "questionInput" + questionNumber;
         answerInput.type = "text";
         answerInput.classList.add("form-control");
-        answerInput.placeholder = "정답을 입력하고 Enter를 누르세요.";
+        answerInput.placeholder = "정답을 입력하고 Enter";
 
 
         // 질문 레이블과 입력 필드를 새로운 div에 추가
@@ -218,11 +227,11 @@ window.onload = function () {
         if (isCorrect) {
             //inputTagElement 아래에 정답입니다.
             // resultTag.classList.add("text-secondary"); // 회색 텍스트
-            resultTag.textContent = "정답입니다.";
+            resultTag.textContent = "정답";
         } else {
             //inputTagElement 아래에 틀렸습니다.
             resultTag.classList.add("text-danger", "fst-italic"); // 빨간색, 기울인 텍스트
-            resultTag.textContent = "틀렸습니다.";
+            resultTag.textContent = "틀렸습니다";
             //그로인해 생명기회 차감
         }
         // 입력태그 바로 다음에 결과태그 삽입

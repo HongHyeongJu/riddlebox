@@ -106,6 +106,8 @@ public class GameServiceImpl implements GameService {
     }
 
 
+
+
     //단건 게임 데이터 전달
     /*게임 식별자로 게임, 게임컨텐츠, 게임이미지 조회해서 DTO 반환*/
     @Transactional(readOnly = true)
@@ -120,6 +122,7 @@ public class GameServiceImpl implements GameService {
 
         return gameplayInfoDto;
     }
+
 
     /*각 게임의 질문리스트 반환하는 메서드
     * @param gameId
@@ -142,7 +145,7 @@ public class GameServiceImpl implements GameService {
         return questions;
     }
 
-
+    /*게임 관련 정보(카테고리, 게임정보, 게임컨텐츠, 게임이미지) 가져오기*/
     @Transactional(readOnly = true)
     public GameplayInfoDto getGameplayInfoDto(Long gameId) {
         return queryFactory
@@ -153,6 +156,7 @@ public class GameServiceImpl implements GameService {
                 .fetchOne();
     }
 
+    /*게임 관련 컨텐츠(질문,답) 가져오기*/
     private List<GameContent> getGameContents(Long gameId) {
         return queryFactory
                 .selectFrom(gameContent)
@@ -160,6 +164,7 @@ public class GameServiceImpl implements GameService {
                 .fetch();
     }
 
+    /*게임 관련 이미지 가져오기*/
     private List<GameImage> getGameImages(Long gameId) {
         return queryFactory
                 .selectFrom(gameImage)
@@ -167,8 +172,7 @@ public class GameServiceImpl implements GameService {
                 .fetch();
     }
 
-
-    //게임 목록 검색(검색 조건, 페이져블)
+    /*게임 목록 검색하기 (조건, 페이져블)*/
     public Page<GameListDto> searchGameSimple(GameSearchCondition condition, Pageable pageable) {
         List<GameListDto> results = queryFactory.select(new QGameListDto(game.id, game.gameCategory, game.title, game.gameLevel, gameImage.fileUrl))
                 .from(game)
@@ -198,22 +202,6 @@ public class GameServiceImpl implements GameService {
     }
 
 
-    /*List 채점*/
-    @Override
-    public GameScoreResult checkAnswers(Map<Long, String> answers, Long memberId) {
-        int correctCount = 0;
-        for (Map.Entry<Long, String> entry : answers.entrySet()) {
-            Long gameContentId = entry.getKey();
-            String userAnswer = entry.getValue();
-
-            if (checkAnswer(gameContentId, userAnswer, memberId)) {
-                correctCount++;
-            }
-        }
-        return new GameScoreResult(answers.size(), correctCount);
-    }
-
-
     // TODO: 2024-01-17 현재는 MariaDB 이용하기. 나중에 동시성 문제 고려해서 Redis로 변경하기
     /*단건 질문 채점*/
     @Override
@@ -230,6 +218,9 @@ public class GameServiceImpl implements GameService {
         boolean isCorrect = count > 0;
 
         // TODO: 2024-01-15 오답 기록을 위한 Table 생성하고 기록 추가하기. gameContentId, 사용자 오답, 시스템컬럼
+        /* TODO: 사용자가 뒤로 가기나 새로고침을 통해 이전 페이지로 돌아갔을 때 중복된 게임 결과 기록을 방지하기
+        *        사용자가 게임에 참여할 때, 해당 게임 세션에 대한 상태를 서버에 저장하기
+        *        ex)예를 들어, "진행 중", "완료됨" 등의 상태를 관리해서 진행중 일때만 기록하기!!  */
         if (!isCorrect) {
             // memberId와 오답 정보를 사용하여 오답 기록
         }
@@ -237,6 +228,24 @@ public class GameServiceImpl implements GameService {
         return isCorrect;
     }
 
+
+    /*List 채점*/
+    @Override
+    public GameScoreResult checkAnswers(Map<Long, String> answers, Long memberId) {
+        int correctCount = 0;
+        for (Map.Entry<Long, String> entry : answers.entrySet()) {
+            Long gameContentId = entry.getKey();
+            String userAnswer = entry.getValue();
+
+            if (checkAnswer(gameContentId, userAnswer, memberId)) {
+                correctCount++;
+            }
+        }
+        return new GameScoreResult(answers.size(), correctCount);
+    }
+
+
+    /*홈페이지 추천 게임*/
     @Override
     public List<GameListDto> fetchRecommendedGamesForHomepage() {
 

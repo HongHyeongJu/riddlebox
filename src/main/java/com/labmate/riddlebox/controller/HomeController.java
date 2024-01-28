@@ -56,8 +56,6 @@ public class HomeController {
         model.addAttribute("pageType", "homepage");
         model.addAttribute("title", "RiddleBox");
 
-        //return index.html
-//        return "layout/layoutBase";
         return "layout_base";
 
     }

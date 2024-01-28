@@ -12,6 +12,7 @@
     <link href="/css/one_card.css" rel="stylesheet">
     <link href="/css/game_story.css" th:if="${pageType == 'gameStory'}" rel="stylesheet">
     <link href="/css/game_solve.css" th:if="${pageType == 'gameSolve'}" rel="stylesheet">
+    <link href="/css/game_result.css" th:if="${pageType == 'gameResult'}" rel="stylesheet">
 
 </head>
 
@@ -113,6 +114,13 @@
 <!--        </div>-->
     </div>
 
+    <div th:case="'gameResult'">
+<!--        <div class="row justify-content-center align-self-center mt-3 "> &lt;!&ndash; border border-dark&ndash;&gt;-->
+            <!-- [4] 결과페이지 -->
+            <p th:replace="~{layout/user/game/game_result_content :: gameResultContent}">gameResultContent</p>
+<!--        </div>-->
+    </div>
+
 </div>
 
 
@@ -173,6 +181,16 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </div>
+
+
+<div th:if="${pageType == 'gameResult'}">
+    <script src="/js/game_result.js"></script>
+</div>
+
+
+
+
+
 
 <!--네비게이션 토글-->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

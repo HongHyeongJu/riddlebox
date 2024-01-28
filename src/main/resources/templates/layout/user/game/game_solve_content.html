@@ -59,8 +59,11 @@
 
         <!--중도포기-->
         <div class="container mt-5 p-3 d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-light">중도포기</button>
+            <a th:href="@{/game/{id}/quit(id=${gameInfo.id})}">
+                <button type="button" class="btn btn-outline-light">중도포기</button>
+            </a>
         </div>
+
 
 
 </div>

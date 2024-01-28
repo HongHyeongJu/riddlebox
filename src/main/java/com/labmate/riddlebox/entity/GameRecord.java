@@ -1,6 +1,7 @@
 package com.labmate.riddlebox.entity;
 
 
+import com.labmate.riddlebox.enumpackage.GameResultType;
 import com.labmate.riddlebox.enumpackage.InquiryStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -32,16 +33,19 @@ public class GameRecord extends BaseEntity {
     private int score;  //점수
     private int playTime;  //플레이타임(초?? 이 기준은 이후에)
     private float successRate;  //정답률
-    private String result;  //승패
+
+    @Enumerated(EnumType.STRING)
+    private GameResultType resultType;  // 게임 결과 타입
+
 
     /*    생성자    */
-    public GameRecord(Member member, Game game, int score, int playTime, float successRate, String result) {
+    public GameRecord(Member member, Game game, int score, int playTime, float successRate, GameResultType resultType) {
         this.member = member;
         this.game = game;
         this.score = score;
         this.playTime = playTime;
         this.successRate = successRate;
-        this.result = result;
+        this.resultType = resultType;
     }
 
 }
