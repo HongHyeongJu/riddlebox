@@ -1,0 +1,55 @@
+<div th:fragment="layoutNavi" class="container">
+
+    <a class="navbar-brand d-flex align-items-center" href="/" style="margin-right: 50px;">
+        <img src="/img/RiddleBox.png" width="30" height="30" style="margin-right: 10px;">
+        <p class="fs-4 m-0 fw-semibold">RIDDLE BOX</p>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-2">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/notice">Notice</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><p class="fs-6 m-0">📷스냅샷</p></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">📙단편소설</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">😋이모지'S</a>
+            </li>
+
+            <li class="nav-item search-form">
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </li>
+
+            <li class="nav-item" th:if="${session.loginId == null}">
+                <button type="button" class="btn btn-primary" th:onclick="'location.href=\'' + @{/login} + '\''">
+                    Login
+                </button>
+            </li>
+            <li class="nav-item" th:if="${session.loginId != null}">
+                <button type="button" class="btn" style="background-color: darkblue; color: #9fa2a4;"
+                        th:onclick="'location.href=\'' + @{/logout} + '\''">Logout
+                </button>
+            </li>
+
+        </ul>
+        <!--            <button th:if="${session.loginId == null}" type="button" class="btn btn-primary login-btn" th:onclick="'location.href=\'' + @{/login} + '\''">Login</button>-->
+        <!--            <button th:if="${session.loginId != null}" type="button" class="btn  login-btn" style="background-color: darkblue; color: #9fa2a4;"  th:onclick="'location.href=\'' + @{/logout} + '\''">Logout</button>-->
+    </div>
+
+
+</div>

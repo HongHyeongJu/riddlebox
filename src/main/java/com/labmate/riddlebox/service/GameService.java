@@ -3,15 +3,10 @@ package com.labmate.riddlebox.service;
 import com.labmate.riddlebox.dto.GameListDto;
 import com.labmate.riddlebox.dto.GameSearchCondition;
 import com.labmate.riddlebox.dto.GameplayInfoDto;
-import com.labmate.riddlebox.dto.Question;
-import com.labmate.riddlebox.repository.GameRepository;
+import com.labmate.riddlebox.admindto.Question;
 import com.labmate.riddlebox.util.GameScoreResult;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;

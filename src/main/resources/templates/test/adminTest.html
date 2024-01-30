@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- 부트스트랩 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-size: .875rem;
+            caret-color: transparent;
+        }
+
+        .feather {
+            width: 16px;
+            height: 16px;
+            vertical-align: text-bottom;
+        }
+
+        /*
+        * Sidebar
+        */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            /* rtl:raw:
+            right: 0;
+            */
+            bottom: 0;
+            left: 0;
+            z-index: 100; /* Behind the navbar */
+            padding: 48px 0 0; /* Height of navbar */
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+
+        @media (max-width: 767.98px) {
+            .sidebar {
+                top: 5rem;
+            }
+        }
+
+        .sidebar-sticky {
+            position: relative;
+            top: 0;
+            height: calc(100vh - 48px);
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+        }
+
+        .nav-item:hover {
+            background-color: #f8f4e1; /* This is a light grey color */
+            cursor: pointer;
+        }
+
+
+/* Add this inside the <style> tag */
+    .nav-category {
+    background-color: #e9ecef; /* This is a light grey color, different from the main background */
+    font-size: 1.1rem; /* This increases the font size */
+    font-weight: bold; /* This makes the font bold */
+}
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-3 mr-0 px-3" href="#">🎲RIDDLE BOX ADMIN</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+                <div class="navbar-nav flex-row px-3">
+            <a class="nav-link pr-5" href="#">김당근 [사원] 님 </a> <!-- 현재 로그인한 사용자 이름 표시 -->
+            <span class="nav-link pr-5">로그인 2024/01/29 15:23:44</span>
+            <a class="nav-link" href="#">로그아웃</a>
+        </div>
+    </nav>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-2 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <input class="form-control form-control-dark nav-link" type="text" placeholder="Search" aria-label="Search" style="margin-right: auto; caret-color: black;"> <!-- 길이를 w-40에서 w-25로 변경하고 오른쪽 자동 마진 추가 -->
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            HOME
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-category" href="#">
+                            🎲아케이드관리
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            🟣 게임 목록
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            🟣 게임 기록
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-category" href="#">
+                            🧑🏻‍💻고객센터관리
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            🟢 공지사항
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            🟢 FAQ
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            🟢 1:1문의
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-category" href="#">
+                            🕵🏻사용자관리
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            🔵 회원
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            🔵 관리자
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2 class="h2">현재 페이지 타이틀</h2>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group mr-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+                    </div>
+                </div>
+
+            </div>
+            <!--실제 데이터-->
+            <div class="container mt-3">
+                <h4>사용자 관리</h4>
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>이름</th>
+                            <th>이메일</th>
+                            <th>가입 날짜</th>
+                            <th>상태</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>홍길동</td>
+                            <td>hong@example.com</td>
+                            <td>2024-01-01</td>
+                            <td>활성</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">보기</button>
+                                <button class="btn btn-warning btn-sm">수정</button>
+                                <button class="btn btn-danger btn-sm">삭제</button>
+                            </td>
+                        </tr>
+                        <!-- 여기에 추가 행을 넣을 수 있습니다. -->
+                        <!-- ... -->
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -79,4 +79,13 @@ public class HomeController {
     }*/
 
 
+    @GetMapping("/notice") //로그인 안한 모든 사용자를 위한 index페이지
+    public String noticeHomepage(Model model){
+        model.addAttribute("pageType", "noticeHome");
+        model.addAttribute("title", "RiddleBox Notice");
+
+        return "layout_base";
+    }
+
+
 }
