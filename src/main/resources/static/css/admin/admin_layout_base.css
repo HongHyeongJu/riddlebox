@@ -52,3 +52,11 @@ body {
     font-size: 1.1rem; /* This increases the font size */
     font-weight: bold; /* This makes the font bold */
 }
+
+/*목록 뱃지*/
+.admin-table-badge-custom {
+    padding: .5em .75em; /* 패딩을 조정하여 뱃지를 두껍게 만듦 */
+    font-size: 1em; /* 폰트 크기를 늘려서 뱃지의 내용을 두드러지게 만듦 */
+    border-radius: .25em; /* 둥근 모서리의 반경을 조정 */
+    margin-right: 10px;
+}

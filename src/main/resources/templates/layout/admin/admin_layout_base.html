@@ -11,6 +11,8 @@
 
 </head>
 <body>
+
+<!--Riddle Box Admin Page Base Layout-->
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-md-3 col-lg-3 mr-0 px-3" href="#">🎲RIDDLE BOX ADMIN</a>
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse"
@@ -28,52 +30,72 @@
 <div class="container-fluid">
 
     <div class="row">
+
         <nav id="sidebarMenu" class="col-md-2 col-lg-2 d-md-block bg-light sidebar collapse">
             <p th:replace="~{layout/admin/admin_sidebar_menu :: adminSidebarMenu}">adminSidebarMenu</p>
         </nav>
+
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4" th:switch="${pageType}">
 
             <div th:case="'gameList'">
                 <!-- 게임 목록 -->
-                <p th:replace="~{layout/admin/game_template :: top_title}"></p>
-                <p th:replace="~{layout/admin/game_template :: bottom_content}"></p>
+                <p th:replace="~{layout/admin/game/game_list :: top_title}"></p>
+                <p th:replace="~{layout/admin/game/game_list :: bottom_content}"></p>
             </div>
 
             <div th:case="'gameRedords'">
                 <!-- 게임 기록 -->
-                <p th:replace="~{layout/admin/user_template :: top_title}"></p>
-                <p th:replace="~{layout/admin/user_template :: bottom_content}"></p>
+                <p th:replace="~{layout/admin/game/game_records_list :: top_title}"></p>
+                <p th:replace="~{layout/admin/game/game_records_list :: bottom_content}"></p>
             </div>
 
-            <div th:case="'notices'">
+            <div th:case="'noticeList'">
                 <!-- 공지사항 관련 상단 타이틀 및 컨텐츠 -->
-                <p th:replace="~{layout/admin/notice_template :: top_title}"></p>
-                <p th:replace="~{layout/admin/notice_template :: bottom_content}"></p>
+                <p th:replace="~{layout/admin/support/notice_list :: top_title}"></p>
+                <p th:replace="~{layout/admin/support/notice_list :: bottom_content}"></p>
             </div>
 
-            <div th:case="'faq'">
-                <!-- 기본 상단 타이틀 및 컨텐츠 -->
-                <p th:replace="~{layout/admin/default_template :: top_title}"></p>
-                <p th:replace="~{layout/admin/default_template :: bottom_content}"></p>
+            <div th:case="'noticeDetail'">
+                <!-- 공지사항 관련 상단 타이틀 및 컨텐츠 -->
+                <p th:replace="~{layout/admin/support/notice_detail :: top_title}"></p>
+                <p th:replace="~{layout/admin/support/notice_detail :: bottom_content}"></p>
             </div>
 
-            <div th:case="'inquiry'">
+            <div th:case="'faqList'">
                 <!-- 기본 상단 타이틀 및 컨텐츠 -->
-                <p th:replace="~{layout/admin/default_template :: top_title}"></p>
-                <p th:replace="~{layout/admin/default_template :: bottom_content}"></p>
+                <p th:replace="~{layout/admin/support/faq_list :: top_title}"></p>
+                <p th:replace="~{layout/admin/support/faq_list :: bottom_content}"></p>
+            </div>
+
+            <div th:case="'faqDetail'">
+                <!-- 공지사항 관련 상단 타이틀 및 컨텐츠 -->
+                <p th:replace="~{layout/admin/support/notice_detail :: top_title}"></p>
+                <p th:replace="~{layout/admin/support/notice_detail :: bottom_content}"></p>
+            </div>
+
+            <div th:case="'inquiryList'">
+                <!-- 기본 상단 타이틀 및 컨텐츠 -->
+                <p th:replace="~{layout/admin/support/inquiry_list :: top_title}"></p>
+                <p th:replace="~{layout/admin/support/inquiry_list :: bottom_content}"></p>
+            </div>
+
+            <div th:case="'faqDetail'">
+                <!-- 공지사항 관련 상단 타이틀 및 컨텐츠 -->
+                <p th:replace="~{layout/admin/support/notice_detail :: top_title}"></p>
+                <p th:replace="~{layout/admin/support/notice_detail :: bottom_content}"></p>
             </div>
 
             <div th:case="'members'">
                 <!-- 기본 상단 타이틀 및 컨텐츠 -->
-                <p th:replace="~{layout/admin/default_template :: top_title}"></p>
-                <p th:replace="~{layout/admin/default_template :: bottom_content}"></p>
+                <p th:replace="~{layout/admin/user/member_list :: top_title}"></p>
+                <p th:replace="~{layout/admin/user/member_list :: bottom_content}"></p>
             </div>
 
             <div th:case="'admin'">
                 <!-- 기본 상단 타이틀 및 컨텐츠 -->
-                <p th:replace="~{layout/admin/default_template :: top_title}"></p>
-                <p th:replace="~{layout/admin/default_template :: bottom_content}"></p>
+                <p th:replace="~{layout/admin/user/admin_list :: top_title}"></p>
+                <p th:replace="~{layout/admin/user/admin_list :: bottom_content}"></p>
             </div>
 
 <!--            <div th:case="*">-->

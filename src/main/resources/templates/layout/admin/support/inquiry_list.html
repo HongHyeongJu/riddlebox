@@ -1,0 +1,156 @@
+<!--상단 타이틀-->
+<div th:fragment="top_title"
+     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+
+    <h2 class="h2">현재 페이지 타이틀</h2>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+        </div>
+    </div>
+</div>
+
+
+
+<!--실제 데이터-->
+<div th:fragment="bottom_content" class="container mt-3">
+
+    <!-- 검색 폼 -->
+    <form class="mb-4">
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <select class="form-control" id="searchTopic">
+                    <option value="">주제 선택</option>
+                    <option value="topic1">주제1</option>
+                    <option value="topic2">주제2</option>
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <select class="form-control" id="searchStatus">
+                    <option value="">상태 선택</option>
+                    <option value="active">활성</option>
+                    <option value="inactive">비활성</option>
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <input type="text" class="form-control" id="searchKeyword" placeholder="검색어">
+            </div>
+            <div class="form-group col-md-2">
+                <input type="date" class="form-control" id="startDate">
+            </div>
+            <div class="form-group col-md-2">
+                <input type="date" class="form-control" id="endDate">
+            </div>
+            <div class="form-group col-md-1">
+                <button type="submit" class="btn btn-primary">검색</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th>글번호</th>
+            <th>주제</th>
+            <th>제목</th>
+            <th>작성일</th>
+            <th>작성자</th>
+            <th>상태</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <div class="d-flex align-items-center">
+                    <span class="ml-2 mr-2">1</span> <!-- 여기에서 mr-2 클래스로 여백을 추가합니다 -->
+                    <input type="checkbox">
+                </div>
+            </td>
+            <td>홍길동</td>
+            <td>hong@example.com</td>
+            <td>2024-01-01</td>
+            <td>활성</td>
+            <td>
+                <span class="badge badge-primary admin-table-badge-custom">관리자</span>
+                <button class="btn btn-danger btn-sm">삭제</button>
+            </td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>홍길동</td>
+            <td>hong@example.com</td>
+            <td>2024-01-01</td>
+            <td>활성</td>
+            <td>
+                <span class="badge badge-primary admin-table-badge-custom">관리자</span>
+                <button class="btn btn-danger btn-sm">삭제</button>
+            </td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>홍길동</td>
+            <td>hong@example.com</td>
+            <td>2024-01-01</td>
+            <td>활성</td>
+            <td>
+                <span class="badge badge-primary admin-table-badge-custom">관리자</span>
+                <button class="btn btn-danger btn-sm">삭제</button>
+            </td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>홍길동</td>
+            <td>hong@example.com</td>
+            <td>2024-01-01</td>
+            <td>활성</td>
+            <td>
+                <span class="badge badge-primary admin-table-badge-custom">관리자</span>
+                <button class="btn btn-danger btn-sm">삭제</button>
+            </td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>홍길동</td>
+            <td>hong@example.com</td>
+            <td>2024-01-01</td>
+            <td>활성</td>
+            <td>
+                <span class="badge badge-primary admin-table-badge-custom">관리자</span>
+                <button class="btn btn-danger btn-sm">삭제</button>
+            </td>
+        </tr>
+        <!-- 여기에 추가 행을 넣을 수 있습니다. -->
+        <!-- ... -->
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between">
+        <div>
+            <!-- 왼쪽에 아무것도 없기 때문에 빈 div를 사용할 수 있습니다 -->
+        </div>
+        <div>
+            <!-- '등록'과 '임시 저장' 버튼은 여기에 중앙 정렬됩니다 -->
+            <!--            <button type="submit" class="btn btn-primary mx-2">등록</button>-->
+            <!--            <button type="button" class="btn btn-info mx-2">임시 저장</button>-->
+        </div>
+        <div>
+            <!-- '목록' 버튼은 여기에 오른쪽 정렬됩니다 -->
+            <button type="button" class="btn btn-secondary">목록</button>
+        </div>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">이전</a></li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">다음</a></li>
+        </ul>
+    </nav>
+
+
+</div>
+

@@ -1,0 +1,47 @@
+<!--상단 타이틀-->
+<div th:fragment="top_title"
+     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+
+    <h2 class="h2">현재 페이지 타이틀</h2>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+        </div>
+    </div>
+</div>
+
+
+<!--실제 데이터-->
+<div th:fragment="bottom_content" class="container mt-3">
+    <h4>사용자 관리</h4>
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>이름</th>
+            <th>이메일</th>
+            <th>가입 날짜</th>
+            <th>상태</th>
+            <th>작업</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1</td>
+            <td>홍길동</td>
+            <td>hong@example.com</td>
+            <td>2024-01-01</td>
+            <td>활성</td>
+            <td>
+                <button class="btn btn-primary btn-sm">보기</button>
+                <button class="btn btn-warning btn-sm">수정</button>
+                <button class="btn btn-danger btn-sm">삭제</button>
+            </td>
+        </tr>
+        <!-- 여기에 추가 행을 넣을 수 있습니다. -->
+        <!-- ... -->
+        </tbody>
+    </table>
+</div>
+
