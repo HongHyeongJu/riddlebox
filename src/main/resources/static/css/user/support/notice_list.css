@@ -1,0 +1,16 @@
+.font-weight-bold-custom {
+    font-weight: bold;
+}
+
+
+/* 모든 <a> 태그에 적용 */
+a {
+    color: inherit; /* 부모 요소의 글자 색상을 상속받음 */
+    text-decoration: none; /* 밑줄 제거 */
+}
+
+/* 호버 상태에 대한 스타일 */
+a:hover {
+    color: inherit; /* 호버 시에도 글자 색상을 상속받음 */
+    text-decoration: none; /* 밑줄 제거 */
+}

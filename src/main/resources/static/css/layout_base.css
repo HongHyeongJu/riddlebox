@@ -165,3 +165,8 @@ body { /* 전체 배경색 */
 
 
 }
+
+/*공지사항 목록 h2 두껍게*/
+.font-weight-bold-custom {
+    font-weight: bold;
+}

@@ -1,0 +1,20 @@
+.img-container img {
+    max-height: 20rem; /* 이미지 최대 높이를 컨테이너의 높이에 맞춤 */
+    object-fit: contain; /* 이미지 비율을 유지하면서 컨테이너에 맞게 조정 */
+    width: 100%; /* 너비를 100%로 설정하여 컨테이너에 꽉 차게 만듦 */
+}
+
+
+.div-custom {
+    background-color: #c1c4c6;
+}
+
+
+/* 테이블의 두 번째 열에 대한 중앙 정렬 스타일 */
+.custom-table td:nth-child(1) {
+    text-align: center;
+}
+
+.font-weight-bold-custom {
+    font-weight: 700; /* 더 굵은 글꼴 굵기로 설정 */
+}

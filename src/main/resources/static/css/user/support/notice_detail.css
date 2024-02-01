@@ -1,0 +1,11 @@
+.font-weight-bold-custom {
+    font-weight: bold;
+}
+
+.user-input-display {
+    white-space: pre-line; /* 사용자의 줄바꿈과 공백을 유지 */
+}
+
+.container {
+    max-width: 800px; /* 원하는 너비로 조정 */
+}

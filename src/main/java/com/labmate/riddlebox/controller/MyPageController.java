@@ -1,12 +1,9 @@
 package com.labmate.riddlebox.controller;
 
-import com.labmate.riddlebox.entity.GameRecord;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/mypage")
@@ -15,9 +12,10 @@ public class MyPageController {
     /*내 게임 기록, 1:1 문의, 나의 정보(회원정보 수정), 내 프로필, 등급*/
     @GetMapping("")
     public String myPageHome(Model model) {
-        model.addAttribute("pageType","myPage");
+        model.addAttribute("pageType","myPageHome");
+        model.addAttribute("title", "RiddleBox MyPage");
 
-        return "layout_base"; // HTML 뷰 이름
+        return "layout/layout_base"; // HTML 뷰 이름
     }
 
 
@@ -28,14 +26,28 @@ public class MyPageController {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        Long memberId = authentication.getMemberId();
         Long testMemberId = 1L;
+        model.addAttribute("pageType","myPageDetail");
+        model.addAttribute("title", "RiddleBox MyRecords");
 
         // 게임 기록 로드 및 처리
 //        List<GameRecord>
         //TODO 게임 기록 보여줄 DTO만들기
 
-        return "mypage/game-records";
+        return "layout/layout_base"; // HTML 뷰 이름
+
     }
 
+
+    /* 나의 정보 (회원정보 수정) */
+    @GetMapping("/my-point")
+    public String myPoint(Model model) {
+        // 사용자 정보 로드 및 처리
+        model.addAttribute("pageType","myPageDetail");
+        model.addAttribute("title", "RiddleBox MyPoint");
+
+        return "layout/layout_base"; // HTML 뷰 이름
+
+    }
 
     /* 1:1 문의 */
     @GetMapping("/inquiries")
@@ -44,8 +56,10 @@ public class MyPageController {
 //        String username = authentication.getName();
         // 1:1 문의 정보 로드 및 처리
         //TODO 문의내용 Dto는 이미 있다 -> 그러나 적합한지 확인하기
+        model.addAttribute("pageType","myPageInquiry");
 
-        return "mypage/inquiries";
+        return "layout/layout_base"; // HTML 뷰 이름
+
     }
 
 
@@ -53,7 +67,10 @@ public class MyPageController {
     @GetMapping("/my-info")
     public String myInfo(Model model) {
         // 사용자 정보 로드 및 처리
-        return "mypage/my-info";
+        model.addAttribute("pageType","myPageInfo");
+
+        return "layout/layout_base"; // HTML 뷰 이름
+
     }
 
 

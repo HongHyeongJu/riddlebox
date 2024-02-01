@@ -12,11 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Map;
-import java.util.Random;
 
 
 @Controller
@@ -26,13 +24,14 @@ public class WebGameController {
     @Autowired
     GameService gameService;
 
+
     /* 게임 목록 조회 */
     @GetMapping("/games")
     public String showGames(Model model) {
         Pageable pageable = PageRequest.of(0, 10);
         Page<GameListDto> games = gameService.searchGameSimple(new GameSearchCondition(), pageable);
         model.addAttribute("games", games);
-        return "games";
+        return "layout/layout_base";
     }
 
 
@@ -47,7 +46,7 @@ public class WebGameController {
         model.addAttribute("title","RiddleBox ["+ gameInfo.getTitle()+" ]");
         System.out.println(" [1] 게임 스토리 페이지 ");
         System.out.println(" title "+gameInfo.getTitle());
-        return "layout_base";
+        return "layout/layout_base";
     }
 
 
@@ -62,7 +61,7 @@ public class WebGameController {
         System.out.println("gameSolve");
         System.out.println("gameInfo.level "+gameInfo.getGameLevel());
         System.out.println("RiddleBox ["+ gameInfo.getTitle()+"] 문제풀기 ");
-        return "layout_base";
+        return "layout/layout_base";
     }
 
 
@@ -105,7 +104,7 @@ public class WebGameController {
         model.addAttribute("pageType","gameResult");
         model.addAttribute("gameResult", !isFail ? "success" : "fail");
 
-        return "layout_base"; // HTML 뷰 이름
+        return "layout/layout_base"; // HTML 뷰 이름
     }
 
 
@@ -129,6 +128,7 @@ public class WebGameController {
 
         return "redirect:/game/"+randomGameNumber+"/story";
     }
+
 }
 
 

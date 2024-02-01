@@ -1,0 +1,59 @@
+.desk-container {
+    position: relative; /* Needed for absolute positioning of children */
+}
+
+
+.desk-image {
+    width: 100%; /* Full width */
+    height: auto; /* Maintain aspect ratio */
+}
+
+
+.desk-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    align-items: center; /* 모든 자식 요소들을 가로 중앙에 정렬합니다 */
+}
+
+
+.desk-content {
+    /* background: rgba(255, 255, 255, 0.8); */
+    border: solid 2px slateblue;
+    border-radius: 0.5rem;
+    margin-top: 6rem;
+    padding: 1rem;
+    width: 80%;
+    min-height: 20rem;
+}
+
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px; /* 버튼 그룹과 컨텐츠 사이의 간격을 추가합니다. */
+    margin-top: 0.3rem;
+}
+
+
+/* 첫 번째 버튼을 제외한 버튼에 왼쪽 마진을 적용합니다 */
+.button-group button:not(:first-child) {
+    margin-left: 4rem; /* 첫 번째 버튼을 제외한 다음 버튼부터 적용 */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .desk-overlay {
+        flex-direction: column;
+        padding: 0.5rem;
+    }
+
+    .button-group {
+        flex-direction: column; /* 작은 화면에서 버튼들을 세로로 정렬합니다 */
+        align-items: center; /* 세로 중앙 정렬을 위해 사용합니다 */
+    }
+}

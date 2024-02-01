@@ -1,0 +1,145 @@
+.desk-container {
+    position: relative;
+    width: 100%; /* 컨테이너 너비를 100%로 설정 */
+    padding-top: 56.25%; /* 16:9 비율의 이미지에 대한 패딩 */
+    /*overflow: hidden; !* 범위를 벗어난 내용 숨기기 *!*/
+}
+
+
+.desk-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+}
+
+.desk-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center child elements horizontally */
+    height: 100%;
+}
+
+.user-info {
+    margin-left: auto; /* Align the list to center */
+    margin-right: auto; /* Align the list to center */
+}
+
+.user-info h4 {
+    margin-top: 43%; /* 병아리탐정 캬캬 위쪽 여백 */
+    margin-bottom: 13%; /* 병아리탐정 캬캬 아래쪽 여백 */
+}
+
+.user-info h5 {
+    margin-bottom: 22%;
+}
+
+.info-title {
+    margin-right: 0%; /* 오른쪽 여백을 줍니다 */
+}
+
+.info-value {
+    font-weight: bold; /* 값의 글자를 굵게 합니다 */
+}
+
+
+.mypage-menu-top {
+    flex: 2; /* 상대적인 flex 비율을 사용하여 높이 조정 */
+    /*border: solid 2px;*/
+    height: 66%; /* desk-overlay의 높이에 대해 66% 차지 */
+    width: 30%;
+
+}
+
+.mypage-menu-bottom {
+    flex: 1; /* 상대적인 flex 비율을 사용하여 높이 조정 */
+    /*border: solid 2px;*/
+    height: 35%; /* desk-overlay의 높이에 대해 66% 차지 */
+}
+
+
+.icon-list {
+    display: flex;
+    justify-content: space-between; /* Distribute space evenly between the icons */
+    width: 80%;
+    margin-left: 10%; /* Align the list to center */
+    margin-right: 10%; /* Align the list to center */
+}
+
+.icon-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 아이콘과 텍스트를 중앙 정렬 */
+    text-align: center;
+}
+
+.icon-list li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 20%;
+    /* border: solid 2px darkcyan; */
+    position: relative; /* 이미지 위치를 조정하기 위해 relative 설정 */
+    overflow: hidden; /* 넘치는 이미지를 숨김 */
+    margin-top: 10%;
+    margin-bottom: auto;
+}
+
+.icon-list img {
+    width: 60%; /* Adjust the size as needed */
+    height: auto; /* Adjust the size as needed */
+    border-radius: 50%;
+}
+
+
+.icon-list span {
+    margin-bottom: 5%;
+    font-weight: bold; /* 글자를 굵게 만듭니다 */
+    font-size: 100%; /* 글자 크기를 키웁니다. 'em' 단위는 현재 글꼴 크기에 상대적입니다 */
+}
+
+
+.icon-list li:first-child {
+    border: solid 3px;
+    border-color: gold; /* 첫 번째 아이템의 테두리 색상을 골드로 설정 */
+    border-radius: 15%;
+    width: 15%;
+}
+
+.icon-list li:first-child img {
+    /* 첫 번째 아이템의 이미지에 적용되는 스타일 */
+    object-fit: cover;
+    width: 100%;
+    display: block; /* 이미지를 블록 레벨 요소로 설정 */
+    vertical-align: top; /* 이미지를 상단에 정렬 */
+    border-radius: 0; /* 이미지의 모서리를 둥글지 않게 함 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 그림자 효과 추가 */
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .desk-overlay {
+        flex-direction: column;
+        padding: 0.5rem;
+    }
+}
+
+
+/* 모든 <a> 태그에 적용 */
+a {
+    color: inherit; /* 부모 요소의 글자 색상을 상속받음 */
+    text-decoration: none; /* 밑줄 제거 */
+}
+
+/* 호버 상태에 대한 스타일 */
+a:hover {
+    color: inherit; /* 호버 시에도 글자 색상을 상속받음 */
+    text-decoration: none; /* 밑줄 제거 */
+}

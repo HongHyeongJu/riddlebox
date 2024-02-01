@@ -1,0 +1,28 @@
+<!-- mypage_detail.html -->
+<div th:fragment="myPageDetail" class="container desk-container">
+  <!-- The background image of the desk -->
+        <img src="img/myPageDesk.png"  alt="Desk Background" class="desk-image">
+        <!-- The overlay with buttons and content -->
+        <div class="desk-overlay">
+            <div class="button-group">
+                <!-- Bootstrap styled buttons -->
+                <button type="button" class="btn btn-warning btn-sm">게임기록</button>
+                <button type="button" class="btn btn-warning btn-sm">게임 포인트</button>
+                <button type="button" class="btn btn-warning btn-sm">1:1 문의</button>
+                <button type="button" class="btn btn-warning btn-sm">나의 정보</button>
+            </div>
+
+
+            <p th:replace="~{layout/user/mypage/mypage_detail :: myPageDetailContent}">myPageDetailContent</p>
+
+
+        </div>
+</div>
+
+
+
+
+<div th:fragment="myPageDetailContent"  class="desk-content">
+    <p>컨텐츠 div</p>
+
+</div>
