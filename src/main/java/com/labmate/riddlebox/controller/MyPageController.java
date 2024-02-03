@@ -27,6 +27,7 @@ public class MyPageController {
 //        Long memberId = authentication.getMemberId();
         Long testMemberId = 1L;
         model.addAttribute("pageType","myPageDetail");
+        model.addAttribute("myPageType","myRecord");
         model.addAttribute("title", "RiddleBox MyRecords");
 
         // 게임 기록 로드 및 처리
@@ -43,6 +44,7 @@ public class MyPageController {
     public String myPoint(Model model) {
         // 사용자 정보 로드 및 처리
         model.addAttribute("pageType","myPageDetail");
+        model.addAttribute("myPageType","myPoint");
         model.addAttribute("title", "RiddleBox MyPoint");
 
         return "layout/layout_base"; // HTML 뷰 이름
@@ -56,7 +58,8 @@ public class MyPageController {
 //        String username = authentication.getName();
         // 1:1 문의 정보 로드 및 처리
         //TODO 문의내용 Dto는 이미 있다 -> 그러나 적합한지 확인하기
-        model.addAttribute("pageType","myPageInquiry");
+        model.addAttribute("pageType","myPageDetail");
+        model.addAttribute("myPageType","myInquiry");
 
         return "layout/layout_base"; // HTML 뷰 이름
 
@@ -67,7 +70,8 @@ public class MyPageController {
     @GetMapping("/my-info")
     public String myInfo(Model model) {
         // 사용자 정보 로드 및 처리
-        model.addAttribute("pageType","myPageInfo");
+        model.addAttribute("pageType","myPageDetail");
+        model.addAttribute("myPageType","myInfo");
 
         return "layout/layout_base"; // HTML 뷰 이름
 

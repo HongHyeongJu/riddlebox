@@ -25,24 +25,26 @@
     /* background: rgba(255, 255, 255, 0.8); */
     border: solid 2px slateblue;
     border-radius: 0.5rem;
-    margin-top: 6rem;
+    margin-top: 8%;
     padding: 1rem;
-    width: 80%;
-    min-height: 20rem;
+    width: 90%;
+    height: 50%;
+    margin-left: 2%;
 }
+
 
 
 .button-group {
     display: flex;
     justify-content: center;
-    margin-bottom: 20px; /* 버튼 그룹과 컨텐츠 사이의 간격을 추가합니다. */
-    margin-top: 0.3rem;
+    margin-bottom: 3%;
+    margin-top: 0.1rem;
 }
 
 
 /* 첫 번째 버튼을 제외한 버튼에 왼쪽 마진을 적용합니다 */
-.button-group button:not(:first-child) {
-    margin-left: 4rem; /* 첫 번째 버튼을 제외한 다음 버튼부터 적용 */
+.button-group a:not(:first-child) {
+    margin-left: 4rem; /* 첫 번째 링크(버튼처럼 보이는)를 제외한 다음 링크부터 적용 */
 }
 
 /* Responsive adjustments */
