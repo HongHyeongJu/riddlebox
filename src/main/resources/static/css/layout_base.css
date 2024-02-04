@@ -170,3 +170,9 @@ body { /* 전체 배경색 */
 .font-weight-bold-custom {
     font-weight: bold;
 }
+
+
+.board-custom-container {
+    max-width: 600px; /* 원하는 최대 가로 길이로 설정 */
+    margin: auto; /* 가운데 정렬 */
+}

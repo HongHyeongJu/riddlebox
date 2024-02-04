@@ -1,0 +1,56 @@
+<div th:fragment="board" class="container rounded border border-5 board-custom-container">
+    <div class="row ">
+        <div class="col-12">
+            <div class="paper-style p-4">
+                <h2 class="mb-4 ">게시글 작성</h2>
+                <form>
+                    <div class="mb-4 mt-3">
+                        <label for="topic" class="form-label">문의 주제 선택</label>
+                        <select class="form-select" id="topic">
+                            <option selected>주제를 선택하세요</option>
+                            <option value="1">계정 관련 문의</option>
+                            <option value="2">결제 문제</option>
+                            <option value="3">기술적 문제</option>
+                            <option value="4">기타 문의</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 mt-4">
+                        <input type="text" class="form-control" id="title" placeholder="제목을 입력하세요">
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" id="content" rows="6" placeholder="내용을 입력하세요"></textarea>
+                    </div>
+
+                    <div class="row mb-3 mt-4 justify-content-center">
+                        <div class="col-5 text-center px-2 mt-2 mb-2"> <!-- col-3 클래스로 가로길이 조절 -->
+                            <label for="date" class="form-label">2024.01.01</label>
+                        </div>
+                        <div class="col-5 text-center px-2 mt-2 mb-3"> <!-- col-3 클래스로 가로길이 조절 -->
+                            <label for="name" class="form-label">이름</label>
+                        </div>
+                    </div>
+
+
+                    <!-- "목록" 버튼을 왼쪽에 배치하고, 나머지 버튼들을 중앙에 배치하기 위한 컨테이너 -->
+                    <div class="d-flex justify-content-between">
+                        <!-- "목록" 버튼을 링크로 변경하고 왼쪽에 배치 -->
+                        <a href="목록-링크.html" class="btn btn-primary me-2">목록</a>
+
+                        <!-- 나머지 버튼들을 중앙에 배치하기 위한 서브 컨테이너 -->
+                        <div class="d-flex justify-content-center" style="flex-grow: 1;">
+                            <!-- 나머지 버튼들을 링크로 변경 -->
+                            <a href="저장-링크.html" class="btn btn-primary mx-2">저장</a>
+                            <a href="취소-링크.html" class="btn btn-secondary mx-2">취소</a>
+                            <a href="취소-링크.html" class="btn btn-secondary mx-2">수정</a>
+                            <a href="삭제-링크.html" class="btn btn-danger mx-2">삭제</a>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</div>

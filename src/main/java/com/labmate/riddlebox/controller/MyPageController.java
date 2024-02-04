@@ -60,6 +60,7 @@ public class MyPageController {
         //TODO 문의내용 Dto는 이미 있다 -> 그러나 적합한지 확인하기
         model.addAttribute("pageType","myPageDetail");
         model.addAttribute("myPageType","myInquiry");
+        model.addAttribute("myPageDetailContent","board");
 
         return "layout/layout_base"; // HTML 뷰 이름
 

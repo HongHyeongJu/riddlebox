@@ -44,6 +44,7 @@ public class SupportController {
 
         model.addAttribute("pageType","noticeDetail");
         model.addAttribute("title","Notice");
+        model.addAttribute("middleContent","board");
 
         return "layout/layout_base";
     }
