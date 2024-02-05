@@ -30,7 +30,7 @@ public class Notice extends BaseEntity {
     private NoticeStatus status;  //상태
 
     private LocalDateTime noticeDate;  //notice_date
-    private int viewCount;  //조회수
+    private Integer viewCount;  //조회수
 
 
 

@@ -1,0 +1,118 @@
+<div th:fragment="login" class="container">
+
+    <div class="login-container">
+        <h2 class="login-title">RIDDLE BOX</h2>
+        <form>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="ID" required>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="PW" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block login-button">로그인</button>
+            <div class="row">
+                <div class="col-6">
+                    <a href="#" class="btn btn-secondary btn-block login-button">구글 로그인</a>
+                </div>
+                <div class="col-6">
+                    <a href="#" class="btn btn-warning btn-block login-button">카카오 로그인</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <a href="#" class="btn btn-link btn-block login-button">회원가입</a>
+                </div>
+                <div class="col-6">
+                    <a href="#" class="btn btn-link btn-block login-button">계정 찾기</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+
+<div th:fragment="signup" class="container">
+    <div class="signup-container">
+        <h4 class="signup-title">회원가입</h4>
+        <form>
+            <div class="form-group">
+                <label for="inputId" class="signup-label">Id</label>
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputId" placeholder="Id" required>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button">중복체크</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group   mt-4">
+                <label for="inputPassword1" class="signup-label">Password</label>
+                <input type="password" class="form-control" id="inputPassword1" placeholder="Password" minlength="8"
+                       maxlength="12" onkeyup="validatePassword()" required>
+                <small id="passwordHelpBlock" class="validation-message  mt-2">
+                    비밀번호는 영문자와 숫자를 포함한 8~12글자로 제한됩니다.
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="inputPassword2">Password 확인</label>
+                <input type="password" class="form-control" id="inputPassword2" placeholder="Password 확인"
+                       onkeyup="matchPasswords()" required>
+                <small id="confirmHelpBlock" class="validation-message   mt-2">
+                    동일한 패스워드를 입력하세요.
+                </small>
+            </div>
+
+            <div class="form-group   mt-4">
+                <label for="inputEmail" class="signup-label">이메일</label>
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputEmail" placeholder="이메일" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text">@</span>
+                    </div>
+                    <select class="custom-select" required>
+                        <option value="">선택하세요</option>
+                        <option value="gmail.com">gmail.com</option>
+                        <option value="naver.com">naver.com</option>
+                        <option value="hanmail.net">hanmail.net</option>
+                        <!-- 여러 이메일 도메인 추가 가능 -->
+                    </select>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-block signup-button" onclick="showVerification()">인증번호
+                전송하기
+            </button>
+
+            <div id="verificationSection" class="hidden mt-2">
+                <div class="form-group">
+                    <label for="inputVerificationCode">인증번호</label>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" id="inputVerificationCode" placeholder="인증번호" required>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button">확인</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group   mt-4">
+                <label for="inputNickname" class="signup-label">닉네임</label>
+                <input type="text" class="form-control" id="inputNickname" placeholder="닉네임" required>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-block signup-button">회원가입하기</button>
+        </form>
+    </div>
+
+</div>
+
+
+<div th:fragment="findAccount">
+
+
+</div>
+
+
+
