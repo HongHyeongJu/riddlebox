@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class LoginController {
 
-    @GetMapping("/login")
+    @GetMapping("/login-page")
     public String showLoginPage(Model model) {
         model.addAttribute("pageType", "login");
         model.addAttribute("title","RiddleBox login");
