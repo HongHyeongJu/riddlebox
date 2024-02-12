@@ -1,3 +1,4 @@
+/*
 package com.labmate.riddlebox.service;
 
 import lombok.RequiredArgsConstructor;
@@ -45,3 +46,4 @@ public class MailService {
 
 
 }
+*/

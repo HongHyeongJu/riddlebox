@@ -1,3 +1,4 @@
+/*
 package com.labmate.riddlebox.service;
 
 import com.labmate.riddlebox.entity.Member;
@@ -105,3 +106,4 @@ public class MemberServiceImpl implements MemberService {
 
 
 }
+*/
