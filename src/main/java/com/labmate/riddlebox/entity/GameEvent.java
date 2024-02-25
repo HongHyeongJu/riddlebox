@@ -20,8 +20,8 @@ public class GameEvent extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;  //회원번호
+    @JoinColumn(name = "user_id")
+    private RBUser user;  //회원번호
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id")
@@ -34,10 +34,15 @@ public class GameEvent extends BaseEntity {
 
 
     /*   생성자   */
-    public GameEvent(Member member, Game game, EventType eventType) {
-        this.member = member;
+    public GameEvent(RBUser user, Game game, EventType eventType) {
+        this.user = user;
         this.game = game;
         this.eventTime = LocalDateTime.now();
         this.eventType = eventType;
+    }
+
+    // RBUser 엔티티와의 관계를 설정하는 메서드
+    public void setUser(RBUser user) {
+        this.user = user;
     }
 }

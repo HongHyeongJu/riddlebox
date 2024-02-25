@@ -1,67 +1,104 @@
 package com.labmate.riddlebox.security;
 
-import com.labmate.riddlebox.enumpackage.UserRole;
-import lombok.Getter;
-import lombok.Setter;
+import com.labmate.riddlebox.entity.RBRole;
+import com.labmate.riddlebox.entity.RBUser;
+import com.labmate.riddlebox.enumpackage.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.lang.annotation.Documented;
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@Getter
-@Setter
 public class CustomUserDetails implements UserDetails {
 
-    private Long userId;
-    private String userLoginId;
-    private String userNickname;
-    private UserRole userRole;
+    private Long userId; // 사용자 엔티티의 PK
+    private String loginEmail;
     private String password;
+    private String name;
+    private String nickname;
+    private UserStatus status;
+    private LocalDate passwordSetDate; // 비밀번호 설정일
+    private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(Long userId, String userLoginId, String userNickname, UserRole userRole, String password) {
-        this.userId = userId;
-        this.userLoginId = userLoginId;
-        this.userNickname = userNickname;
-        this.userRole = userRole;
-        this.password = password;
+    public CustomUserDetails(RBUser user) {
+        this.userId = user.getId(); // User 엔티티로부터 사용자 ID를 설정
+        this.loginEmail = user.getLoginEmail();
+        this.password = user.getPassword();
+        this.name = user.getName();
+        this.nickname = user.getNickname();
+        this.passwordSetDate = user.getPasswordSetDate(); // 비밀번호 설정일 설정
+        this.status = user.getStatus();
+        this.authorities = translateRolesToAuthorities(user.getRoles());
+    }
+
+    // 역할을 Spring Security의 GrantedAuthority로 변환
+    private Collection<? extends GrantedAuthority> translateRolesToAuthorities(Set<RBRole> roles) {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {  //권한 정보 반환
-        return Collections.singletonList(new SimpleGrantedAuthority(userRole.name()));
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
     }
 
+    /**
+     * login email 반환
+     */
     @Override
     public String getUsername() {
-        return null;
+        return loginEmail;
     }
 
+    /**
+     * PK반환
+     */
+    public Long getUserId() {
+        return userId;
+    }
 
-    // TODO: 2024-01-16 기타 UserDetails 인터페이스 메서드 구현 (isAccountNonExpired, isAccountNonLocked(), isCredentialsNonExpired(), isEnabled 등)
+    /**
+     * 닉네임 반환
+     */
+    public String getUserNickname() {
+        return nickname;
+    }
+
+    /**
+     * 실명 반환
+     */
+    public String getRealName() {
+        return name;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
-        // 계정 만료 여부에 대한 로직
-        return true; // 예시로, 항상 true 반환
+        return status != UserStatus.EXPIRED;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        // 계정 잠금 여부에 대한 로직
-        return true; // 예시로, 항상 true 반환
+        return status != UserStatus.LOCKED;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        // 자격 증명 만료 여부에 대한 로직
-        return true; // 예시로, 항상 true 반환
+        return false;
     }
 
     @Override
     public boolean isEnabled() {
-        // 계정 활성화 여부에 대한 로직
-        return true; // 예시로, 항상 true 반환
+        return false;
     }
 
 

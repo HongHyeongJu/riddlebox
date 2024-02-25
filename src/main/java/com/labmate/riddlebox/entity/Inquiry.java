@@ -19,9 +19,11 @@ public class Inquiry extends BaseEntity {
     @Column(name = "inquiry_id")
     private Long id;  //문의번호
 
+    // 문의자 - 사용자 역할
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;  //회원번호
+    @JoinColumn(name = "inquirer_id")
+    private RBUser inquirer;
+
 
     @Enumerated(EnumType.STRING)
     private FaqCategory faqCategory;  //이용문의,계정문의,게임컨텐츠문의,일반문의
@@ -35,23 +37,39 @@ public class Inquiry extends BaseEntity {
 
     private String response;  //관리자 답변
 
+    // 답변자 - 관리자 역할
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id")
-    private Admin admin;  //답변한 관리자 번호
+    @JoinColumn(name = "responder_id")
+    private RBUser responder;
 
     private LocalDateTime respondedDate;  //답변일
 
 
-
     /*   생성자   */
-    public Inquiry(Member member, FaqCategory faqCategory, String question, String content) {
-        this.member = member;
+    public Inquiry(RBUser inquirer, FaqCategory faqCategory, String question, String content,
+                   LocalDateTime inquiryAt, InquiryStatus status,
+                   String response, RBUser responder, LocalDateTime respondedDate) {
+
+        this.inquirer = inquirer;
         this.faqCategory = faqCategory;
         this.question = question;
         this.content = content;
-        this.inquiryAt = LocalDateTime.now(); // 문의 일자를 현재 시간으로 설정
-        this.status = InquiryStatus.ANSWERING; // 초기 상태 설정
+        this.inquiryAt = inquiryAt;
+        this.status = status;
+        this.response = response;
+        this.responder = responder;
+        this.respondedDate = respondedDate;
     }
+
+
+    // RBUser 엔티티와의 관계를 설정하는 메서드
+    public void setInquirer(RBUser inquirer) {
+        this.inquirer = inquirer;
+    }
+    public void setResponder(RBUser responder) {
+        this.responder = responder;
+    }
+
 
 
     /*    변경 메서드    */
@@ -61,17 +79,16 @@ public class Inquiry extends BaseEntity {
     }
 
     //관리자 답변
-    public void addResponse(String response, Admin responder) {
+    public void addResponse(String response, RBUser responder) {
         this.response = response;
         this.respondedDate = LocalDateTime.now();
-        this.admin = responder;
+        this.responder = responder;
         changeStatus(InquiryStatus.COMPLETED);
     }
 
     //사용자 문의 내용 수정
     public void updateInquiry(FaqCategory newFaqCategory, String newQuestion,
                               String newContent) {
-
         //답변 완료된 질문 내용은 수정할 수 없음
         if (status != InquiryStatus.COMPLETED) {
             this.faqCategory = newFaqCategory;

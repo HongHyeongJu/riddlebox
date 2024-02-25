@@ -23,8 +23,8 @@ public class GameRecord extends BaseEntity {
     private Long id;  //게임기록 인조식별자
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;  //회원번호
+    @JoinColumn(name = "user_id")
+    private RBUser user;  //회원번호
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id")
@@ -37,15 +37,24 @@ public class GameRecord extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private GameResultType resultType;  // 게임 결과 타입
 
-
     /*    생성자    */
-    public GameRecord(Member member, Game game, int score, int playTime, float successRate, GameResultType resultType) {
-        this.member = member;
+    public GameRecord(RBUser user, Game game, int score, int playTime, float successRate, GameResultType resultType) {
+        this.user = user;
         this.game = game;
         this.score = score;
         this.playTime = playTime;
         this.successRate = successRate;
         this.resultType = resultType;
+    }
+
+    // RBUser 엔티티와의 관계를 설정하는 메서드
+    public void setUser(RBUser user) {
+        this.user = user;
+    }
+
+    // 게임 설정 메서드 - 필요한 경우 추가
+    public void setGame(Game game) {
+        this.game = game;
     }
 
 }
