@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 
 import java.util.List;
 
+
 public class GameRepositoryImpl implements GameRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;

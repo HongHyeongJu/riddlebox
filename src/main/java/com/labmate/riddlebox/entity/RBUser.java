@@ -158,21 +158,12 @@ public class RBUser extends BaseEntity {
 
     /*    변경 메서드    */
     //사용자 정보 변경 메서드
-    @PreAuthorize("#loginEmail == authentication.principal.loginEmail")
-    public void updateMemberInfo(String newPassword, String newNickname) {
-        if (!isValidNickname(newNickname)) {
-            throw new IllegalArgumentException("중복 닉네임");
-        }
-        this.password = newPassword;
+    public void setNickname(String newNickname) {
         this.nickname = newNickname;
     }
-
-
-/*    //역할 변경 메서드
-    public void updateMemberRole(RBRole newRole) {
-        //변경하려는 사람의 역할이 Director이어야 함
-
-    }*/
+    public void setPassword(String newPassword) {
+        this.password = newPassword;
+    }
 
     //마지막 로그인 변경 메서드
     public void updateLastLoginDate() {
