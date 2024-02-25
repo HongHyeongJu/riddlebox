@@ -36,15 +36,22 @@ public class RecommendGame extends BaseEntity {
 
 
     /*   생성자   */
-    public RecommendGame(Game game, String reason, LocalDateTime startDate,
+    public RecommendGame(String reason, LocalDateTime startDate,
                          LocalDateTime endDate, int recommendRank) {
-        this.game = game;
         this.reason = reason;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.recommendRank = recommendRank;
         this.status = GameStatus.ACTIVE; // 초기 상태 설정
+        this.recommendRank = recommendRank;
         this.clicks = 0; // 클릭수 초기화
+    }
+
+
+    public void setGame(Game game) {
+        if (this.game != null) {
+            this.game.getRecommendGames().remove(this);
+        }
+        this.game = game;
     }
 
 

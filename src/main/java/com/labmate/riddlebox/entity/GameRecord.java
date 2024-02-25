@@ -49,11 +49,20 @@ public class GameRecord extends BaseEntity {
 
     // RBUser 엔티티와의 관계를 설정하는 메서드
     public void setUser(RBUser user) {
+        // 이전에 참조하던 관계를 제거
+        if (this.user != null) {
+            this.user.getGameRecords().remove(this);
+        }
+
+        // 새로운 객체 참조 설정
         this.user = user;
+
     }
 
-    // 게임 설정 메서드 - 필요한 경우 추가
     public void setGame(Game game) {
+        if (this.game != null) {
+            this.game.getGameRecords().remove(this);
+        }
         this.game = game;
     }
 

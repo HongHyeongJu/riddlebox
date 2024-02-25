@@ -36,8 +36,7 @@ public class GameContent extends BaseEntity {
 
 
     /*   생성자   */
-    public GameContent(Game game, String question, String answer) {
-        this.game = game;
+    public GameContent(String question, String answer) {
         this.question = question;
         this.answer = answer;
         this.status = GameStatus.ACTIVE; // 초기 상태 설정
@@ -46,6 +45,9 @@ public class GameContent extends BaseEntity {
 
     /*    생성 메서드    */
     public void setGame(Game game) {
+        if (this.game != null) {
+            this.game.getGameContents().remove(this);
+        }
         this.game = game;
     }
 
@@ -55,6 +57,7 @@ public class GameContent extends BaseEntity {
     public void changeStatus(GameStatus newStatus) {
         this.status = newStatus;
     }
+
 
     //게임 데이터 수정 (Game에도 영향)
     public void updateGameContent(String newQuestion, String newAnswer, Game newGame) {
@@ -82,6 +85,11 @@ public class GameContent extends BaseEntity {
     //삭제
     public void softDelete() {
         changeStatus(GameStatus.DELETED);
+    }
+
+    //문제 출제순서 변경
+    public void setOrdering(int newOrdering) {
+        this.ordering = newOrdering;
     }
 
 

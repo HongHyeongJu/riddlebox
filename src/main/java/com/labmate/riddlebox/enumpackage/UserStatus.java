@@ -2,19 +2,19 @@ package com.labmate.riddlebox.enumpackage;
 
 public enum UserStatus {
 
-    ACTIVE("Active"), //사용가능 계정
-    DORMANT("Dormant"), //휴면계정
-    SUSPENDED("Suspended"), //정지상태
-    DELETED("Deleted");  //삭제상태
+    ACTIVE("Active - 사용 가능한 계정"),
+    LOCKED("Locked - 보안 문제 등의 이유로 잠긴 계정"),
+    EXPIRED("Expired - 사용 기간이 만료된 계정"),
+    DISABLED("Disabled - 비활성화된 계정");
 
-    private final String status;
+    private final String description;
 
-    UserStatus(String status) {
-        this.status = status;
+    UserStatus(String description) {
+        this.description = description;
     }
 
-    public String getStatus() {
-        return status;
+    public String getDescription() {
+        return description;
     }
 }
 

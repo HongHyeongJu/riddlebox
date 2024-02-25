@@ -34,15 +34,26 @@ public class GameEvent extends BaseEntity {
 
 
     /*   생성자   */
-    public GameEvent(RBUser user, Game game, EventType eventType) {
-        this.user = user;
-        this.game = game;
+    public GameEvent(EventType eventType) {
         this.eventTime = LocalDateTime.now();
         this.eventType = eventType;
     }
 
     // RBUser 엔티티와의 관계를 설정하는 메서드
     public void setUser(RBUser user) {
+        if (this.user != null) {
+            this.user.getGameEvents().remove(this);
+        }
         this.user = user;
     }
+
+    public void setGame(Game game) {
+        if (this.game != null) {
+            this.game.getGameEvents().remove(this);
+        }
+        this.game = game;
+    }
+
+
+
 }

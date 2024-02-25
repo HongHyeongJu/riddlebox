@@ -54,8 +54,12 @@ public class GameImage extends BaseEntity {
 
     /*    생성 메서드    */
     public void setGame(Game game) {
+        if (this.game != null) {
+            this.game.getGameImages().remove(this);
+        }
         this.game = game;
     }
+
 
 
     /*    변경 메서드    */

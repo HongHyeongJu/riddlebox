@@ -48,6 +48,18 @@ public class GameCategory extends BaseEntity {
         this.status = GameStatus.ACTIVE; // 초기 상태 설정
     }
 
+    public void addGame(Game game) {
+        this.games.add(game);
+        game.setGameCategory(this);
+    }
+
+    public void removeGame(Game game) {
+        this.games.add(game);
+        game.setGameCategory(null);
+    }
+
+
+
     /*    변경 메서드    */
     //카테고리 상태 변경하기
     public void changeStatus(GameStatus newStatus) {

@@ -1,6 +1,5 @@
 package com.labmate.riddlebox.entity;
 
-import com.labmate.riddlebox.enumpackage.UserRole;
 import com.labmate.riddlebox.enumpackage.UserStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -36,15 +35,27 @@ public class RBRole extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus status;  //계정 상태
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<RBUser> users = new HashSet<>();
+    @OneToMany(mappedBy = "role")
+    private Set<UserRole> userRoles = new HashSet<>();
 
     /*   생성자   */
-    public RBRole(String name, String description, Integer level, UserStatus status, Set<RBUser> users) {
+    public RBRole(String name, String description, Integer level, UserStatus status) {
         this.name = name;
         this.description = description;
         this.level = level;
         this.status = status;
-        this.users = users;
     }
+
+    public void addUserRole(UserRole userRole) {
+        this.userRoles.add(userRole);
+        userRole.setRole(this); // 올바르게 UserRole에 현재 Role을 설정합니다.
+    }
+
+    public void removeUserRole(UserRole userRole) {
+        this.userRoles.remove(userRole); // 여기서 제거 작업을 수행해야 합니다.
+        userRole.setRole(null); // UserRole에서 Role 참조를 제거합니다.
+    }
+
+
+
 }

@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -67,24 +68,70 @@ public class Game extends BaseEntity {
         this.title = title;
         this.description = description;
         this.gameLevel = gameLevel;
-        this.author = author;
         this.status = GameStatus.ACTIVE; // 초기 상태 설정
+        this.viewCount = 0; // 조회수 초기화
+        this.author = author;
         this.officialReleaseDate = LocalDateTime.now(); // 생성일 설정
         this.officialUpdateDate = LocalDateTime.now(); // 수정일 설정
-        this.viewCount = 0; // 조회수 초기화
     }
 
+    /*    헬프 메서드    */
+    public void addGameRecord(GameRecord gameRecord) {
+        this.gameRecords.add(gameRecord);
+        gameRecord.setGame(this);
+    }
 
-    /*    생성 메서드    */
+    public void removeGameRecord(GameRecord gameRecord) {
+        this.gameRecords.add(gameRecord);
+        gameRecord.setGame(null);
+    }
     public void addGameContent(GameContent gameContent) {
-        gameContents.add(gameContent);
+        this.gameContents.add(gameContent);
         gameContent.setGame(this);
     }
 
+    public void removeGameContent(GameContent gameContent) {
+        this.gameContents.add(gameContent);
+        gameContent.setGame(null);
+    }
     public void addGameImage(GameImage gameImage) {
-        gameImages.add(gameImage);
+        this.gameImages.add(gameImage);
         gameImage.setGame(this);
     }
+
+    public void removeGameImage(GameImage gameImage) {
+        this.gameImages.add(gameImage);
+        gameImage.setGame(null);
+    }
+    public void addRecommendGame(RecommendGame recommendGame) {
+        this.recommendGames.add(recommendGame);
+        recommendGame.setGame(this);
+    }
+
+    public void removeRecommendGame(RecommendGame recommendGame) {
+        this.recommendGames.add(recommendGame);
+        recommendGame.setGame(null);
+    }
+    public void addGameEvent(GameEvent gameEvent) {
+        this.gameEvents.add(gameEvent);
+        gameEvent.setGame(this);
+    }
+
+    public void removeGameEvent(GameEvent gameEvent) {
+        this.gameEvents.add(gameEvent);
+        gameEvent.setGame(null);
+    }
+
+
+
+
+    public void setGameCategory(GameCategory gameCategory) {
+        if (this.gameCategory != null) {
+            this.gameCategory.getGames().remove(this);
+        }
+        this.gameCategory = gameCategory;
+    }
+
 
 
     /*    변경 메서드    */
@@ -94,6 +141,7 @@ public class Game extends BaseEntity {
     }
 
     //게임 내용 수정 (GameCategory 에도 영향)
+    @PreAuthorize("hasRole('TEAM_LEADER')")   //메서드 레벨 보안 적용
     public void updateGame(String newTitle, String newDescription,
                            GameLevel newGameLevel, String newAuthor,
                            GameCategory newGameCategory) {

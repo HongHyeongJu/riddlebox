@@ -2,13 +2,13 @@ package com.labmate.riddlebox.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.benmanes.caffeine.cache.Expiry;
-import com.labmate.riddlebox.enumpackage.UserRole;
 import com.labmate.riddlebox.enumpackage.UserStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -40,12 +41,8 @@ public class RBUser extends BaseEntity {
     @Column(nullable = false)
     private LocalDate passwordSetDate; // 비밀번호 설정일
 
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<RBRole> roles = new HashSet<>();  //역할
+    @OneToMany(mappedBy = "user")
+    private Set<UserRole> userRoles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SocialProfile> socialProfiles = new ArrayList<>();
@@ -68,8 +65,8 @@ public class RBUser extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<GameEvent> gameEvents = new ArrayList<>();
 
-    /*   생성자   */
 
+    /*   생성자   */
     public RBUser(String loginEmail, String name, String nickname, String password,
                   LocalDate passwordSetDate, LocalDateTime regDate, LocalDateTime lastLoginDate,
                   UserStatus status) {
@@ -83,20 +80,40 @@ public class RBUser extends BaseEntity {
         this.status = status;
     }
 
+
+    // 관계 설정 및 수정을 위한 헬퍼 메소드
+    // UserRole/SocialProfile/GameRecord/
+    // Inquiry(inquirer)/Inquiry(responder)/GameEvent
+
+    public void addUserRole(UserRole userRole) {
+        this.userRoles.add(userRole);
+        userRole.setUser(this);
+    }
+
+    public void removeUserRole(UserRole userRole) {
+        this.userRoles.remove(userRole);
+        userRole.setUser(null);
+    }
+
+
     public void addSocialProfile(SocialProfile socialProfile) {
-        socialProfiles.add(socialProfile);
+        this.socialProfiles.add(socialProfile);
         socialProfile.setUser(this);
     }
 
     public void removeSocialProfile(SocialProfile socialProfile) {
-        socialProfiles.remove(socialProfile);
+        this.socialProfiles.remove(socialProfile);
         socialProfile.setUser(null);
     }
 
-    // 관계 설정 및 수정을 위한 헬퍼 메소드
     public void addGameRecord(GameRecord gameRecord) {
         this.gameRecords.add(gameRecord);
         gameRecord.setUser(this);
+    }
+
+    public void removeGameRecord(GameRecord gameRecord) {
+        this.gameRecords.remove(gameRecord);
+        gameRecord.setUser(null);
     }
 
     public void addInquiry(Inquiry inquiry) {
@@ -104,9 +121,19 @@ public class RBUser extends BaseEntity {
         inquiry.setInquirer(this);
     }
 
+    public void removeInquiry(Inquiry inquiry) {
+        this.inquiries.remove(inquiry);
+        inquiry.setInquirer(null);
+    }
+
     public void addResponse(Inquiry response) {
         this.responses.add(response);
         response.setResponder(this);
+    }
+
+    public void removeResponse(Inquiry response) {
+        this.responses.remove(response);
+        response.setResponder(null);
     }
 
     public void addGameEvent(GameEvent gameEvent) {
@@ -114,8 +141,24 @@ public class RBUser extends BaseEntity {
         gameEvent.setUser(this);
     }
 
+    public void removeGameEvent(GameEvent gameEvent) {
+        this.gameEvents.add(gameEvent);
+        gameEvent.setUser(null);
+    }
+
+
+    public Set<RBRole> getRoles() {
+        return this.userRoles.stream()
+                             .filter(UserRole::getIsActive) // 활성화된 UserRole만 필터링
+                             .map(UserRole::getRole) // UserRole에서 Role 추출
+                             .collect(Collectors.toSet());
+    }
+
+
+
     /*    변경 메서드    */
     //사용자 정보 변경 메서드
+    @PreAuthorize("#loginEmail == authentication.principal.loginEmail")
     public void updateMemberInfo(String newPassword, String newNickname) {
         if (!isValidNickname(newNickname)) {
             throw new IllegalArgumentException("중복 닉네임");
@@ -124,12 +167,6 @@ public class RBUser extends BaseEntity {
         this.nickname = newNickname;
     }
 
-    //닉네임 유효성 검증 메서드
-    private boolean isValidNickname(String newNickname) {
-        //중복검증 todo :
-
-        return true;
-    }
 
 /*    //역할 변경 메서드
     public void updateMemberRole(RBRole newRole) {

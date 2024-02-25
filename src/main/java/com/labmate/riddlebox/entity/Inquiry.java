@@ -64,9 +64,16 @@ public class Inquiry extends BaseEntity {
 
     // RBUser 엔티티와의 관계를 설정하는 메서드
     public void setInquirer(RBUser inquirer) {
+        if (this.inquirer != null) {
+            this.inquirer.getInquiries().remove(this);
+        }
         this.inquirer = inquirer;
     }
+
     public void setResponder(RBUser responder) {
+        if (this.responder != null) {
+            this.responder.getResponses().remove(this);
+        }
         this.responder = responder;
     }
 

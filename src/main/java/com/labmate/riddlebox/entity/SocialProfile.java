@@ -29,6 +29,9 @@ public class SocialProfile {
     }
 
     public void setUser(RBUser user) {
+        if (this.user != null) {
+            this.user.getSocialProfiles().remove(this);
+        }
         this.user = user;
     }
 
