@@ -1,4 +1,4 @@
-package com.labmate.riddlebox.security;
+package com.labmate.riddlebox.security.userDetail;
 
 import com.labmate.riddlebox.entity.RBRole;
 import com.labmate.riddlebox.entity.RBUser;

@@ -1,21 +1,22 @@
-package com.labmate.riddlebox.security;
+package com.labmate.riddlebox.security.userDetail;
 
 import com.labmate.riddlebox.entity.RBRole;
 import com.labmate.riddlebox.entity.RBUser;
 import com.labmate.riddlebox.entity.SocialProfile;
 import com.labmate.riddlebox.entity.UserRole;
 import com.labmate.riddlebox.enumpackage.RoleStatus;
-import com.labmate.riddlebox.enumpackage.UserRoleEnum;
 import com.labmate.riddlebox.enumpackage.UserStatus;
 import com.labmate.riddlebox.repository.RoleRepository;
 import com.labmate.riddlebox.repository.SocialProfileRepository;
 import com.labmate.riddlebox.repository.UserRepository;
+import com.labmate.riddlebox.security.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -24,17 +25,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
-public class CustomOauth2UserService extends DefaultOAuth2UserService {
+@RequiredArgsConstructor
+public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final SocialProfileRepository socialProfileRepository;
     private final PasswordEncoder passwordEncoder;
-    private SocialProfileRepository socialProfileRepository;
 
     @Override
     @Transactional
@@ -77,7 +77,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         // SocialProfile 처리
         SocialProfile socialProfile = SocialProfile.builder()
                 .profilePictureURL(profilePictureURL)
-                .socialAccessToken(null)
+                .refreshToken(null)
                 .provider(provider)
                 .providerId(providerId)
                 .user(user)
