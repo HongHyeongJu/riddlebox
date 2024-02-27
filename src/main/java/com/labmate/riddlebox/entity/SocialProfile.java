@@ -1,8 +1,14 @@
 package com.labmate.riddlebox.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SocialProfile {
 
     @Id
@@ -16,16 +22,17 @@ public class SocialProfile {
     private String provider;
     private String providerId;
     private String profilePictureURL;
-    private String socialAccessToken;
+    private String refreshToken;
 
+    @Builder
     public SocialProfile(RBUser user, String provider,
                          String providerId, String profilePictureURL,
-                         String socialAccessToken) {
+                         String refreshToken) {
         this.user = user;
         this.provider = provider;
         this.providerId = providerId;
         this.profilePictureURL = profilePictureURL;
-        this.socialAccessToken = socialAccessToken;
+        this.refreshToken = refreshToken;
     }
 
     public void setUser(RBUser user) {

@@ -1,5 +1,6 @@
 package com.labmate.riddlebox.entity;
 
+import com.labmate.riddlebox.enumpackage.RoleStatus;
 import com.labmate.riddlebox.enumpackage.UserStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -33,13 +34,13 @@ public class RBRole extends BaseEntity {
     private Integer level;
 
     @Enumerated(EnumType.STRING)
-    private UserStatus status;  //계정 상태
+    private RoleStatus  status;  //역할 활성화 상태
 
     @OneToMany(mappedBy = "role")
     private Set<UserRole> userRoles = new HashSet<>();
 
     /*   생성자   */
-    public RBRole(String name, String description, Integer level, UserStatus status) {
+    public RBRole(String name, String description, Integer level, RoleStatus status) {
         this.name = name;
         this.description = description;
         this.level = level;

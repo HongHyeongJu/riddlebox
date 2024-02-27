@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class UserPoint extends BaseEntity {
 
     @Id
+    @Column(name = "user_point_id")
     private Long id; // User의 PK와 동일한 값을 사용합니다.
 
     @OneToOne

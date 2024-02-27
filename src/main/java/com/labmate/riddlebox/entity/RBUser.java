@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Expiry;
 import com.labmate.riddlebox.enumpackage.UserStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -36,9 +37,7 @@ public class RBUser extends BaseEntity {
     private String nickname;  //닉네임
 
     @JsonIgnore
-    @Column(nullable = false)
     private String password;  //비밀번호
-    @Column(nullable = false)
     private LocalDate passwordSetDate; // 비밀번호 설정일
 
     @OneToMany(mappedBy = "user")
@@ -67,6 +66,7 @@ public class RBUser extends BaseEntity {
 
 
     /*   생성자   */
+    @Builder
     public RBUser(String loginEmail, String name, String nickname, String password,
                   LocalDate passwordSetDate, LocalDateTime regDate, LocalDateTime lastLoginDate,
                   UserStatus status) {
