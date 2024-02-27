@@ -30,15 +30,17 @@ public class UsernamePwdAuthenticationProvider implements AuthenticationProvider
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
+        String username = authentication.getName();  //이메일 반환
         String pwd = authentication.getCredentials().toString();
         Optional<RBUser> userOptional = userRepository.findByLoginEmail(username);
+
         return userOptional.map(user
                 -> {if (passwordEncoder.matches(pwd, user.getPassword())) {
                         return new UsernamePasswordAuthenticationToken(username, pwd, getGrantedAuthorities(user.getRoles()));
                     } else {
                         throw new BadCredentialsException("Invalid password!");
                     }}).orElseThrow(() -> new BadCredentialsException("No user registered with this details!"));
+
     }
 
 

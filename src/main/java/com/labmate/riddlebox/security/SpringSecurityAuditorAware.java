@@ -1,6 +1,6 @@
 package com.labmate.riddlebox.security;
 
-import org.springframework.data.annotation.CreatedBy;
+import com.labmate.riddlebox.security.userDetail.CustomUserDetails;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication; // Authentication!!!
 import org.springframework.security.core.context.SecurityContextHolder;
