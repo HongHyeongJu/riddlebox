@@ -73,61 +73,7 @@ public class SupportController {
     }
 
 
-
-    /* 1:1 List */
-    @GetMapping("/inquiry")
-    public String showInquiryList(Model model) {
-        model.addAttribute("pageType","inquiryList");
-        //List<CommonListDto> commonListDto
-
-        return "layout/layout_base";
-    }
-
-
-    /* 1:1 상세보기 */
-    @GetMapping("/inquiry/{inquiryId}")
-    public String showInquiryDetail(@PathVariable("inquiryId") Long inquiryId,
-                                    Model model) {
-        //해당 글의 작성자 id가 현재 세션의 사용자 id인지 확인해야함
-        model.addAttribute("pageType","inquiryDetail");
-
-        return "layout/layout_base";
-    }
-
-
-
-    /* 1:1 작성하기 */
-    @GetMapping("/inquiry/new")
-    public String createInquiry(Model model) {
-        //해당 글의 작성자 id가 현재 세션의 사용자 id인지 확인해야함
-        model.addAttribute("pageType","createInquiry");
-        model.addAttribute("pageMode","new");
-
-        return "layout/layout_base";
-    }
-
-    /* 1:1 제출하기 */
-    @PostMapping("/inquiry/submit")
-    public String sendInquiry(Model model) {
-        //해당 글의 작성자 id가 현재 세션의 사용자 id인지 확인해야함
-        model.addAttribute("pageType","inquiryList");
-
-        return "layout/layout_base";
-    }
-
-
-    /* 1:1 수정하기 */
-    @GetMapping("/inquiry/modify/{inquiryId}")
-    public String updateInquiry(@PathVariable("inquiryId") Long inquiryId,
-                                Model model) {
-        //해당 글의 작성자 id가 현재 세션의 사용자 id인지 확인해야함
-        //글상태가 답변완료면 수정 불가
-        //InquiryDetailDto
-        model.addAttribute("pageType","updateInquiry");
-
-        return "layout/layout_base";
-    }
-
+    /* inquiry 문의글은 따로 컨트롤러 뺌 */
 
 
 }

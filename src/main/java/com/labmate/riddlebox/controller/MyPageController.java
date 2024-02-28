@@ -35,11 +35,10 @@ public class MyPageController {
         //TODO 게임 기록 보여줄 DTO만들기
 
         return "layout/layout_base"; // HTML 뷰 이름
-
     }
 
 
-    /* 나의 정보 (회원정보 수정) */
+    /* 나의 포인트 */
     @GetMapping("/my-point")
     public String myPoint(Model model) {
         // 사용자 정보 로드 및 처리

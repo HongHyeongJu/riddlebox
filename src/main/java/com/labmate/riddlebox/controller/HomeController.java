@@ -1,8 +1,12 @@
 package com.labmate.riddlebox.controller;
 
 import com.labmate.riddlebox.dto.GameListDto;
+import com.labmate.riddlebox.dto.GameSearchCondition;
 import com.labmate.riddlebox.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,27 +33,11 @@ public class HomeController {
 //        return "loginHome";
 //    }
 
-    @GetMapping("/") //로그인 안한 모든 사용자를 위한 index페이지
+    @GetMapping("/index") //로그인 안한 모든 사용자를 위한 index페이지
     public String Homepage(Model model){
-        //로그인여부 확인, 로그인 했으면 -> redirect:/home
-//        Authentication 객체는 현재 인증된 사용자의 세부 정보를 포함하고 있으며,
-//                              일반적으로 사용자의 이름이나 식별자를 포함하고 있습니다.
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//        if (authentication != null || authentication.isAuthenticated() ||
-//            authentication instanceof AnonymousAuthenticationToken) {
-//            // 로그인하지 않은 경우
-//            return "redirect:/home";
-//        }
-        System.out.println("Homepage");
 
         //추천게임 목록 받기
         List<GameListDto> gameListDtos = gameService.fetchRecommendedGamesForHomepage();
-        System.out.println("gameListDtos.size "+gameListDtos.size());
-
-        for (GameListDto dto :gameListDtos ) {
-            System.out.println(dto.toString());
-        }
 
         //모델에 담기
         model.addAttribute("gameListDtos", gameListDtos);
@@ -59,6 +47,19 @@ public class HomeController {
         return "layout/layout_base";
 
     }
+
+
+
+    /* 게임 목록 조회 */
+    @GetMapping("/games")
+    public String showGames(Model model) {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<GameListDto> games = gameService.searchGameSimple(new GameSearchCondition(), pageable);
+        model.addAttribute("games", games);
+        return "layout/layout_base";
+    }
+
+
 
     /*
     @GetMapping("/home")  //로그인한 사용자의 index페이지
@@ -79,13 +80,7 @@ public class HomeController {
     }*/
 
 
-    @GetMapping("/notice") //로그인 안한 모든 사용자를 위한 index페이지
-    public String noticeHomepage(Model model){
-        model.addAttribute("pageType", "noticeHome");
-        model.addAttribute("title", "RiddleBox Notice");
 
-        return "layout/layout_base";
-    }
 
 
 }

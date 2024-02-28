@@ -25,16 +25,6 @@ public class WebGameController {
     GameService gameService;
 
 
-    /* 게임 목록 조회 */
-    @GetMapping("/games")
-    public String showGames(Model model) {
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<GameListDto> games = gameService.searchGameSimple(new GameSearchCondition(), pageable);
-        model.addAttribute("games", games);
-        return "layout/layout_base";
-    }
-
-
     //공통 레이아웃 layout_base
 
     /* [1] 게임 문제 제시 페이지 */   /*TODO 지금은 스냅샷 url을 story로 하지만 이후에는 단편소설 url과 바꿔야 할듯. 현재는 문제제시의 의미로 사용*/

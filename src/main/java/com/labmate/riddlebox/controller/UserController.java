@@ -1,4 +1,4 @@
 package com.labmate.riddlebox.controller;
 
-public class MemberController {
+public class UserController {
 }
