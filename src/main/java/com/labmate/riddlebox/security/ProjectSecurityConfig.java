@@ -101,13 +101,13 @@ public class ProjectSecurityConfig {  //Spring Security의 보안 구성을 정�
                 .addFilterAfter(new JwtTokenGeneratorFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JwtTokenValidatorFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((requests)->requests
-                        .requestMatchers("/myAccount").hasRole("USER")
-                        .requestMatchers("/myBalance").hasAnyRole("USER","ADMIN")
-                        .requestMatchers("/myLoans").authenticated()
-                        .requestMatchers("/myCards").hasRole("USER")
-                        .requestMatchers("/user").authenticated()
-                        .requestMatchers("/notices","/contact","/register","/index",
-                                            "/resources/**", "/css/**", "/js/**", "/img/**").permitAll())
+                        .requestMatchers("/game/**","api/games/**","/support/inquiry/**",
+                                            "/mypage/**").hasRole("PLAYER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/payment/**").hasRole("PAY_PLAYER")
+                        .requestMatchers("/logout").authenticated()
+                        .requestMatchers("/", "/index", "/games", "/resources/**", "/css/**", "/js/**",
+                        "/supports/**", "/login").permitAll())
                 .formLogin(form -> form
                     .loginPage("/login")
                     .loginProcessingUrl("/perform_login")
