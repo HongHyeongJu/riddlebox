@@ -11,13 +11,13 @@ import lombok.ToString;
 public class LoginRequestDto {
 
     @NotBlank
-    private String username;
+    private String loginEmail;
 
     @NotBlank
     private String password;
 
-    public LoginRequestDto(String username, String password) {
-        this.username = username;
+    public LoginRequestDto(String loginEmail, String password) {
+        this.loginEmail = loginEmail;
         this.password = password;
     }
 }

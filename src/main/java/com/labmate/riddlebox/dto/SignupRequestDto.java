@@ -14,25 +14,25 @@ import lombok.ToString;
 public class SignupRequestDto {
 
     @NotBlank
-    @Size(min = 3, max = 20)
-    private String username;
-
-    @NotBlank
     @Size(max = 50)
     @Email
     private String email;
 
     @NotBlank
-    @Size(min = 6, max = 40)
+    @Size(min = 3, max = 20)
+    private String username;
+
+    @NotBlank
+    @Size(min = 8, max = 20)
     private String password;
 
     @NotBlank
     @Size(min = 6, max = 40)
     private String nickname;
 
-    public SignupRequestDto(String username, String email, String password, String nickname) {
-        this.username = username;
+    public SignupRequestDto( String email, String username, String password, String nickname) {
         this.email = email;
+        this.username = username;
         this.password = password;
         this.nickname = nickname;
     }

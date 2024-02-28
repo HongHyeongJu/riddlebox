@@ -5,20 +5,29 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @ToString
-public class InquiryDto {
+public class InquirySubmitDto {
 
     @NotBlank
-    private String loginEmail;
+    private String faqCategory;  //FaqCategory
 
     @NotBlank
-    private String password;
+    private String question;
 
-    public LoginRequestDto(String loginEmail, String password) {
-        this.loginEmail = loginEmail;
-        this.password = password;
+    @NotBlank
+    private String content;
+
+    @NotBlank
+    private LocalDateTime inquiryAt;
+
+    public InquirySubmitDto(String faqCategory, String question, String content, LocalDateTime inquiryAt) {
+        this.faqCategory = faqCategory;
+        this.question = question;
+        this.content = content;
+        this.inquiryAt = inquiryAt;
     }
-
 }
