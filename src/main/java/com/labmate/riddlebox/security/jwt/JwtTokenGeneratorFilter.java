@@ -1,5 +1,6 @@
-package com.labmate.riddlebox.security;
+package com.labmate.riddlebox.security.jwt;
 
+import com.labmate.riddlebox.security.SecurityConstants;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
@@ -20,7 +21,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
+public class JwtTokenGeneratorFilter extends OncePerRequestFilter {
 
     @Value("${my.secret.key}")
     private String JWT_KEY;

@@ -23,7 +23,7 @@ public class Notice extends BaseEntity {
     private String title;  //제목
 
     @Lob  // 긴 텍스트를 위한 애너테이션
-    @Column
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String content;  //내용
 
     @Enumerated(EnumType.STRING)

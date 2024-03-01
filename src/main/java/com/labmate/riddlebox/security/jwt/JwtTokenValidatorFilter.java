@@ -1,5 +1,6 @@
-package com.labmate.riddlebox.security;
+package com.labmate.riddlebox.security.jwt;
 
+import com.labmate.riddlebox.security.SecurityConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -19,7 +20,7 @@ import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-public class JWTTokenValidatorFilter  extends OncePerRequestFilter {
+public class JwtTokenValidatorFilter extends OncePerRequestFilter {
 
 
     @Value("${my.secret.key}")
@@ -34,9 +35,9 @@ public class JWTTokenValidatorFilter  extends OncePerRequestFilter {
                 SecretKey key = Keys.hmacShaKeyFor(JWT_KEY.getBytes(StandardCharsets.UTF_8));
 
                 Claims claims = Jwts.parser()
-                                .setSigningKey(key)
-                                .parseClaimsJws(jwt)
-                                .getBody();
+                                    .setSigningKey(key)
+                                    .parseClaimsJws(jwt)
+                                    .getBody();
                 String username = String.valueOf(claims.get("username"));
                 String authorities = (String) claims.get("authorities");
                 Authentication auth = new UsernamePasswordAuthenticationToken(username, null,

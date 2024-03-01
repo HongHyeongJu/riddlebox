@@ -16,12 +16,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;  // Spring Security 필터 체인을 정의
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -63,18 +59,7 @@ public class ProjectSecurityConfig {  //Spring Security의 보안 구성을 정�
     private SocialProfileRepository socialProfileRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    // 서비스 빈으로 등록
-    @Bean
-    public OAuth2UserService<OAuth2UserRequest, OAuth2User> customOAuth2UserService() {
-        return new CustomOAuth2UserService(userRepository, roleRepository, socialProfileRepository, passwordEncoder);
-    }
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new com.labmate.riddlebox.security.CustomUserDetailsService();
-    }
-
+    private CustomOAuth2UserService customOAuth2UserService;
 
 
     @Bean
@@ -88,6 +73,7 @@ public class ProjectSecurityConfig {  //Spring Security의 보안 구성을 정�
                 CorsConfiguration config = new CorsConfiguration();
                 config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
                 config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                config.setAllowedOrigins(Collections.singletonList("http://localhost:8080"));
                 config.setAllowedMethods(Collections.singletonList("*"));
                 config.setAllowCredentials(true);
                 config.setAllowedHeaders(Collections.singletonList("*"));
@@ -95,7 +81,8 @@ public class ProjectSecurityConfig {  //Spring Security의 보안 구성을 정�
                 config.setMaxAge(3600L);
                 return config;
             }
-        })).csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("/contact","/register")
+        })).csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler)
+                        .ignoringRequestMatchers("/index", "/games","/login","/supports/**", "/signup/send-email","/signup/validate-code")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JwtTokenGeneratorFilter(), BasicAuthenticationFilter.class)
@@ -106,8 +93,8 @@ public class ProjectSecurityConfig {  //Spring Security의 보안 구성을 정�
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/payment/**").hasRole("PAY_PLAYER")
                         .requestMatchers("/logout").authenticated()
-                        .requestMatchers("/", "/index", "/games", "/resources/**", "/css/**", "/js/**",
-                        "/supports/**", "/login").permitAll())
+                        .requestMatchers("/", "/index", "/games", "/resources/**", "/css/**", "/js/**", "/img/**",
+                        "/supports/**", "/login","/account/recovery", "/signup/**").permitAll())
                 .formLogin(form -> form
                     .loginPage("/login")
                     .loginProcessingUrl("/perform_login")
@@ -118,7 +105,7 @@ public class ProjectSecurityConfig {  //Spring Security의 보안 구성을 정�
                     .permitAll())
                 .oauth2Login(oauth2 -> oauth2
                     .loginPage("/login")
-                    .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService()))
+                    .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                     .successHandler(customOAuth2LoginSuccessHandler())
                     .failureHandler(customAuthenticationFailureHandler()));
 

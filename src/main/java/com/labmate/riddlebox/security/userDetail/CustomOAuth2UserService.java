@@ -12,11 +12,7 @@ import com.labmate.riddlebox.repository.UserRepository;
 import com.labmate.riddlebox.security.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -34,7 +30,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final SocialProfileRepository socialProfileRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional

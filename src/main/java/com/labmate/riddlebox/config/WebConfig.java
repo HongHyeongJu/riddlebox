@@ -1,16 +1,30 @@
-package com.labmate.riddlebox.web.argumentresolver;
+package com.labmate.riddlebox.config;
 
-import com.labmate.riddlebox.web.interceptor.LogInterceptor;
-import com.labmate.riddlebox.web.interceptor.LoginCheckInterceptor;
+import com.labmate.riddlebox.security.jwt.JwtInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import java.util.List;
+
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    @Autowired
+    private JwtInterceptor jwtInterceptor;
+
     @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/");
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(jwtInterceptor)
+                .addPathPatterns("/api/**"); // 특정 경로 패턴에 대해서만 인터셉터 적용
+    }
+/*    @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new LoginMemberArgumentResolver());
     }
@@ -30,5 +44,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/css/**", "/*.ico", "/error"
                 );
 
-    }
+    }*/
+
+
 }

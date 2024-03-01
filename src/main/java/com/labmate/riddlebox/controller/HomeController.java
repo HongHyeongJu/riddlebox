@@ -4,6 +4,7 @@ import com.labmate.riddlebox.dto.GameListDto;
 import com.labmate.riddlebox.dto.GameSearchCondition;
 import com.labmate.riddlebox.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,18 +21,10 @@ public class HomeController {
     @Autowired
     GameService gameService;
 
-//    @GetMapping("/")
-//    public String homeLoginArgumentResolver(@Login Member loginMember, Model model) {
-//
-//        //세션에 회원 데이터가 없으면 home
-//        if (loginMember == null) {
-//            return "home";
-//        }
-//
-//        //세션이 유지되면 로그인으로 이동
-//        model.addAttribute("member", loginMember);
-//        return "loginHome";
-//    }
+    @GetMapping("/")
+    public String homeLoginArgumentResolver( Model model) {
+        return "redirect:/index";
+    }
 
     @GetMapping("/index") //로그인 안한 모든 사용자를 위한 index페이지
     public String Homepage(Model model){

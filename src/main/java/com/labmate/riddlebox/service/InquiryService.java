@@ -1,2 +1,7 @@
-package com.labmate.riddlebox.service;public class InquiryService {
+package com.labmate.riddlebox.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class InquiryService {
 }

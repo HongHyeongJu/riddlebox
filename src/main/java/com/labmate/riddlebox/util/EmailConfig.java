@@ -1,2 +1,4 @@
-package com.labmate.riddlebox.util;public class EmailConfig {
+package com.labmate.riddlebox.util;
+
+public class JavaMailSender {
 }
