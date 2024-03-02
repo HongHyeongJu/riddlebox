@@ -16,7 +16,7 @@
                 <a class="nav-link active" aria-current="page" href="/">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/support">Notice</a>
+                <a class="nav-link" href="/supports">Notice</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/mypage">MyPage</a>
@@ -27,9 +27,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="#">📙단편소설</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">😋이모지'S</a>
-            </li>
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" href="#">😋이모지'S</a>-->
+<!--            </li>-->
 
             <li class="nav-item search-form">
                 <form class="d-flex" role="search">
@@ -38,14 +38,17 @@
                 </form>
             </li>
 
-            <li class="nav-item" th:if="${session.loginId == null}">
-                <button type="button" class="btn btn-primary" th:onclick="'location.href=\'' + @{/login} + '\''">
+            <li class="nav-item" id="loginButton" style="display: none;">
+                <button type="button" class="btn btn-primary" onclick="location.href='/login'">
                     Login
                 </button>
+                <button type="button" class="btn btn-secondary" onclick="location.href='/signup'">
+                    Signup
+                </button>
             </li>
-            <li class="nav-item" th:if="${session.loginId != null}">
-                <button type="button" class="btn" style="background-color: darkblue; color: #9fa2a4;"
-                        th:onclick="'location.href=\'' + @{/logout} + '\''">Logout
+            <li class="nav-item" id="logoutButton" style="display: none;">
+                <button type="button" class="btn btn-secondary" onclick="location.href='/logout'">
+                    Logout
                 </button>
             </li>
 

@@ -2,30 +2,32 @@
 
     <div class="login-container">
         <h2 class="login-title">RIDDLE BOX</h2>
-        <form>
-            <div class="form-group">
+        <form action="/login" method="POST">
+            <div class="form-group mb-3 mt-5">
                 <input type="text" class="form-control" placeholder="ID" required>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-5">
                 <input type="password" class="form-control" placeholder="PW" required>
             </div>
-            <button type="submit" class="btn btn-primary btn-block login-button">로그인</button>
-            <div class="row">
-                <div class="col-6">
-                    <a href="#" class="btn btn-secondary btn-block login-button">구글 로그인</a>
+            <div class="row justify-content-center">
+                <button type="submit" class="btn btn-primary btn-block login-button">로그인</button>
+            </div>
+            <div class="row justify-content-center">
+                <a href="/login-google" class="btn btn-secondary btn-block login-button">구글 로그인</a>
+            </div>
+            <!--                <div class="col-6">-->
+            <!--                    <a href="/login-kakao" class="btn btn-warning btn-block login-button">카카오 로그인</a>-->
+            <!--                </div>-->
+            <div class="row justify-content-center mt-4">
+                <div class="col-auto">
+                    <a href="/signup" class="btn btn-link login-button" style="text-decoration: none;">회원가입</a>
                 </div>
-                <div class="col-6">
-                    <a href="#" class="btn btn-warning btn-block login-button">카카오 로그인</a>
+                <div class="col-auto">
+                    <a href="/account/recovery" class="btn btn-link login-button" style="text-decoration: none;">계정
+                        찾기</a>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-6">
-                    <a href="#" class="btn btn-link btn-block login-button">회원가입</a>
-                </div>
-                <div class="col-6">
-                    <a href="#" class="btn btn-link btn-block login-button">계정 찾기</a>
-                </div>
-            </div>
+
         </form>
     </div>
 
@@ -35,43 +37,16 @@
 <div th:fragment="signup" class="container">
     <div class="signup-container">
         <h4 class="signup-title">회원가입</h4>
-        <form>
-            <div class="form-group">
-                <label for="inputId" class="signup-label">Id</label>
+        <form action="/signup" method="post"> <!--회원가입 전송-->
+
+            <div class="form-group mt-2 mb-2">
+                <label for="emailInput" class="signup-label mb-2">ID(이메일)</label>
                 <div class="input-group mb-2">
-                    <input type="text" class="form-control" id="inputId" placeholder="Id" required>
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button">중복체크</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group   mt-4">
-                <label for="inputPassword1" class="signup-label">Password</label>
-                <input type="password" class="form-control" id="inputPassword1" placeholder="Password" minlength="8"
-                       maxlength="12" onkeyup="validatePassword()" required>
-                <small id="passwordHelpBlock" class="validation-message  mt-2">
-                    비밀번호는 영문자와 숫자를 포함한 8~12글자로 제한됩니다.
-                </small>
-            </div>
-
-            <div class="form-group">
-                <label for="inputPassword2">Password 확인</label>
-                <input type="password" class="form-control" id="inputPassword2" placeholder="Password 확인"
-                       onkeyup="matchPasswords()" required>
-                <small id="confirmHelpBlock" class="validation-message   mt-2">
-                    동일한 패스워드를 입력하세요.
-                </small>
-            </div>
-
-            <div class="form-group   mt-4">
-                <label for="inputEmail" class="signup-label">이메일</label>
-                <div class="input-group mb-2">
-                    <input type="text" class="form-control" id="inputEmail" placeholder="이메일" required>
+                    <input type="text" class="form-control" id="emailInput" placeholder="이메일" required>
                     <div class="input-group-append">
                         <span class="input-group-text">@</span>
                     </div>
-                    <select class="custom-select" required>
+                    <select class="custom-select" required id="custom-select">
                         <option value="">선택하세요</option>
                         <option value="gmail.com">gmail.com</option>
                         <option value="naver.com">naver.com</option>
@@ -80,36 +55,88 @@
                     </select>
                 </div>
             </div>
-
-            <button type="button" class="btn btn-primary btn-block signup-button" onclick="showVerification()">인증번호
+            <button type="button" class="btn btn-secondary btn-block signup-button" id="verifyButton" disabled>인증번호
                 전송하기
             </button>
 
-            <div id="verificationSection" class="hidden mt-2">
+            <div id="verificationSection" class="hidden mt-2 mb-2">
                 <div class="form-group">
                     <label for="inputVerificationCode">인증번호</label>
                     <div class="input-group mb-2">
                         <input type="text" class="form-control" id="inputVerificationCode" placeholder="인증번호" required>
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button">확인</button>
+                            <button class="btn btn-outline-secondary" type="button" id="verifyCodeBtn">확인</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="form-group   mt-4">
-                <label for="inputNickname" class="signup-label">닉네임</label>
-                <input type="text" class="form-control" id="inputNickname" placeholder="닉네임" required>
+
+            <div class="form-group mt-4">
+                <label for="inputPassword1" class="signup-label mb-2">Password</label>
+                <input type="new-password" class="form-control" id="inputPassword1" placeholder="Password" minlength="8"
+                       maxlength="12" required>
+                <small id="passwordHelpBlock" class="validation-message mt-2">
+                    비밀번호는 영문자와 숫자를 포함한 8~12글자로 제한됩니다.
+                </small>
             </div>
 
-            <button type="submit" class="btn btn-success btn-block signup-button">회원가입하기</button>
+            <div class="form-group mt-2">
+                <input type="new-password" class="form-control" id="inputPassword2" placeholder="Password 확인"
+                       onkeyup="matchPasswords()" required>
+                <small id="confirmHelpBlock" class="validation-message   mt-2">
+                    동일한 패스워드를 입력하세요.
+                </small>
+            </div>
+
+
+            <div class="form-group mt-4">
+                <label for="inputNickname" class="signup-label mb-2">닉네임</label>
+                <input type="text" class="form-control" id="inputNickname" placeholder="닉네임" required>
+                <button type="button" class="btn btn-secondary mt-2" disabled id="nicknameBtn">중복 체크</button>
+            </div>
+            <div id="nicknameCheckResult"></div>
+
+
+            <div class="row justify-content-center mt-4">
+                <button type="submit" class="btn btn-primary btn-block signup-button">회원가입하기</button>
+            </div>
+            <meta name="_csrf" content="${_csrf.token}"/>
+            <meta name="_csrf_header" content="${_csrf.headerName}"/>
+
         </form>
     </div>
 
 </div>
 
 
-<div th:fragment="findAccount">
+<div th:fragment="findAccount" class="container">
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2>계정 찾기</h2>
+            <form id="accountRecoveryForm" action="/">
+                <div class="form-group  mt-3">
+                    <label for="recoveryEmail">이메일 주소</label>
+                    <input type="email" class="form-control" id="recoveryEmail" placeholder="회원가입 시 사용한 이메일을 입력하세요"
+                           required>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="sendVerificationCode()">인증번호 전송</button>
+
+                <div id="verificationSection2" class="hidden  mt-3">
+                    <div class="form-group">
+                        <label for="verificationCode">인증번호</label>
+                        <input type="text" class="form-control" id="verificationCode" placeholder="인증번호를 입력하세요"
+                               required>
+                    </div>
+                    <button type="button" class="btn btn-success" onclick="verifyCode()">인증하기</button>
+                </div>
+            </form>
+            <div id="resultSection" class="hidden mt-3">
+                <p id="accountInfo"></p>
+            </div>
+        </div>
+    </div>
 
 
 </div>
