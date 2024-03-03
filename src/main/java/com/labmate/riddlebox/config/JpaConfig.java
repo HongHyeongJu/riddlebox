@@ -1,4 +1,4 @@
-package com.labmate.riddlebox.security;
+package com.labmate.riddlebox.config;
 
 import com.labmate.riddlebox.security.userDetail.CustomUserDetails;
 import org.springframework.context.annotation.Bean;

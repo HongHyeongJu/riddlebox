@@ -53,10 +53,10 @@ public class EmailServiceImpl implements EmailService {
 
         String title = "RiddleBox 회원가입 이메일 인증번호";
         String authCode = createCode();
-        String sendText = "<h1>RiddleBox 회원가입 이메일 인증번호</h1>" +
-                "<p>귀하의 회원가입 이메일 인증번호는 <strong>" + authCode + "</strong> 입니다. " +
+        String sendText = "<h2>RiddleBox 회원가입 이메일 인증번호</h2>" +
+                "<p>귀하의 회원가입 이메일 인증번호는 <h3>" + authCode + "</h3> 입니다. " +
                 "인증번호는 30분 이후 만료됩니다.</p>" +
-                "<p>사이트 방문하기: <a href='http://RiddleBox.com'>RiddleBox</a></p>" +
+                "<p>사이트 방문하기: <a href='http://RiddleBox.com'>RiddleBox.com</a></p>" +
                 "<p>문의사항이 있으시면, <a href='mailto:riddlebox2024@gmail.com'>riddlebox2024@gmail.com</a>로 연락주세요.</p>";
         String sendTextTest = "RiddleBox 회원가입 인증번호 ["+authCode+"] (30분 뒤 만료)";
 

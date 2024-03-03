@@ -11,7 +11,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.labmate.riddlebox.entity.QRBUser.rBUser;
 
@@ -33,25 +35,38 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isValidNickname(String nickname) {
-        QRBUser user = rBUser;
-        long count = queryFactory.selectFrom(user)
-                                .where(user.nickname.eq(nickname))
+        // 사용 중인 닉네임인지 확인
+        long count = queryFactory.selectFrom(rBUser)
+                                .where(rBUser.nickname.eq(nickname))
                                 .fetchCount();
-        // 사용 금지 단어 여부를 확인하는 로직 수정
-        boolean isForbidden = forbiddenWordRepository.existsByWord(nickname); // existsByWord 메서드 가정
 
-        // 닉네임이 사용 중이지 않고, 사용 금지 단어도 아닐 경우에만 true 반환
-        return count == 0 && !isForbidden;
+        // 금지된 단어 목록 가져오기
+        List<String> forbiddenWords = findAllWords(); // f모든 금지 단어를 리스트로 반환
+
+        // 닉네임에 금지된 단어가 포함되어 있는지 확인
+        boolean containsForbiddenWord = forbiddenWords.stream()
+                                                       .anyMatch(nickname::contains);
+
+        // 닉네임이 사용 중이지 않고, 금지된 단어를 포함하고 있지 않을 경우에만 true 반환
+        return count == 0 && !containsForbiddenWord;
     }
+
+    /*금지단어 목록 출력*/
+    public List<String> findAllWords() {
+        return forbiddenWordRepository.findAll()
+                                      .stream()
+                                      .map(ForbiddenWord::getWord)
+                                      .collect(Collectors.toList());
+    }
+
 
     @Override
     public boolean checkDuplicateEmail(String email) {
-        Integer fetchOne = queryFactory.selectOne() // 결과가 있으면 1을 반환하도록 설정
-                                       .from(rBUser) // Q클래스를 사용하여 from 절을 구성
-                                       .where(rBUser.loginEmail.eq(email)) // 이메일이 일치하는 조건
-                                       .fetchFirst(); // 첫 번째 결과만 가져옴, 결과가 없으면 null 반환
+        long exists = queryFactory.selectFrom(rBUser) // Q클래스를 사용하여 from 절을 구성
+                                  .where(rBUser.loginEmail.eq(email)) // 이메일이 일치하는 조건
+                                  .fetchCount(); // 조건에 맞는 결과의 수를 가져옴
 
-        return fetchOne != null; // 결과가 있으면 true, 없으면 false 반환
+        return exists == 0; // 결과가 1개 이상이면 true, 아니면 false 반환
     }
 
 

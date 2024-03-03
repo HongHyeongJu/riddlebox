@@ -2,15 +2,15 @@ window.onload = function () {
 
     // CSRF 토큰 값과 헤더 이름 가져오기
     const csrfToken = document.querySelector('meta[name="_csrf"]').content;
-    const csrfHeaderName  = document.querySelector('meta[name="_csrf_header"]').content;
+    const csrfHeaderName = document.querySelector('meta[name="_csrf_header"]').content;
 
 
     /* 이메일 유효성 검사 */
     let emailInput = document.getElementById('emailInput');
     let domainSelect = document.getElementById('custom-select');
 
-    emailInput.addEventListener("input", validateEmail );
-    domainSelect.addEventListener('change' , validateEmail );
+    emailInput.addEventListener("input", validateEmail);
+    domainSelect.addEventListener('change', validateEmail);
 
     function validateEmail() {
         let verifyButton = document.getElementById('verifyButton');
@@ -33,13 +33,29 @@ window.onload = function () {
     }
 
 
+    let debounceTimer;
+    let allowRequest = true;
+
 
     /* 인증번호 전송 */
-    document.getElementById('verifyButton').addEventListener('click',async function () {
+    document.getElementById('verifyButton').addEventListener('click', async function () {
 
         const fullEmail = emailInput.value + '@' + domainSelect.value;
-        console.log("fullEmail "+ fullEmail);
+        // console.log("fullEmail " + fullEmail);
 
+        if (!allowRequest) {
+            console.log("잠시 후 다시 시도해주세요.");
+            return;
+        }
+
+        allowRequest = false; // 추가 요청을 무시하기 위해 false로 설정
+        clearTimeout(debounceTimer); // 이전 타이머를 초기화
+
+
+        // 일정 시간(예: 5000ms = 5초) 후에 다시 요청을 허용
+        debounceTimer = setTimeout(() => {
+            allowRequest = true;
+        }, 5000);
 
         try {
             const response = await fetch('/signup/send-email', {
@@ -56,7 +72,7 @@ window.onload = function () {
                 console.log(result); // 성공 메시지 로깅
                 document.getElementById('verificationSection').classList.remove('hidden'); // 인증번호 입력 섹션 표시
             } else {
-                throw new Error(result);
+                alert("이미 사용중인 이메일 입니다");
             }
         } catch (error) {
             console.error('Error:', error.message);
@@ -64,12 +80,12 @@ window.onload = function () {
     });
 
 
-
     /* 인증번호 검사 */
     document.getElementById('verifyCodeBtn').addEventListener('click', async function () {
 
         const fullEmail = emailInput.value + '@' + domainSelect.value; // 이메일 입력 필드의 ID를 'emailInput'이라고 가정합니다.
-        const code = document.getElementById('verificationCode').value;
+        let codeInput = document.getElementById('verificationCode');
+        const code = codeInput.value;
 
         try {
             const response = await fetch('/signup/validate-code', {
@@ -83,12 +99,10 @@ window.onload = function () {
             if (response.ok) {
                 const isValid = await response.json(); // 서버가 boolean 값을 반환한다고 가정
                 if (isValid) {
-                    console.log('Verification successful');
-                    document.getElementById('verificationSection').classList.add('hidden'); // 인증 섹션 숨기기
-                    // 추가적으로, 인증 성공 시 다른 UI 요소를 비활성화할 수 있습니다.
+                    codeInput.disabled = true;
+                    this.disabled = true;
                 } else {
-                    console.log('Invalid verification code');
-                    // 사용자에게 유효하지 않은 코드임을 알리는 UI 처리를 할 수 있습니다.
+                    alert('인증번호가 유효하지 않습니다.');
                 }
             } else {
                 throw new Error('Verification failed');
@@ -97,7 +111,6 @@ window.onload = function () {
             console.error('Error:', error);
         }
     });
-
 
 
     /* 닉네임 중복 검사 */
@@ -122,11 +135,6 @@ window.onload = function () {
             document.getElementById('nicknameCheckResult').textContent = '닉네임 검사 중 오류가 발생했습니다.';
         }
     })
-
-
-
-
-
 
 
     /* 비밀번호 */

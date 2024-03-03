@@ -4,6 +4,8 @@ import com.labmate.riddlebox.dto.EmailRequestDto;
 import com.labmate.riddlebox.service.EmailService;
 import com.labmate.riddlebox.service.RedisService;
 import com.labmate.riddlebox.service.UserService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -50,9 +53,7 @@ public class ApiUserController {
     /* 인증 메일 전송 */
     @PostMapping("/signup/send-email")
     public ResponseEntity<String> sendEmail(@RequestBody EmailRequestDto request) {
-
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-
         mailSender.setHost(host);
         mailSender.setPort(port);
         mailSender.setUsername(username);
@@ -64,30 +65,29 @@ public class ApiUserController {
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.debug", "true");
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        Map map = emailService.makeMailContentAndSaveCodeToRedis(request.getToEmail());
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-        message.setFrom(username);
-        message.setTo(request.getToEmail());
-        message.setSubject((String) map.get("title"));
-        message.setText((String)map.get("sendText"));
+            Map<String, String> map = emailService.makeMailContentAndSaveCodeToRedis(request.getToEmail());
+            if (map.isEmpty()) {
+                logger.error("이메일 전송 실패. 받는 사람: {}", request.getToEmail());
+                return ResponseEntity.badRequest().body("이미 사용 중인 이메일 주소입니다.");
+            }
 
-        mailSender.send(message);
+            helper.setFrom(username);
+            helper.setTo(request.getToEmail());
+            helper.setSubject(map.get("title"));
+            helper.setText(map.get("sendText"), true); // HTML 형식으로 설정
 
-        redisService.setValues(AUTH_CODE_PREFIX + request.getToEmail(),
-                "111111", Duration.ofMinutes(30)); //만료시간 30분!
+            mailSender.send(message);
 
-//        boolean emailSent = emailService.sendCodeToEmail(request.getToEmail());
-
-        return ResponseEntity.ok("이메일로 인증번호가 전송되었습니다.");
-
-/*        if (emailSent) {
             logger.info("이메일로 인증번호가 성공적으로 전송되었습니다. 받는 사람: {}", request.getToEmail());
             return ResponseEntity.ok("이메일로 인증번호가 전송되었습니다.");
-        } else {
-            logger.error("이메일 전송 실패. 받는 사람: {}", request.getToEmail());
-            return ResponseEntity.badRequest().body("이메일 전송 실패.");
-        }*/
+        } catch (MessagingException e) {
+            logger.error("이메일 전송 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.internalServerError().body("이메일 전송 중 오류가 발생했습니다.");
+        }
     }
 
 
