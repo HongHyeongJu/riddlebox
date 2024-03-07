@@ -34,7 +34,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+
+        System.out.println("-----CustomOAuth2UserService의 loadUser 메서드----");
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        System.out.println("-----getAttributes: " + oAuth2User.getAttributes());
         log.info("getAttributes : {}", oAuth2User.getAttributes());
 
         String provider = userRequest.getClientRegistration().getRegistrationId(); // 예: "google"

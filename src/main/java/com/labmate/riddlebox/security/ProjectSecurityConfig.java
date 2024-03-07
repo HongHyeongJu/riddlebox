@@ -48,16 +48,6 @@ public class ProjectSecurityConfig {  //Spring Security의 보안 구성을 정�
         return new CustomAuthenticationFailureHandler();
     }
 
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private SocialProfileRepository socialProfileRepository;
-
     @Autowired
     private CustomOAuth2UserService customOAuth2UserService;
 
@@ -71,9 +61,7 @@ public class ProjectSecurityConfig {  //Spring Security의 보안 구성을 정�
             @Override
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                 CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-                config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                config.setAllowedOrigins(Collections.singletonList("http://localhost:8080"));
+                config.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:3000", "http://localhost:8080",  "https://localhost:8080"));
                 config.setAllowedMethods(Collections.singletonList("*"));
                 config.setAllowCredentials(true);
                 config.setAllowedHeaders(Collections.singletonList("*"));
@@ -82,7 +70,7 @@ public class ProjectSecurityConfig {  //Spring Security의 보안 구성을 정�
                 return config;
             }
         })).csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers("/index", "/games","/login","/supports/**", "/signup/send-email","/signup/validate-code")
+                        .ignoringRequestMatchers("/index", "/games","/login","/supports/**", "/signup/send-email","/signup/validate-code","/oauth2/**","/login/plz/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JwtTokenGeneratorFilter(), BasicAuthenticationFilter.class)
@@ -94,7 +82,7 @@ public class ProjectSecurityConfig {  //Spring Security의 보안 구성을 정�
                         .requestMatchers("/payment/**").hasRole("PAY_PLAYER")
                         .requestMatchers("/logout").authenticated()
                         .requestMatchers("/", "/index", "/games", "/resources/**", "/css/**", "/js/**", "/img/**",
-                        "/supports/**", "/login","/account/recovery", "/signup/**").permitAll())
+                        "/supports/**", "/login","/account/recovery", "/signup/**","/oauth2/**","/login/plz/**").permitAll())
                 .formLogin(form -> form
                     .loginPage("/login")
                     .loginProcessingUrl("/perform_login")
