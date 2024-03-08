@@ -1,6 +1,6 @@
 package com.labmate.riddlebox.config;
 
-import com.labmate.riddlebox.security.jwt.JwtInterceptor;
+import com.labmate.riddlebox.security.jwt.JwtTokenInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
-    private JwtInterceptor jwtInterceptor;
+    private JwtTokenInterceptor jwtTokenInterceptor;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -21,9 +21,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtInterceptor)
+        registry.addInterceptor(jwtTokenInterceptor)
                 .addPathPatterns("/api/**"); // 특정 경로 패턴에 대해서만 인터셉터 적용
     }
+
 /*    @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new LoginMemberArgumentResolver());

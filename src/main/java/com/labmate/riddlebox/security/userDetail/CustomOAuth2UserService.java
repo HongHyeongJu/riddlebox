@@ -1,88 +1,69 @@
 package com.labmate.riddlebox.security.userDetail;
 
-import com.labmate.riddlebox.entity.RBRole;
 import com.labmate.riddlebox.entity.RBUser;
-import com.labmate.riddlebox.entity.SocialProfile;
-import com.labmate.riddlebox.entity.UserRole;
-import com.labmate.riddlebox.enumpackage.RoleStatus;
-import com.labmate.riddlebox.enumpackage.UserStatus;
 import com.labmate.riddlebox.repository.RoleRepository;
 import com.labmate.riddlebox.repository.SocialProfileRepository;
 import com.labmate.riddlebox.repository.UserRepository;
-import com.labmate.riddlebox.security.PrincipalDetails;
+import com.labmate.riddlebox.security.oauth2.OAuthAttributesDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
-@Service
-@Slf4j
 @RequiredArgsConstructor
-public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+@Service
+public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final SocialProfileRepository socialProfileRepository;
 
     @Override
-    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        System.out.println("------------loadUser---------");
 
-        System.out.println("-----CustomOAuth2UserService의 loadUser 메서드----");
-        OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println("-----getAttributes: " + oAuth2User.getAttributes());
-        log.info("getAttributes : {}", oAuth2User.getAttributes());
+        OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
+        OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        String provider = userRequest.getClientRegistration().getRegistrationId(); // 예: "google"
-        String providerId = oAuth2User.getAttribute("sub"); // 예: "103058387739722400130"
-        String email = oAuth2User.getAttribute("email");
-        String profilePictureURL = oAuth2User.getAttribute("picture");
-        String name = oAuth2User.getAttribute("name"); // 또는 다른 이름 조합 로직
-        String given_name = oAuth2User.getAttribute("given_name"); // 또는 다른 이름 조합 로직
+		//로그인 진행중인 서비스를 구분하는 ID -> 여러 개의 소셜 로그인할 때 사용하는 ID
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        RBUser user = userRepository.findByLoginEmail(email)
-                .orElseGet(() -> {
-                    RBUser newUser = RBUser.builder()
-                            .loginEmail(email)
-                            .name(name)
-                            .nickname(given_name)
-                            .regDate(LocalDateTime.now())
-                            .status(UserStatus.ACTIVE)
-                            .lastLoginDate(LocalDateTime.now())
-                            .build();
-                    return newUser;
-                });
-        userRepository.save(user);
+        //OAuth2 로그인 진행 시 키가 되는 필드값(Primary Key) -> 구글은 기본적으로 해당 값 지원("sub")
+        //그러나, 네이버, 카카오 로그인 시 필요한 값
+        String userNameAttributeName = userRequest.getClientRegistration()
+                .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
-        // 역할이 'PLAYER'인지 확인하고, 없으면 새로 생성하여 저장
-        RBRole role = roleRepository.findByName("PLAYER")
-                .orElseGet(() -> {
-                    RBRole newRole = new RBRole("PLAYER", "플레이어", 100, RoleStatus.ENABLED);
-                    return roleRepository.save(newRole);
-                });
+		//OAuth2UserSevice를 통해 가져온 OAuth2User의 attribute를 담은 클래스
+        OAuthAttributesDto attributes = OAuthAttributesDto.of(registrationId,
+                userNameAttributeName, oAuth2User.getAttributes());
 
-        // 사용자 역할 연결
-        UserRole userRole = new UserRole(user, role, LocalDateTime.now(), "System", true, "Assigned by OAuth2 login");
-        user.addUserRole(userRole);
-
-        // SocialProfile 처리
-        SocialProfile socialProfile = SocialProfile.builder()
-                .profilePictureURL(profilePictureURL)
-                .refreshToken(null)
-                .provider(provider)
-                .providerId(providerId)
-                .user(user)
-                .build();
-        socialProfileRepository.save(socialProfile);
-
-        return new PrincipalDetails(user, oAuth2User.getAttributes());
+        return new DefaultOAuth2User(
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
+                attributes.getAttributes(),
+                attributes.getNameAttributeKey());
     }
 
+    private RBUser saveOrSelect(OAuthAttributesDto attributes) {
+        // 이메일을 기반으로 사용자 정보 조회
+        Optional<RBUser> existingUser = userRepository.findByLoginEmail(attributes.getEmail());
+
+        // 만약 사용자가 이미 존재한다면, 그대로 반환 (또는 필요에 따라 업데이트 로직 추가)
+        if (existingUser.isPresent()) {
+            return existingUser.get();
+        } else {
+            // 사용자가 존재하지 않는 경우, 새로운 사용자 생성 후 저장
+            RBUser newUser = attributes.toEntity();
+            return userRepository.save(newUser);
+        }
+    }
 }

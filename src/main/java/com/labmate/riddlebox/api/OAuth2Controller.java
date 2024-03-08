@@ -1,18 +1,54 @@
 package com.labmate.riddlebox.api;
 
-//import com.labmate.riddlebox.service.OAuthService;
-import lombok.RequiredArgsConstructor;
+import com.labmate.riddlebox.security.oauth2.GoogleOauth;
+import com.labmate.riddlebox.security.userDetail.CustomOAuth2UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
 
 
-@RestController
-@RequestMapping(produces = "application/json")
-public class OAuthController {
+@Controller
+@RequestMapping("/oauth2")
+public class OAuth2Controller {
+
+
+    @Autowired
+    private GoogleOauth googleOauth;
+
+    @GetMapping("/google")
+    public void getGoogleAuthUrl(HttpServletResponse response) throws IOException {
+        response.sendRedirect(googleOauth.getOauthRedirectUrl());
+    }
+
+
+
+//    @Autowired
+//    private CustomOAuth2UserService customOAuth2UserService;
+//
+//    @Autowired
+//    private CustomAuthenticationManager customAuthenticationManager;
+//
+//    @GetMapping("/auth/callback/{provider}")
+//    public String handleOAuth2Callback(@PathVariable String provider, @RequestParam("code") String code) {
+//
+//        // 1. provider를 기반으로 인증 코드를 사용해 사용자 정보를 조회 -> 조회값 반환 / 등록&반환
+//        OAuth2User oAuth2User = customOAuth2UserService.loadUserByOAuth2UserRequest(provider, code);
+//
+//        // 3. 사용자를 로그인 상태로 만들기
+//        customAuthenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userInfo.getUsername(), null, userInfo.getAuthorities()));
+//
+//        // 4. 사용자를 /index 페이지로 리디렉션
+//        return "redirect:/index";
+//    }
 
  /*   @Autowired
     private OAuthService oAuthService;

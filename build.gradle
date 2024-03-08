@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.0'
+    id 'org.springframework.boot' version '3.2.2'
     id 'io.spring.dependency-management' version '1.1.4'
 //    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
@@ -17,7 +17,6 @@ java {
     tasks.withType(JavaCompile) {
         options.compilerArgs.add('-parameters')
     }
-
 
 
 }
@@ -41,6 +40,8 @@ sourceSets {
     }
 }
 
+
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -52,9 +53,10 @@ dependencies {
     //쿼리 파라미터 로그 남기기
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 
+
     // Spring Security
     // Spring Security의 기본적인 기능을 포함하며, 웹 보안과 인증/인가 메커니즘을 구현할 수 있도록 지원
-    implementation 'org.springframework.boot:/spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 
@@ -62,8 +64,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
     //외부 OAuth 2.0 제공자(예: 구글, 페이스북)를 이용한 인증을 구현
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    // Spring Security OAuth2 Resource Server
+    implementation 'org.springframework.security:spring-security-oauth2-resource-server'
+    // Spring Security OAuth2 JOSE(jwt)
+    implementation 'org.springframework.security:spring-security-oauth2-jose'
     //Thymeleaf 템플릿 엔진과 Spring Security를 통합하기 위한 추가 라이브러리
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+//    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE'
 
 
     //JWT 토큰 의존성
@@ -86,6 +93,10 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
+    implementation 'org.projectlombok:lombok'
+    implementation 'org.apache.logging.log4j:log4j-core'
+    annotationProcessor 'org.projectlombok:lombok'
+
 
     //Querydsl 추가  빌드 과정속에 Qdsl을 넣은 것
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -97,13 +108,15 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.9'
 
     // 이메일 인증을 위한 의존성 추가
-    implementation 'org.springframework.boot:spring-boot-starter-mail:3.0.5'
-    implementation 'javax.mail:javax.mail-api:1.6.2'
-    implementation 'com.sun.mail:javax.mail:1.6.2'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+//    implementation 'javax.mail:javax.mail-api:1.6.2'  //자바17에는 맞지않다
+//    implementation 'com.sun.mail:javax.mail:1.6.2'
+    implementation 'com.sun.mail:jakarta.mail:2.0.1'
 
     // redis 의존성 추가
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
+    implementation 'org.springframework.data:spring-data-redis'
+    implementation 'io.lettuce:lettuce-core' // Redis 클라이언트 라이브러리
 
 
 }
@@ -114,12 +127,8 @@ tasks.named('test') {
 
 
 clean {
-   delete file('src/main/generated')
+    delete file('src/main/generated')
 }
-
-
-
-
 
 
 //    runtimeOnly 'com.h2database:h2'

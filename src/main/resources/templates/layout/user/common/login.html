@@ -2,19 +2,39 @@
 
     <div class="login-container">
         <h2 class="login-title">RIDDLE BOX</h2>
-        <form action="/login" method="POST">
+        <form action="/perform_login" method="POST">
             <div class="form-group mb-3 mt-5">
-                <input type="text" class="form-control" placeholder="ID" required>
+                <input type="text" name="username" class="form-control" placeholder="ID" required>
             </div>
             <div class="form-group mb-5">
-                <input type="password" class="form-control" placeholder="PW" required>
+                <input type="password" name="password" class="form-control" placeholder="PW" required>
             </div>
             <div class="row justify-content-center">
                 <button type="submit" class="btn btn-primary btn-block login-button">로그인</button>
+
             </div>
             <div class="row justify-content-center">
-                <a href="/login-google" class="btn btn-secondary btn-block login-button">구글 로그인</a>
-            </div>
+<!--            <a class="btn btn-outline-secondary btn-block login-button"-->
+<!--               th:href="@{https://accounts.google.com/o/oauth2/auth(client_id='128777211280-9p0d1tseuf1scjgsasr7np829jr3mdg5.apps.googleusercontent.com', redirect_uri='http://localhost:8080/auth/callback/google', response_type='code', scope='email profile')}">-->
+<!--                Google 로그인-->
+<!--            </a>-->
+                <a class="btn btn-outline-secondary btn-block login-button"
+                   th:href="@{/oauth2/google}">
+                    Google 로그인
+                </a>
+
+           </div>
+            <div class="row justify-content-center">
+                <a class="btn btn-outline-warning btn-block login-button" href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=k7hePiTdyGxxcl1ZoNb5&redirect_uri=http://localhost:8080/login/oauth2/code/kakao&state=임의의상태값">Kakao 로그인</a>
+           </div>
+            <div class="row justify-content-center">
+                <a class="btn btn-outline-success btn-block login-button" href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=k7hePiTdyGxxcl1ZoNb5&redirect_uri=http://localhost:8080/login/oauth2/code/naver&state=임의의상태값">Naver 로그인</a>
+           </div>
+<!--               th:href="@{/oauth2/authorization/google}">Google 로그인</a>-->
+
+            <!--               th:href="@{/oauth2/authorization/kakao}">Kakao 로그인</a>-->
+
+            <!--               th:href="@{/oauth2/authorization/naver}">Naver 로그인</a>-->
             <!--                <div class="col-6">-->
             <!--                    <a href="/login-kakao" class="btn btn-warning btn-block login-button">카카오 로그인</a>-->
             <!--                </div>-->
