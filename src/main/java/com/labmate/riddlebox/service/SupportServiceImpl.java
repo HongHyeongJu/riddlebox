@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,16 +68,6 @@ public class SupportServiceImpl implements SuppotService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<NoticeListDto> getNoticeList(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("noticeDate").descending());
-        Page<Notice> noticePage = noticeRepository.findByStatus(NoticeStatus.POSTED, pageable);
-
-        return noticePage.stream()
-                .map(notice -> new NoticeListDto(notice.getId(), notice.getCategory(), notice.getTitle()))
-                .collect(Collectors.toList());
-    }
-
 
     @Override
     public NoticeViewDto findNoticeViewDtoById(Long noticeId) {
@@ -97,6 +88,27 @@ public class SupportServiceImpl implements SuppotService {
 
         return result;
     }
+
+    @Override
+    public Page<NoticeListDto> getNoticeListPaging(int page, int size) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("noticeDate"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sorts));
+        Page<Notice> noticePage = noticeRepository.findAll(pageable);
+        return noticePage.map(notice -> new NoticeListDto(notice.getId(), notice.getCategory(), notice.getTitle()));
+    }
+
+
+    @Override
+    public List<NoticeListDto> getNoticeList(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("noticeDate").descending());
+        Page<Notice> noticePage = noticeRepository.findByStatus(NoticeStatus.POSTED, pageable);
+
+        return noticePage.stream()
+                .map(notice -> new NoticeListDto(notice.getId(), notice.getCategory(), notice.getTitle()))
+                .collect(Collectors.toList());
+    }
+
 
 
 }

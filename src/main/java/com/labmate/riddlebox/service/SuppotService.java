@@ -5,6 +5,7 @@ import com.labmate.riddlebox.dto.FaqViewDto;
 import com.labmate.riddlebox.dto.NoticeListDto;
 import com.labmate.riddlebox.dto.NoticeViewDto;
 import com.labmate.riddlebox.enumpackage.NoticeStatus;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -13,5 +14,11 @@ public interface SuppotService {
 
     List<NoticeListDto> getNoticeList(int page, int size);
 
+    Page<NoticeListDto> getNoticeListPaging(int page, int size);
+
     NoticeViewDto findNoticeViewDtoById(Long noticeId);
+
+
+
+
 }
