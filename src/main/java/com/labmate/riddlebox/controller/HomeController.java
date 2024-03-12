@@ -41,11 +41,6 @@ public class HomeController {
     @Autowired
     GameService gameService;
 
-    @Value("${jwt.secret}")
-    private String JWT_KEY;
-
-
-
 
     @GetMapping("/")
     public String home(Model model) {

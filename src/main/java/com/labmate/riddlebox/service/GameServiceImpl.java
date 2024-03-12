@@ -4,13 +4,13 @@ import com.labmate.riddlebox.admindto.Question;
 import com.labmate.riddlebox.dto.*;
 import com.labmate.riddlebox.dto.QGameListDto;
 import com.labmate.riddlebox.dto.QGameplayInfoDto;
-import com.labmate.riddlebox.entity.GameCategory;
-import com.labmate.riddlebox.entity.GameContent;
-import com.labmate.riddlebox.entity.GameImage;
-import com.labmate.riddlebox.entity.QGame;
+import com.labmate.riddlebox.entity.*;
 import com.labmate.riddlebox.enumpackage.GameLevel;
+import com.labmate.riddlebox.enumpackage.GameResultType;
 import com.labmate.riddlebox.enumpackage.GameStatus;
+import com.labmate.riddlebox.repository.GameRecordRepository;
 import com.labmate.riddlebox.repository.GameRepository;
+import com.labmate.riddlebox.repository.UserRepository;
 import com.labmate.riddlebox.util.GameScoreResult;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -39,11 +39,16 @@ public class GameServiceImpl implements GameService {
 
     private final JPAQueryFactory queryFactory;
     private final GameRepository gameRepository;
+    private final UserRepository userRepository;
+    private final GameRecordRepository gameRecordRepository;
 
     @Autowired
-    public GameServiceImpl(EntityManager em, GameRepository gameRepository) {
+    public GameServiceImpl(EntityManager em, GameRepository gameRepository,
+                           UserRepository userRepository, GameRecordRepository gameRecordRepository) {
         this.queryFactory = new JPAQueryFactory(em);
         this.gameRepository = gameRepository;
+        this.userRepository = userRepository;
+        this.gameRecordRepository = gameRecordRepository;
     }
 
 
@@ -106,12 +111,17 @@ public class GameServiceImpl implements GameService {
     }
 
 
-
-
     //단건 게임 데이터 전달
     /*게임 식별자로 게임, 게임컨텐츠, 게임이미지 조회해서 DTO 반환*/
-    @Transactional(readOnly = true)
+    @Transactional
     public GameplayInfoDto findGameInfo(Long gameId) {
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new EntityNotFoundException("Game not found with ID: " + gameId));
+
+        // 조회수 증가
+        game.addViewCount();
+        gameRepository.save(game);
+
         GameplayInfoDto gameplayInfoDto = getGameplayInfoDto(gameId);
         if (gameplayInfoDto == null) {
             throw new EntityNotFoundException("Game not found with ID: " + gameId);
@@ -125,16 +135,16 @@ public class GameServiceImpl implements GameService {
 
 
     /*각 게임의 질문리스트 반환하는 메서드
-    * @param gameId
-    * @return List<Question>  : Question(gameContentId, question, ordering)
-    * */
+     * @param gameId
+     * @return List<Question>  : Question(gameContentId, question, ordering)
+     * */
     @Override
     public List<Question> getQuestionList(Long gameId) {
         List<GameContent> gameContents = queryFactory
-                                        .selectFrom(gameContent)
-                                        .where(gameIdEquals(gameId), gameContentIsActive())
-                                        .orderBy(gameContent.ordering.asc()) // ordering 값으로 정렬
-                                        .fetch();
+                .selectFrom(gameContent)
+                .where(gameIdEquals(gameId), gameContentIsActive())
+                .orderBy(gameContent.ordering.asc()) // ordering 값으로 정렬
+                .fetch();
 
         List<Question> questions = new ArrayList<>();
         for (GameContent content : gameContents) {
@@ -219,8 +229,8 @@ public class GameServiceImpl implements GameService {
 
         // TODO: 2024-01-15 오답 기록을 위한 Table 생성하고 기록 추가하기. gameContentId, 사용자 오답, 시스템컬럼
         /* TODO: 사용자가 뒤로 가기나 새로고침을 통해 이전 페이지로 돌아갔을 때 중복된 게임 결과 기록을 방지하기
-        *        사용자가 게임에 참여할 때, 해당 게임 세션에 대한 상태를 서버에 저장하기
-        *        ex)예를 들어, "진행 중", "완료됨" 등의 상태를 관리해서 진행중 일때만 기록하기!!  */
+         *        사용자가 게임에 참여할 때, 해당 게임 세션에 대한 상태를 서버에 저장하기
+         *        ex)예를 들어, "진행 중", "완료됨" 등의 상태를 관리해서 진행중 일때만 기록하기!!  */
         if (!isCorrect) {
             // memberId와 오답 정보를 사용하여 오답 기록
         }
@@ -270,6 +280,25 @@ public class GameServiceImpl implements GameService {
                                                 .innerJoin(game.gameImages, gameImage) // game 엔티티와 gameImage 엔티티를 연결
                                                 .innerJoin(game.recommendGames, recommendGame)
                                                 .fetch();*/
+
+
+    @Override
+    // 게임 결과 기록 메서드
+    @Transactional
+    public void recordGameResult(Long gameId, Long userId, int totalQuestions, int correctAnswersCount, boolean isFail) {
+
+        // 사용자와 게임 엔티티 조회
+        RBUser user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        Game game = gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException("Game not found"));
+
+        // 게임 기록 생성
+        float successRate = ((float) correctAnswersCount / totalQuestions) * 100;
+        GameResultType resultType = isFail ? GameResultType.UNSOLVED : GameResultType.SOLVED;
+        GameRecord gameRecord = new GameRecord(user, game, correctAnswersCount, 0 , successRate, resultType);
+
+        // 게임 기록 저장
+        gameRecordRepository.save(gameRecord);
+    }
 
 }
 

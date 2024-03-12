@@ -3,12 +3,15 @@ package com.labmate.riddlebox.controller;
 import com.labmate.riddlebox.dto.GameListDto;
 import com.labmate.riddlebox.dto.GameSearchCondition;
 import com.labmate.riddlebox.dto.GameplayInfoDto;
+import com.labmate.riddlebox.security.PrincipalDetails;
 import com.labmate.riddlebox.service.GameService;
 import com.labmate.riddlebox.util.GameScoreResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,24 +36,24 @@ public class WebGameController {
         GameplayInfoDto gameInfo = gameService.findGameInfo(gameId);
         model.addAttribute("gameInfo", gameInfo);
         model.addAttribute("pageType", "gameStory");
-        model.addAttribute("title","RiddleBox ["+ gameInfo.getTitle()+" ]");
+        model.addAttribute("title", "RiddleBox [" + gameInfo.getTitle() + " ]");
         System.out.println(" [1] 게임 스토리 페이지 ");
-        System.out.println(" title "+gameInfo.getTitle());
+        System.out.println(" title " + gameInfo.getTitle());
         return "layout/layout_base";
     }
 
 
     /* [2] 게임 문제 풀이 페이지
-    * 스냅샷과 단편소설이 같이 사용할 수 있음*/
+     * 스냅샷과 단편소설이 같이 사용할 수 있음*/
     @GetMapping("/{gameId}/solve")
     public String getGameSolve(@PathVariable("gameId") Long gameId, Model model) {
         GameplayInfoDto gameInfo = gameService.findGameInfo(gameId);
         model.addAttribute("gameInfo", gameInfo);
         model.addAttribute("pageType", "gameSolve");
-        model.addAttribute("title", "RiddleBox [ "+ gameInfo.getTitle()+"] 문제풀기 ");
+        model.addAttribute("title", "RiddleBox [ " + gameInfo.getTitle() + "] 문제풀기 ");
         System.out.println("gameSolve");
-        System.out.println("gameInfo.level "+gameInfo.getGameLevel());
-        System.out.println("RiddleBox ["+ gameInfo.getTitle()+"] 문제풀기 ");
+        System.out.println("gameInfo.level " + gameInfo.getGameLevel());
+        System.out.println("RiddleBox [" + gameInfo.getTitle() + "] 문제풀기 ");
         return "layout/layout_base";
     }
 
@@ -69,8 +72,8 @@ public class WebGameController {
 
         //작업 완료 후 리다이렉트할 URL을 지정
         String redirectUrl = "/game/result?totalQuestions=" + gameScoreResult.getTotalQuestions() +
-                             "&correctAnswersCount=" + gameScoreResult.getCorrectAnswers() +
-                             "&isFail=";
+                "&correctAnswersCount=" + gameScoreResult.getCorrectAnswers() +
+                "&isFail=";
 
         // RedirectView를 사용하여 리다이렉션을 설정
         RedirectView redirectView = new RedirectView(redirectUrl);
@@ -87,20 +90,31 @@ public class WebGameController {
                              @RequestParam(value = "isFail", defaultValue = "false") boolean isFail,
                              Model model) {
 
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = 1001L;
+        if (auth != null && auth.getPrincipal() instanceof PrincipalDetails) {
+            PrincipalDetails principalDetails = (PrincipalDetails) auth.getPrincipal();
+            userId = principalDetails.getUserPK();
+        }
+
+        // 게임 결과 기록
+        gameService.recordGameResult(gameId, userId, totalQuestions, correctAnswersCount, isFail);
+
+
         // 파라미터를 모델에 추가
         model.addAttribute("totalQuestions", totalQuestions);
         model.addAttribute("correctAnswersCount", correctAnswersCount);
         model.addAttribute("gameId", gameId);
-        model.addAttribute("pageType","gameResult");
+        model.addAttribute("pageType", "gameResult");
         model.addAttribute("gameResult", !isFail ? "success" : "fail");
 
         return "layout/layout_base"; // HTML 뷰 이름
     }
 
 
-
     /* [5] 중도포기
-    * 중도 포기 기록하고 홈페이지로 보내주기 */
+     * 중도 포기 기록하고 홈페이지로 보내주기 */
     @GetMapping("/{gameId}/quit")
     public String gameQyit(@PathVariable("gameId") Long gameId) {
 
@@ -116,14 +130,13 @@ public class WebGameController {
     public String showRandomGame() {
         Long randomGameNumber = 10L;
 
-        return "redirect:/game/"+randomGameNumber+"/story";
+        return "redirect:/game/" + randomGameNumber + "/story";
     }
 
 }
 
 
-
-    // 단건 채점 마지막 [3-2]
+// 단건 채점 마지막 [3-2]
 /*    @PostMapping("/submitAnswerFinal")
     public String showFinalResultV2(@RequestBody UserAnswerDto answer,
                                     HttpServletRequest request,

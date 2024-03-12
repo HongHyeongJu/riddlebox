@@ -7,6 +7,7 @@ import com.labmate.riddlebox.admindto.Question;
 import com.labmate.riddlebox.util.GameScoreResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -25,5 +26,7 @@ public interface GameService {
     public List<GameListDto> fetchRecommendedGamesForHomepage(); // 첫페이지용 게임 목록 출력
 
 
-
+    // 게임 결과 기록 메서드
+    @Transactional
+    void recordGameResult(Long gameId, Long userId, int totalQuestions, int correctAnswersCount, boolean isFail);
 }
