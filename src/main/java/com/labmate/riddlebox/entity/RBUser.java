@@ -164,6 +164,9 @@ public class RBUser extends BaseEntity {
     public void setPassword(String newPassword) {
         this.password = newPassword;
     }
+    public void setLastLoginDate(LocalDateTime lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
+    }
 
     //마지막 로그인 변경 메서드
     public void updateLastLoginDate() {

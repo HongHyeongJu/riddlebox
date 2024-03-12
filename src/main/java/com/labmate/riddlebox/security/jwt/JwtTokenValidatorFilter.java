@@ -1,6 +1,7 @@
 package com.labmate.riddlebox.security.jwt;
 
 import com.labmate.riddlebox.security.SecurityConstants;
+import com.labmate.riddlebox.security.SimplifiedPrincipalDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -29,7 +30,9 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
         String jwt = request.getHeader(SecurityConstants.JWT_HEADER);
+
         if (null != jwt) {
             try {
                 SecretKey key = Keys.hmacShaKeyFor(JWT_KEY.getBytes(StandardCharsets.UTF_8));
@@ -38,9 +41,13 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
                                     .setSigningKey(key)
                                     .parseClaimsJws(jwt)
                                     .getBody();
-                String username = String.valueOf(claims.get("username"));
+                String loginEmail = String.valueOf(claims.get("loginEmail"));
+                Long id = claims.get("id", Long.class);
+                String nickname = String.valueOf(claims.get("nickname"));
                 String authorities = (String) claims.get("authorities");
-                Authentication auth = new UsernamePasswordAuthenticationToken(username, null,
+                SimplifiedPrincipalDetails principalDetails  = new SimplifiedPrincipalDetails(id, nickname, loginEmail, authorities);
+
+                Authentication auth = new UsernamePasswordAuthenticationToken(principalDetails, null,
                         AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {

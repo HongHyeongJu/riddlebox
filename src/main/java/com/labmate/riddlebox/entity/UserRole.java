@@ -30,7 +30,8 @@ public class UserRole extends BaseEntity {
     private Boolean isActive;   // 활성화 여부
     private String notes;
 
-    public UserRole(RBUser user, RBRole role, LocalDateTime assignedDate, String assignedBy, Boolean isActive, String notes) {
+    public UserRole(RBUser user, RBRole role, LocalDateTime assignedDate,
+                    String assignedBy, Boolean isActive, String notes) {
         this.user = user;
         this.role = role;
         this.assignedDate = assignedDate;

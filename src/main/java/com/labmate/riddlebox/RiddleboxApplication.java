@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class RiddleboxApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(RiddleboxApplication.class, args);
+        SpringApplication app = new SpringApplication(RiddleboxApplication.class);
+        app.setAdditionalProfiles("oauth");
+        app.run(args);
     }
 
 }

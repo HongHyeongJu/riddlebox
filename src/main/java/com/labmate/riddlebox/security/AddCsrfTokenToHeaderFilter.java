@@ -10,8 +10,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 //JWT 토큰에 CSRF 방지 토큰 넣기
-public class CsrfCookieFilter extends OncePerRequestFilter {
-
+public class AddCsrfTokenToHeaderFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

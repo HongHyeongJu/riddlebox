@@ -1,8 +1,9 @@
 package com.labmate.riddlebox.service;
 
+import com.labmate.riddlebox.dto.SocialProfileDto;
 import com.labmate.riddlebox.entity.*;
-import com.labmate.riddlebox.repository.ForbiddenWordRepository;
-import com.labmate.riddlebox.repository.UserRepository;
+import com.labmate.riddlebox.enumpackage.UserStatus;
+import com.labmate.riddlebox.repository.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.labmate.riddlebox.entity.QRBUser.rBUser;
@@ -24,13 +30,25 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ForbiddenWordRepository forbiddenWordRepository;
+    private final UserRoleRepository userRoleRepository;
+    private final RoleRepository roleRepository;
+    private final SocialProfileRepository socialProfileRepository;
+
+
+
 
     @Autowired
-    public UserServiceImpl(EntityManager em, UserRepository userRepository, PasswordEncoder passwordEncoder, ForbiddenWordRepository forbiddenWordRepository) {
+    public UserServiceImpl(EntityManager em, UserRepository userRepository,
+                           PasswordEncoder passwordEncoder, ForbiddenWordRepository forbiddenWordRepository,
+                           RoleRepository roleRepository,
+                           UserRoleRepository userRoleRepository, SocialProfileRepository socialProfileRepository) {
         this.queryFactory = new JPAQueryFactory(em);
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.forbiddenWordRepository = forbiddenWordRepository;
+        this.userRoleRepository = userRoleRepository;
+        this.roleRepository = roleRepository;
+        this.socialProfileRepository = socialProfileRepository;
     }
 
     @Override
@@ -85,6 +103,58 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    // 사용자 이메일로 사용자 정보 조회
+    public RBUser findUserByEmail(String email) {
+        RBUser user = queryFactory
+                            .selectFrom(rBUser)
+                            .where(rBUser.loginEmail.eq(email))
+                            .fetchOne();
+        return user;
+    }
+
+    // 사용자의 권한 목록 조회
+    public Set<String> findUserRolesByEmail(String email) {
+        RBUser user = findUserByEmail(email);
+        if (user != null) {
+            return user.getRoles().stream()
+                       .map(role -> role.getName()) // RBRole 엔티티에 getName() 메서드가 있다고 가정
+                       .collect(Collectors.toSet());
+        }
+        return Collections.emptySet();
+    }
+
+
+ @Override
+ @Transactional
+    public RBUser createAndSaveRBUser(String loginEmail, String name, String nickname, String password, SocialProfileDto socialProfileDto) {
+        // RBUser 객체 생성
+        RBUser newUser = RBUser.builder()
+                .loginEmail(loginEmail)
+                .name(name)
+                .nickname(nickname)
+                .password(password) // 실제 사용 시 비밀번호는 암호화 과정을 거쳐야 함
+                .passwordSetDate(LocalDate.now())
+                .regDate(LocalDateTime.now())
+                .lastLoginDate(LocalDateTime.now())
+                .status(UserStatus.ACTIVE)
+                .build();
+
+        // RBUser 저장
+        newUser = userRepository.save(newUser);
+
+        // PLAYER 역할 할당
+        RBRole playerRole = roleRepository.findByName("PLAYER").orElseThrow(() -> new RuntimeException("Role not found"));
+        UserRole userRole = new UserRole(newUser, playerRole, LocalDateTime.now(), "RiddleBox", true, "회원가입");
+        userRoleRepository.save(userRole);
+
+        // 소셜 프로필 저장 (예시 데이터, 실제로는 카카오 등 소셜 로그인 데이터를 사용)
+        SocialProfile socialProfile = new SocialProfile(newUser, socialProfileDto.getProvider(),
+                                                            socialProfileDto.getProviderId(), socialProfileDto.getProfilePictureURL(),
+                                                            socialProfileDto.getRefreshToken());
+        socialProfileRepository.save(socialProfile);
+
+        return newUser;
+    }
 
 
 
