@@ -20,13 +20,12 @@ public class TestController {
         return "hello";
     }
 
-//    @GetMapping("/")
-//    public String getGameStory(Model model) {
-//        Long gameId= 1L;
-//        GameplayInfoDto gameplayInfoDto = gameService.findGameInfos(gameId);
-//        model.addAttribute("gameplayInfoDto", gameplayInfoDto);
-////        return "gamePlayStory";
-//        return "test";
-//    }
+
+
+    @GetMapping("/test/this-event")
+    public String helloEvent() {
+        return "test_html/event";
+    }
+
 
 }

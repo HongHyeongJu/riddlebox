@@ -34,11 +34,11 @@ public class SecurityConfig {  //Spring Security의 보안 구성을 정의하�
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/payment/**").hasRole("PAY_PLAYER")
                         .requestMatchers("/logout").authenticated()
-                        .requestMatchers("/", "/index", "/games", "/resources/**", "/css/**", "/js/**", "/img/**", "/formlogin",
+                        .requestMatchers("/", "/index", "/games", "/resources/**", "/css/**", "/js/**", "/img/**", "/formlogin", "/test/**",
                                 "/supports/**", "/login", "/account/recovery", "/signup/**", "/oauth2/**", "/auth/**","/favicon.ico","/error/**").permitAll())
                 .csrf((csrf) -> csrf.ignoringRequestMatchers("/","/index", "/games", "/login", "/supports/**",
                                             "/signup/send-email", "/signup/validate-code", "/oauth2/**", "/auth/**",
-                                            "/formlogin", "/error/**"))
+                                            "/formlogin", "/error/**","/test/**"))
                 .addFilterBefore(new SecurityContextPersistenceFilter(), BasicAuthenticationFilter.class)
 
                 .headers((headers) -> headers.addHeaderWriter(

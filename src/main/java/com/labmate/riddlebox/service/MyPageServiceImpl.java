@@ -1,6 +1,7 @@
 package com.labmate.riddlebox.service;
 
 import com.labmate.riddlebox.dto.MyPageDto;
+import com.labmate.riddlebox.dto.MyPageProfileDto;
 import com.labmate.riddlebox.dto.MyRecordDto;
 import com.labmate.riddlebox.entity.*;
 import com.labmate.riddlebox.enumpackage.GameResultType;
@@ -83,6 +84,12 @@ public class MyPageServiceImpl implements MyPageService {
                 .join(QGameRecord.gameRecord.game, QGame.game)
                 .where(QGameRecord.gameRecord.user.id.eq(userId))
                 .fetch();
+    }
+
+    @Override
+    public MyPageProfileDto getMyPageProfileDto(Long userId) {
+        RBUser user = queryFactory.selectFrom(QRBUser.rBUser).where(QRBUser.rBUser.id.eq(userId)).fetchOne();
+        return new MyPageProfileDto(user.getId(), user.getLoginEmail(), user.getName(), user.getNickname(), user.getRegDate());
     }
 
     /*record-게임기록*/

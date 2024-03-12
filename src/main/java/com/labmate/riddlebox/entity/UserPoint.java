@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
 public class UserPoint extends BaseEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_point_id")
-    private Long id; // User의 PK와 동일한 값을 사용합니다.
+    private Long id;
 
-    @OneToOne
-    @MapsId // User 엔티티의 ID를 UserPoint의 ID로 매핑합니다.
-    @JoinColumn(name = "id")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private RBUser user;
 
     private String reason;  //적립 이유
@@ -35,5 +35,10 @@ public class UserPoint extends BaseEntity {
         this.earned_date = earnedDate;
         this.total_points = totalPoints;
     }
+
+    public void setUser(RBUser user) {
+        this.user = user;
+    }
+
 
 }

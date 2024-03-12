@@ -5,43 +5,39 @@
         <div class="d-flex flex-column col-md-8 col-lg-8 mb-3">
             <div class="card mb-3" style="height: 25rem;">
                 <div class="card-body div-custom">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="d-flex justify-content-between align-items-center mt-3 mb-5">
                         <h5 class="card-title m-0 font-weight-bold-custom">공지사항</h5>
-                        <a href="/support/notice" class="btn btn-dark">더보기</a>
+                        <a  th:href="@{/supports/notice}"  class="btn btn-dark">더보기</a>
                     </div>
                     <!-- 부트스트랩 클래스를 적용한 테이블 -->
-                    <table class="table mt-3 table-bordered table-hover">
+                    <table class="table mt-5 table-bordered table-hover">
                         <colgroup>
                             <col style="width: 10%;">
-                            <col style="width: 20%;">
-                            <col style="width: 70%;">
+                            <col style="width: 30%;">
+                            <col style="width: 60%;">
                         </colgroup>
                         <thead class="thead-dark">
                         <tr>
-                            <th scope="col" class="text-center">번호</th> <!-- 중앙 정렬 적용 -->
-                            <th scope="col" class="text-center">주제</th> <!-- 중앙 정렬 적용 -->
-                            <th scope="col" class="text-center">제목</th> <!-- 중앙 정렬 적용 -->
+                            <th scope="col" class="text-center">번호</th>
+                            <th scope="col" class="text-center">주제</th>
+                            <th scope="col" class="text-center">제목</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <th scope="row" class="text-center">1</th>
-                            <td class="text-center">일반</td>
-                            <td>RiddleBox 홈페이지를 오픈합니다.</td>
+                        <!-- 타임리프로 리스트 반복 -->
+                        <tr th:each="notice : ${noticeListDtoList}" th:object="${notice}">
+                            <td scope="row" class="text-center" th:text="${noticeStat.count}">1</td> <!-- 순차적 번호 -->
+                            <td class="text-center" th:text="${notice.category.description}">일반</td>
+                            <td>
+                                <a th:href="@{'/supports/notice/detail/' + ${notice.noticeId}}"
+                                   th:text="${notice.title}" style="text-decoration: none; color: inherit;">RiddleBox
+                                    홈페이지를 오픈합니다.</a>
+                            </td>
+
                         </tr>
-                        <tr>
-                            <th scope="row" class="text-center">1</th>
-                            <td class="text-center">일반</td>
-                            <td>RiddleBox 홈페이지를 오픈합니다.</td>
-                        </tr>
-                        <tr>
-                            <th scope="row" class="text-center">1</th>
-                            <td class="text-center">일반</td>
-                            <td>RiddleBox 홈페이지를 오픈합니다.</td>
-                        </tr>
-                        <!-- 이하 추가 게시글 6개가 적당함 -->
                         </tbody>
                     </table>
+
                 </div>
             </div>
         </div>
@@ -49,11 +45,16 @@
 
         <div class="d-flex flex-column col-md-4 col-lg-4 mb-3">
             <div class="card" style="height: 25rem;">
-                <div class="card-body div-custom">
-                    <h5 class="card-title font-weight-bold-custom">EVENT</h5>
-                    <p class="card-text">홈페이지 오픈 이벤트</p>
-                    <div class="img-container" sstyle="height: 23rem; overflow: hidden;">
-                        <a href="/새로운-1-1-문의-링크"><img src="event.png" alt="Image"></a>
+                <div class="card-body div-custom ">
+                    <h5 class="card-title font-weight-bold-custom mt-4">EVENT</h5>
+                    <p class="card-text mt-2">홈페이지 오픈 이벤트</p>
+                    <div class="img-container" style="height: 23rem; overflow: hidden;">
+                        <!-- 이미지가 있을 경우 -->
+                        <a th:if="${imageExists}" th:href="@{/test/this-event}"><img src="event.png" alt="Image"></a>
+                        <!-- 이미지가 없을 경우 -->
+                        <div th:unless="${imageExists}" style="border: 1px solid #ccc; background-color: #f0f0f0;">
+                            <a  th:href="@{/test/this-event}">이벤트</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -65,15 +66,15 @@
                 <div class="card-body div-custom">
                     <h5 class="card-title text-left font-weight-bold-custom">자주 묻는 질문</h5>
                     <div class="btn-group mt-3" role="group">
-                        <a href="/support/faq" class="btn btn-light mx-4 rounded ">홈페이지</a>
-                        <a href="/support/faq" class="btn btn-light mx-4 rounded ">계정</a>
-                        <a href="/support/faq" class="btn btn-light mx-4 rounded ">튜토리얼</a>
-                        <a href="/support/faq" class="btn btn-light mx-4 rounded ">컨텐츠제안</a>
+                        <a th:href="@{/supports/faq/homepage}" class="btn btn-light mx-4 rounded">홈페이지</a>
+                        <a th:href="@{/supports/faq/account}" class="btn btn-light mx-4 rounded">이용/계정</a>
+                        <a th:href="@{/supports/faq/tutorial}" class="btn btn-light mx-4 rounded">튜토리얼</a>
+                        <a th:href="@{/supports/faq/content}" class="btn btn-light mx-4 rounded">컨텐츠제안</a>
                     </div>
                     <div class="btn-group mt-3" role="group">
-                        <a href="/support/faq" class="btn btn-light mx-4 rounded ">기술문제/버그</a>
-                        <a href="/support/faq" class="btn btn-light mx-4 rounded ">게임업데이트</a>
-                        <a href="/support/faq" class="btn btn-light mx-4 rounded ">이벤트/프로모션</a>
+                        <a th:href="@{/supports/faq/issue}" class="btn btn-light mx-4 rounded">기술문제/버그</a>
+                        <a th:href="@{/supports/faq/update}" class="btn btn-light mx-4 rounded">게임업데이트</a>
+                        <a th:href="@{/supports/faq/event}" class="btn btn-light mx-4 rounded">이벤트/프로모션</a>
                     </div>
                 </div>
             </div>
@@ -86,7 +87,7 @@
                     <h5 class="card-title font-weight-bold-custom">문의하기</h5>
                     <a href="/static" class="btn btn-secondary mt-3">1:1 문의</a>
                     <a href="#" class="btn btn-secondary mt-3 ml-5">나의 문의내역</a>
-                    <h6 class="mt-4">riddlebox_2024_cs@gmail.com</h6>
+                    <h6 class="mt-4">riddlebox_2024@gmail.com</h6>
                 </div>
             </div>
         </div>

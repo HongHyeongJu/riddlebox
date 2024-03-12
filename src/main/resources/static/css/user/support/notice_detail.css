@@ -6,6 +6,23 @@
     white-space: pre-line; /* 사용자의 줄바꿈과 공백을 유지 */
 }
 
-.container {
+.noticeDetailContainer {
     max-width: 800px; /* 원하는 너비로 조정 */
+}
+
+.custom-title {
+    padding-left: 15px; /* 조절해보세요 */
+}
+
+.custom-info {
+    padding-left: 15px; /* 조절해보세요 */
+}
+
+.custom-date, .custom-view-count {
+    margin-left: 20px; /* 각 요소의 왼쪽 마진 조절 */
+}
+
+.card-text-div {
+     padding-left: 15px; /* 조절해보세요 */
+     padding-right: 15px; /* 조절해보세요 */
 }

@@ -46,6 +46,10 @@ public class RBUser extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SocialProfile> socialProfiles = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserPoint> userPoints = new ArrayList<>();
+
+
     private LocalDateTime regDate;  //가입일
     private LocalDateTime lastLoginDate;  //마지막 방문일
 
@@ -145,6 +149,20 @@ public class RBUser extends BaseEntity {
         this.gameEvents.add(gameEvent);
         gameEvent.setUser(null);
     }
+
+
+    // UserPoint 리스트에 새로운 포인트를 추가하는 헬퍼 메소드
+    public void addUserPoint(UserPoint userPoint) {
+        this.userPoints.add(userPoint);
+        userPoint.setUser(this);
+    }
+
+    // UserPoint 리스트에서 특정 포인트를 제거하는 헬퍼 메소드
+    public void removeUserPoint(UserPoint userPoint) {
+        this.userPoints.remove(userPoint);
+        userPoint.setUser(null);
+    }
+
 
 
     public Set<RBRole> getRoles() {

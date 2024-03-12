@@ -1,7 +1,9 @@
 package com.labmate.riddlebox.controller;
 
 import com.labmate.riddlebox.dto.MyPageDto;
+import com.labmate.riddlebox.dto.MyPageProfileDto;
 import com.labmate.riddlebox.dto.MyRecordDto;
+import com.labmate.riddlebox.dto.UserAnswerDto;
 import com.labmate.riddlebox.security.PrincipalDetails;
 import com.labmate.riddlebox.service.MyPageService;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +50,12 @@ public class MyPageController {
     /*내 게임 기록, 1:1 문의, 나의 정보(회원정보 수정), 내 프로필, 등급*/
     @GetMapping("")
     public String myPageHome(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        PrincipalDetails principalDetails = (PrincipalDetails) auth.getPrincipal();
+        Long userId = principalDetails.getUserPK();
+
+        MyPageProfileDto myPageProfileDto =  myPageService.getMyPageProfileDto(userId);
+        model.addAttribute("myPageProfileDto", myPageProfileDto);
         model.addAttribute("myPageType", "profile");
 
         return "layout/layout_base"; // HTML 뷰 이름
@@ -57,12 +65,12 @@ public class MyPageController {
     /* 내 게임 기록 보여주기*/
     @GetMapping("/record")
     public String myGameRecords(Model model) {
-        System.out.println("===========myGameRecords");
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         PrincipalDetails principalDetails = (PrincipalDetails) auth.getPrincipal();
         Long userId = principalDetails.getUserPK();
+
         List<MyRecordDto> myRecordDtoList = myPageService.getUserRecordDtoList(userId);
-        System.out.println("===========myRecordDtoList "+myRecordDtoList.size());
         model.addAttribute("myPageType", "record");
         model.addAttribute("myRecordDtoList", myRecordDtoList);
 

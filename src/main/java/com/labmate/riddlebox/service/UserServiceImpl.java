@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
 
     private final JPAQueryFactory queryFactory;
     private final UserRepository userRepository;
+    private final UserPointRepository userPointRepository;
     private final PasswordEncoder passwordEncoder;
     private final ForbiddenWordRepository forbiddenWordRepository;
     private final UserRoleRepository userRoleRepository;
@@ -39,19 +40,18 @@ public class UserServiceImpl implements UserService {
     private final SocialProfileRepository socialProfileRepository;
 
 
-
-
     @Autowired
     public UserServiceImpl(EntityManager em, UserRepository userRepository,
                            PasswordEncoder passwordEncoder, ForbiddenWordRepository forbiddenWordRepository,
-                           RoleRepository roleRepository,
+                           RoleRepository roleRepository, UserPointRepository userPointRepository,
                            UserRoleRepository userRoleRepository, SocialProfileRepository socialProfileRepository) {
         this.queryFactory = new JPAQueryFactory(em);
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.forbiddenWordRepository = forbiddenWordRepository;
-        this.userRoleRepository = userRoleRepository;
         this.roleRepository = roleRepository;
+        this.userPointRepository = userPointRepository;
+        this.userRoleRepository = userRoleRepository;
         this.socialProfileRepository = socialProfileRepository;
     }
 
@@ -59,15 +59,15 @@ public class UserServiceImpl implements UserService {
     public boolean isValidNickname(String nickname) {
         // 사용 중인 닉네임인지 확인
         long count = queryFactory.selectFrom(rBUser)
-                                .where(rBUser.nickname.eq(nickname))
-                                .fetchCount();
+                .where(rBUser.nickname.eq(nickname))
+                .fetchCount();
 
         // 금지된 단어 목록 가져오기
         List<String> forbiddenWords = findAllWords(); // f모든 금지 단어를 리스트로 반환
 
         // 닉네임에 금지된 단어가 포함되어 있는지 확인
         boolean containsForbiddenWord = forbiddenWords.stream()
-                                                       .anyMatch(nickname::contains);
+                .anyMatch(nickname::contains);
 
         // 닉네임이 사용 중이지 않고, 금지된 단어를 포함하고 있지 않을 경우에만 true 반환
         return count == 0 && !containsForbiddenWord;
@@ -76,17 +76,17 @@ public class UserServiceImpl implements UserService {
     /*금지단어 목록 출력*/
     public List<String> findAllWords() {
         return forbiddenWordRepository.findAll()
-                                      .stream()
-                                      .map(ForbiddenWord::getWord)
-                                      .collect(Collectors.toList());
+                .stream()
+                .map(ForbiddenWord::getWord)
+                .collect(Collectors.toList());
     }
 
 
     @Override
     public boolean checkDuplicateEmail(String email) {
         long exists = queryFactory.selectFrom(rBUser) // Q클래스를 사용하여 from 절을 구성
-                                  .where(rBUser.loginEmail.eq(email)) // 이메일이 일치하는 조건
-                                  .fetchCount(); // 조건에 맞는 결과의 수를 가져옴
+                .where(rBUser.loginEmail.eq(email)) // 이메일이 일치하는 조건
+                .fetchCount(); // 조건에 맞는 결과의 수를 가져옴
 
         return exists == 0; // 결과가 1개 이상이면 true, 아니면 false 반환
     }
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
     @PreAuthorize("#loginEmail == authentication.principal.username")
     public void updateMemberInfo(String loginEmail, String newPassword, String newNickname) {
         RBUser user = userRepository.findByLoginEmail(loginEmail)
-                                    .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + loginEmail));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + loginEmail));
 
         if (!isValidNickname(newNickname)) {
             throw new IllegalArgumentException("중복 닉네임");
@@ -110,9 +110,9 @@ public class UserServiceImpl implements UserService {
     // 사용자 이메일로 사용자 정보 조회
     public RBUser findUserByEmail(String email) {
         RBUser user = queryFactory
-                            .selectFrom(rBUser)
-                            .where(rBUser.loginEmail.eq(email))
-                            .fetchOne();
+                .selectFrom(rBUser)
+                .where(rBUser.loginEmail.eq(email))
+                .fetchOne();
         return user;
     }
 
@@ -121,15 +121,15 @@ public class UserServiceImpl implements UserService {
         RBUser user = findUserByEmail(email);
         if (user != null) {
             return user.getRoles().stream()
-                       .map(role -> role.getName()) // RBRole 엔티티에 getName() 메서드가 있다고 가정
-                       .collect(Collectors.toSet());
+                    .map(role -> role.getName()) // RBRole 엔티티에 getName() 메서드가 있다고 가정
+                    .collect(Collectors.toSet());
         }
         return Collections.emptySet();
     }
 
 
- @Override
- @Transactional
+    @Override
+    @Transactional
     public RBUser createAndSaveRBUser(String loginEmail, String name, String nickname, String password, SocialProfileDto socialProfileDto) {
         // RBUser 객체 생성
         RBUser newUser = RBUser.builder()
@@ -153,13 +153,17 @@ public class UserServiceImpl implements UserService {
 
         // 소셜 프로필 저장 (예시 데이터, 실제로는 카카오 등 소셜 로그인 데이터를 사용)
         SocialProfile socialProfile = new SocialProfile(newUser, socialProfileDto.getProvider(),
-                                                            socialProfileDto.getProviderId(), socialProfileDto.getProfilePictureURL(),
-                                                            socialProfileDto.getRefreshToken());
+                socialProfileDto.getProviderId(), socialProfileDto.getProfilePictureURL(),
+                socialProfileDto.getRefreshToken());
         socialProfileRepository.save(socialProfile);
+
+        // 웰컴 포인트 500 부여
+        UserPoint welcomePoint = new UserPoint(newUser, "회원가입 웰컴 포인트", 500, LocalDateTime.now(), 500);
+        userPointRepository.save(welcomePoint);
+
 
         return newUser;
     }
-
 
 
 }

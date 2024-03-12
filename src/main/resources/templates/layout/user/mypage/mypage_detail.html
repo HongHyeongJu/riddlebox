@@ -5,35 +5,36 @@
     <div class="card-body mt-4">
         <table class="table ml-2 mr-2" style="margin-bottom: 20px;"> <!-- 세로 간격을 조정하기 위해 margin-bottom 추가 -->
             <tbody>
-                <tr>
-                    <th scope="row">이메일</th>
-<!--                    <td th:text="${user.loginEmail}">user@example.com</td>-->
-                    <td>user@example.com</td>
-                </tr>
-                <tr>
-                    <th scope="row">이름</th>
-<!--                    <td th:text="${user.name}">홍길동</td>-->
-                    <td>홍길동</td>
-                </tr>
-                <tr>
-                    <th scope="row">닉네임</th>
-<!--                    <td th:text="${user.nickname}">gildong</td>-->
-                    <td>gildong</td>
-                </tr>
-                <!-- 비밀번호는 직접 보여주지 않습니다. 대신 변경할 수 있는 링크나 버튼을 제공할 수 있습니다. -->
-                <tr>
-                    <th scope="row">비밀번호</th>
-                    <td>************</td>
-                </tr>
-                <tr>
-                    <th scope="row">가입일</th>
-<!--                    <td th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}">2024-01-01</td>-->
-                    <td>2024-01-01</td>
-                </tr>
-                   <td colspan="2" class="text-center"> <!-- 새로운 행 추가 -->
-                        <button class="btn btn-outline-secondary mt-3" onclick="editProfile()">정보 수정</button> <!-- 정보 수정 버튼 추가 -->
-                    </td>
-                </tr>
+            <tr>
+                <th scope="row">이메일</th>
+                <td th:text="${myPageProfileDto.loginEmail}">user@example.com</td>
+                <!--                    <td>user@example.com</td>-->
+            </tr>
+            <tr>
+                <th scope="row">이름</th>
+                <td th:text="${myPageProfileDto.name}">홍길동</td>
+                <!--                    <td>홍길동</td>-->
+            </tr>
+            <tr>
+                <th scope="row">닉네임</th>
+                <td th:text="${myPageProfileDto.nickname}">gildong</td>
+                <!--                    <td>gildong</td>-->
+            </tr>
+            <!-- 비밀번호는 직접 보여주지 않습니다. 대신 변경할 수 있는 링크나 버튼을 제공할 수 있습니다. -->
+            <tr>
+                <th scope="row">비밀번호</th>
+                <td>************</td>
+            </tr>
+            <tr>
+                <th scope="row">가입일</th>
+                <td th:text="${myPageProfileDto.regDate}">2024-01-01</td>
+                <!--                    <td>2024-01-01</td>-->
+            </tr>
+            <td colspan="2" style="text-align: right;"> <!-- 새로운 행 추가 -->
+                <button class="btn btn-outline-secondary mt-3" onclick="editProfile()">정보 수정</button>
+                <!-- 정보 수정 버튼 추가 -->
+            </td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -81,11 +82,11 @@
     <div class="card-header text-center">
         <strong>포인트</strong>
     </div>
-    </div>
-    <div class="card-body">
-        <span>업데이트 예정</span>
-        <!-- User's content goes here -->
-    </div>
+</div>
+<div class="card-body">
+    <span>업데이트 예정</span>
+    <!-- User's content goes here -->
+</div>
 </div>
 
 
@@ -97,8 +98,6 @@
         <span>업데이트 예정</span>
     </div>
 </div>
-
-
 
 
 <!--수정용으로 바꾸기-->
@@ -119,35 +118,36 @@
     <div class="card-body mt-4">
         <table class="table ml-2 mr-2" style="margin-bottom: 20px;"> <!-- 세로 간격을 조정하기 위해 margin-bottom 추가 -->
             <tbody>
-                <tr>
-                    <th scope="row" style="text-align: center;">이메일</th>
-<!--                    <td th:text="${user.loginEmail}">user@example.com</td>-->
-                    <td>user@example.com</td>
-                </tr>
-                <tr>
-                    <th scope="row" style="text-align: center;">이름</th>
-<!--                    <td th:text="${user.name}">홍길동</td>-->
-                    <td>홍길동</td>
-                </tr>
-                <tr>
-                    <th scope="row" style="text-align: center;">닉네임</th>
-<!--                    <td th:text="${user.nickname}">gildong</td>-->
-                    <td>gildong</td>
-                </tr>
-                <!-- 비밀번호는 직접 보여주지 않습니다. 대신 변경할 수 있는 링크나 버튼을 제공할 수 있습니다. -->
-                <tr>
-                    <th scope="row" style="text-align: center;">비밀번호</th>
-                    <td>************</td>
-                </tr>
-                <tr>
-                    <th scope="row" style="text-align: center;">가입일</th>
-<!--                    <td th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}">2024-01-01</td>-->
-                    <td>2024-01-01</td>
-                </tr>
-                   <td colspan="2" class="text-center"> <!-- 새로운 행 추가 -->
-                        <button class="btn btn-outline-secondary mt-3" onclick="editProfile()">정보 수정</button> <!-- 정보 수정 버튼 추가 -->
-                    </td>
-                </tr>
+            <tr>
+                <th scope="row" style="text-align: center;">이메일</th>
+                <!--                    <td th:text="${user.loginEmail}">user@example.com</td>-->
+                <td>user@example.com</td>
+            </tr>
+            <tr>
+                <th scope="row" style="text-align: center;">이름</th>
+                <!--                    <td th:text="${user.name}">홍길동</td>-->
+                <td>홍길동</td>
+            </tr>
+            <tr>
+                <th scope="row" style="text-align: center;">닉네임</th>
+                <!--                    <td th:text="${user.nickname}">gildong</td>-->
+                <td>gildong</td>
+            </tr>
+            <!-- 비밀번호는 직접 보여주지 않습니다. 대신 변경할 수 있는 링크나 버튼을 제공할 수 있습니다. -->
+            <tr>
+                <th scope="row" style="text-align: center;">비밀번호</th>
+                <td>************</td>
+            </tr>
+            <tr>
+                <th scope="row" style="text-align: center;">가입일</th>
+                <!--                    <td th:text="${#dates.format(user.regDate, 'yyyy-MM-dd')}">2024-01-01</td>-->
+                <td>2024-01-01</td>
+            </tr>
+            <td colspan="2" class="text-center"> <!-- 새로운 행 추가 -->
+                <button class="btn btn-outline-secondary mt-3" onclick="editProfile()">정보 수정</button>
+                <!-- 정보 수정 버튼 추가 -->
+            </td>
+            </tr>
             </tbody>
         </table>
     </div>

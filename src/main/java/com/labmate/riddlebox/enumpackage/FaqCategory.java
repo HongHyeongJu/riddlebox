@@ -18,4 +18,27 @@ public enum FaqCategory {
     public String getDescription() {
         return description;
     }
+
+
+    public static FaqCategory fromKeyword(String keyword) {
+        switch (keyword.toLowerCase()) {
+            case "homepage":
+                return HOMEPAGE;
+            case "account":
+                return USAGE_ACCOUNT;
+            case "tutorial":
+                return TUTORIAL;
+            case "content":
+                return CONTENT_SUGGESTION;
+            case "issue":
+                return TECHNICAL_ISSUE;
+            case "update":
+                return GAME_UPDATE;
+            case "event":
+                return EVENT_PROMOTION;
+            default:
+                return null;
+        }
+    }
+
 }

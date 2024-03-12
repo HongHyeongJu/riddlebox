@@ -1,17 +1,33 @@
 package com.labmate.riddlebox.controller;
 
+import com.labmate.riddlebox.dto.FaqViewDto;
+import com.labmate.riddlebox.dto.NoticeListDto;
+import com.labmate.riddlebox.dto.NoticeViewDto;
+import com.labmate.riddlebox.entity.Faq;
+import com.labmate.riddlebox.service.SuppotService;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/supports")
+@RequiredArgsConstructor
 public class SupportController {
 
+
+    private final SuppotService suppotService;
 
     /* 공지, 이벤트, FAQ, 1:1 모아둔 페이지 */
     @GetMapping("")
     public String supportHome(Model model) {
+        List<NoticeListDto> noticeListDtoList = suppotService.getNoticeList(1,5);
+        model.addAttribute("noticeListDtoList",noticeListDtoList);
         model.addAttribute("pageType","supportHome");
         model.addAttribute("title","Support Home");
 
@@ -39,8 +55,9 @@ public class SupportController {
     @GetMapping("/notice/detail/{noticeId}")
     public String showNoticeDetail(@PathVariable("noticeId") Long noticeId,
                                    Model model) {
-        //noticeId로 글 찾아오기
-        //NoticeDetailDto dto = ...
+        if(noticeId==null){noticeId=1L;}
+        NoticeViewDto noticeViewDto = suppotService.findNoticeViewDtoById(noticeId);
+        model.addAttribute("noticeViewDto",noticeViewDto);
 
         model.addAttribute("pageType","noticeDetail");
         model.addAttribute("title","Notice");
@@ -62,12 +79,14 @@ public class SupportController {
 
 
     /* FAQ List */
-    @GetMapping("/faq")
-    public String showFAQList(Model model) {
-        model.addAttribute("pageType","faqList");
-        model.addAttribute("title","FAQ List");
+    @GetMapping("/faq/{faqkeyword}")
+    public String showFAQList(@PathVariable("faqkeyword") String faqKeyword, Model model) {
+        model.addAttribute("pageType", "faqList");
+        model.addAttribute("title", "FAQ List");
 
-        //List<CommonListDto> commonListDto
+        List<FaqViewDto> faqList = suppotService.getFaqList(faqKeyword);
+        model.addAttribute("faqList", faqList);
+        model.addAttribute("faqKeyword", faqKeyword);
 
         return "layout/layout_base";
     }

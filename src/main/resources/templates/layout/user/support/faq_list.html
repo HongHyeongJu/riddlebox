@@ -8,62 +8,30 @@
 
         <!-- 버튼 그룹 -->
         <div class="d-flex justify-content-center flex-wrap mb-3">
-            <a href="#" class="btn btn-light m-2" role="button">홈페이지</a>
-            <a href="#" class="btn btn-light m-2" role="button">이용/계정</a>
-            <a href="#" class="btn btn-light m-2" role="button">튜토리얼</a>
-            <a href="#" class="btn btn-light m-2" role="button">컨텐츠제안</a>
-            <a href="#" class="btn btn-light m-2" role="button">기술문제/버그</a>
-            <a href="#" class="btn btn-light m-2" role="button">게임업데이트</a>
-            <a href="#" class="btn btn-light m-2" role="button">이벤트/프로모션</a>
-
+            <a th:href="@{/supports/faq/homepage}" class="btn btn-light m-2"  th:classappend="${faqKeyword} == 'homepage' ? 'disabled' : ''"
+               role="button">홈페이지</a>
+            <a th:href="@{/supports/faq/account}" class="btn btn-light m-2"  th:classappend="${faqKeyword} == 'account' ? 'disabled' : ''"
+               role="button">이용/계정</a>
+            <a th:href="@{/supports/faq/tutorial}" class="btn btn-light m-2"  th:classappend="${faqKeyword} == 'tutorial' ? 'disabled' : ''"
+               role="button">튜토리얼</a>
+            <a th:href="@{/supports/faq/content}" class="btn btn-light m-2"  th:classappend="${faqKeyword} == 'content' ? 'disabled' : ''"
+               role="button">컨텐츠제안</a>
+            <a th:href="@{/supports/faq/issue}" class="btn btn-light m-2"  th:classappend="${faqKeyword} == 'issue' ? 'disabled' : ''"
+               role="button">기술문제/버그</a>
+            <a th:href="@{/supports/faq/update}" class="btn btn-light m-2"  th:classappend="${faqKeyword} == 'update' ? 'disabled' : ''"
+               role="button">게임업데이트</a>
+            <a th:href="@{/supports/faq/event}" class="btn btn-light m-2"  th:classappend="${faqKeyword} == 'event' ? 'disabled' : ''"
+               role="button">이벤트/프로모션</a>
             <!-- 추가 버튼 -->
         </div>
         <!-- FAQ 항목 -->
-        <div>
-            <!-- 각 질문-답변 세트 -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">FAQ 질문 1</h5>
-                </div>
-                <div class="card-body">
-                    여기에 FAQ 답변 1의 내용이 들어갑니다...
-                </div>
-            </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">FAQ 질문 2</h5>
-                </div>
-                <div class="card-body">
-                    여기에 FAQ 답변 2의 내용이 들어갑니다...
-                </div>
+        <div th:each="faq : ${faqList}" class="card my-3">
+            <div class="card-header">
+                <h5 class="mb-0" th:text="${faq.question}">FAQ 질문</h5>
             </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">FAQ 질문 3</h5>
-                </div>
-                <div class="card-body">
-                    여기에 FAQ 답변 3의 내용이 들어갑니다...
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">FAQ 질문 4</h5>
-                </div>
-                <div class="card-body">
-                    여기에 FAQ 답변 4의 내용이 들어갑니다...
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">FAQ 질문 5</h5>
-                </div>
-                <div class="card-body">
-                    여기에 FAQ 답변 5의 내용이 들어갑니다...
-                </div>
+            <div class="card-body" th:text="${faq.answer}">
+                여기에 FAQ 답변의 내용이 들어갑니다...
             </div>
         </div>
 
