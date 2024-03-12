@@ -19,7 +19,7 @@ public class SignupRequestDto {
     private String email;
 
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(min = 2, max = 20)
     private String username;
 
     @NotBlank

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <meta charset="UTF-8">
 
 <head>
@@ -85,11 +85,6 @@
     <div th:case="'myPageHome'">
         <!-- 마이페이지 -->
         <p th:replace="~{layout/user/mypage/mypage_home :: myPageHome}">myPageHome</p>
-    </div>
-
-    <div th:case="'myPageDetail'">
-        <!-- 마이페이지 -->
-        <p th:replace="~{layout/user/mypage/mypage_detail :: myPageDetail}">myPageDetail</p>
     </div>
 
     <div th:case="'supportHome'">

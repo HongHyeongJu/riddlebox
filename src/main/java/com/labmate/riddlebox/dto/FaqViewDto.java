@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 public class FaqViewDto {
 
-    private Long faqId;  //문의자 PK
+    private Long faqId;  // Faq PK
     private String question;
     private String answer;
     private FaqCategory faqCategory;

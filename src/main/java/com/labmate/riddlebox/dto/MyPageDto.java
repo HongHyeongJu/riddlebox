@@ -7,14 +7,20 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserAnswerDto {
-    private Long gameContentId;
-    private String userAnswer;
+public class MyPageDto {
+    private Long userId;
+    private String nickname;
+    private int point=0;
+    private String currentRecord;
+    private String profileImg;
 
-    public UserAnswerDto(Long gameContentId, String userAnswer) {
-        this.gameContentId = gameContentId;
-        this.userAnswer = userAnswer;
+
+    public MyPageDto(Long userId, String nickname, int point, String currentRecord, String profileImg) {
+        this.userId = userId;
+        this.nickname = nickname;
+        this.point = point;
+        this.currentRecord = currentRecord;
+        this.profileImg = profileImg;
     }
-
 
 }

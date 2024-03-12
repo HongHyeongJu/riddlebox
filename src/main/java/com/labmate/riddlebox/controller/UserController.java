@@ -33,12 +33,22 @@ public class UserController {
 
 
     /* 로그인 */
+//    @PostMapping("/login")
+//    public String loginBasic(Model model) {
+//        model.addAttribute("pageType", "login");
+//        model.addAttribute("title","RiddleBox login");
+//        return "layout/layout_base";
+//    }
+
+
+    /* 로그인 */
     @GetMapping("/login")
     public String showLoginPage(Model model) {
         model.addAttribute("pageType", "login");
         model.addAttribute("title","RiddleBox login");
         return "layout/layout_base";
     }
+
 
 
     /* 계정 찾기 */

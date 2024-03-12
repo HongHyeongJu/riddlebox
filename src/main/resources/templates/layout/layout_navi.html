@@ -1,4 +1,4 @@
-<div th:fragment="layoutNavi" class="container">
+<div th:fragment="layoutNavi" class="container" xmlns:sec="http://www.w3.org/1999/xhtml">
 
     <a class="navbar-brand d-flex align-items-center" href="/" style="margin-right: 50px;">
         <img src="/img/RiddleBox.png" width="30" height="30" style="margin-right: 10px;">
@@ -39,18 +39,19 @@
             </li>
 
             <li class="nav-item" id="loginButton" style="display: none;">
-                <button type="button" class="btn btn-primary" onclick="location.href='/login'">
+                <button type="button" sec:authorize="isAnonymous()" class="btn btn-primary" onclick="location.href='/login'">
                     Login
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="location.href='/signup'">
+                <button type="button" sec:authorize="isAnonymous()" class="btn btn-secondary" onclick="location.href='/signup'">
                     Signup
                 </button>
             </li>
-            <li class="nav-item" id="logoutButton" style="display: none;">
-                <button type="button" class="btn btn-secondary" onclick="location.href='/logout'">
+            <li class="nav-item" id="logoutButton">
+                <button type="button" sec:authorize="isAuthenticated()" class="btn btn-secondary" onclick="location.href='/logout'">
                     Logout
                 </button>
             </li>
+
 
         </ul>
         <!--            <button th:if="${session.loginId == null}" type="button" class="btn btn-primary login-btn" th:onclick="'location.href=\'' + @{/login} + '\''">Login</button>-->

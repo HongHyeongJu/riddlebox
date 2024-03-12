@@ -13,15 +13,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -40,33 +45,13 @@ public class HomeController {
     private String JWT_KEY;
 
 
+
+
     @GetMapping("/")
     public String home(Model model) {
 
-        System.out.println("===============(home)인증 객체 생성 및 SecurityContextHolder에 저장============= ");
-
-
-            // 콘솔에 인증된 사용자 정보 출력
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null && auth.isAuthenticated()) {
-                // 사용자 이름 출력
-                String username = auth.getName(); // 또는 principalDetails.getUsername() 사용
-                System.out.println("인증된 사용자 이름: " + username);
-
-                // 권한(역할) 목록 출력
-                Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
-                System.out.println("권한 목록:");
-                for (GrantedAuthority authority : authorities) {
-                    System.out.println(" - " + authority.getAuthority());
-                }
-            } else {
-                System.out.println("인증된 사용자가 없습니다.");
-            }
-
-
         return "redirect:/index";
     }
-
 
 
     @GetMapping("/index") //로그인 안한 모든 사용자를 위한 index페이지
@@ -74,7 +59,6 @@ public class HomeController {
 
         //추천게임 목록 받기
         List<GameListDto> gameListDtos = gameService.fetchRecommendedGamesForHomepage();
-
         System.out.println("===============(index)인증 객체 생성 및 SecurityContextHolder에 저장============= ");
 
 

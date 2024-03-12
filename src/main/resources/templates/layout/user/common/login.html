@@ -2,57 +2,64 @@
 
     <div class="login-container">
         <h2 class="login-title">RIDDLE BOX</h2>
-        <form action="/perform_login" method="POST">
+        <form action="/login" method="POST">
+            <div th:if="${param.error}">
+                <div class="alert alert-danger">
+                    사용자ID 또는 비밀번호를 확인해 주세요.
+                </div>
+            </div>
             <div class="form-group mb-3 mt-5">
-                <input type="text" name="username" class="form-control" placeholder="ID" required>
+                <input type="text" name="username" id="username" class="form-control" placeholder="ID" required>
             </div>
+
             <div class="form-group mb-5">
-                <input type="password" name="password" class="form-control" placeholder="PW" required>
+                <input type="password" name="password" id="password" class="form-control" placeholder="PW" required>
             </div>
+
             <div class="row justify-content-center">
                 <button type="submit" class="btn btn-primary btn-block login-button">로그인</button>
-
             </div>
-            <div class="row justify-content-center">
-                <a class="btn btn-outline-secondary btn-block login-button"
-                   th:href="@{/oauth2/google}">
-                    Google 로그인
-                </a>
-            </div>
-            <div class="row justify-content-center">
-                <a class="btn btn-outline-warning btn-block login-button"
-                   th:href="@{/oauth2/kakao}">
-                    Kakao 로그인
-                </a>
-            </div>
-            <div class="row justify-content-center">
-                <a class="btn btn-outline-success btn-block login-button"
-                   th:href="@{/oauth2/naver}">
-                    Naver 로그인
-                </a>
-            </div>
-<!--            <div class="row justify-content-center">-->
-<!--                <a class="btn btn-outline-success btn-block login-button" href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=k7hePiTdyGxxcl1ZoNb5&redirect_uri=http://localhost:8080/login/oauth2/code/naver&state=임의의상태값">Naver 로그인</a>-->
-<!--           </div>-->
-<!--               th:href="@{/oauth2/authorization/google}">Google 로그인</a>-->
-
-            <!--               th:href="@{/oauth2/authorization/kakao}">Kakao 로그인</a>-->
-
-            <!--               th:href="@{/oauth2/authorization/naver}">Naver 로그인</a>-->
-            <!--                <div class="col-6">-->
-            <!--                    <a href="/login-kakao" class="btn btn-warning btn-block login-button">카카오 로그인</a>-->
-            <!--                </div>-->
-            <div class="row justify-content-center mt-4">
-                <div class="col-auto">
-                    <a href="/signup" class="btn btn-link login-button" style="text-decoration: none;">회원가입</a>
-                </div>
-                <div class="col-auto">
-                    <a href="/account/recovery" class="btn btn-link login-button" style="text-decoration: none;">계정
-                        찾기</a>
-                </div>
-            </div>
-
         </form>
+        <div class="row justify-content-center">
+            <a class="btn btn-outline-secondary btn-block login-button"
+               th:href="@{/oauth2/google}">
+                Google 로그인
+            </a>
+        </div>
+        <div class="row justify-content-center">
+            <a class="btn btn-outline-warning btn-block login-button"
+               th:href="@{/oauth2/kakao}">
+                Kakao 로그인
+            </a>
+        </div>
+        <div class="row justify-content-center">
+            <a class="btn btn-outline-success btn-block login-button"
+               th:href="@{/oauth2/naver}">
+                Naver 로그인
+            </a>
+        </div>
+        <!--            <div class="row justify-content-center">-->
+        <!--                <a class="btn btn-outline-success btn-block login-button" href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=k7hePiTdyGxxcl1ZoNb5&redirect_uri=http://localhost:8080/login/oauth2/code/naver&state=임의의상태값">Naver 로그인</a>-->
+        <!--           </div>-->
+        <!--               th:href="@{/oauth2/authorization/google}">Google 로그인</a>-->
+
+        <!--               th:href="@{/oauth2/authorization/kakao}">Kakao 로그인</a>-->
+
+        <!--               th:href="@{/oauth2/authorization/naver}">Naver 로그인</a>-->
+        <!--                <div class="col-6">-->
+        <!--                    <a href="/login-kakao" class="btn btn-warning btn-block login-button">카카오 로그인</a>-->
+        <!--                </div>-->
+        <div class="row justify-content-center mt-4">
+            <div class="col-auto">
+                <a href="/signup" class="btn btn-link login-button" style="text-decoration: none;">회원가입</a>
+            </div>
+            <div class="col-auto">
+                <a href="/account/recovery" class="btn btn-link login-button" style="text-decoration: none;">계정
+                    찾기</a>
+            </div>
+        </div>
+
+
     </div>
 
 </div>

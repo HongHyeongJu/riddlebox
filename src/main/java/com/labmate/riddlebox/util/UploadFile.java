@@ -1,4 +1,4 @@
-package com.labmate.riddlebox.file;
+package com.labmate.riddlebox.util;
 
 import lombok.Data;
 
