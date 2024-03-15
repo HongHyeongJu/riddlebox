@@ -14,7 +14,8 @@ import java.util.UUID;
 public class FileStore {
 
     //dir: E:/riddleboxfile/
-    @Value("${file.dir}")
+    //dir: resources/static/img/
+    @Value("${file.s3.directory}")
     private String fileDir;
 
     // 웹 접근을 위한 기본 URL

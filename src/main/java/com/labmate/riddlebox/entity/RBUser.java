@@ -1,15 +1,12 @@
 package com.labmate.riddlebox.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.benmanes.caffeine.cache.Expiry;
 import com.labmate.riddlebox.enumpackage.UserStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
