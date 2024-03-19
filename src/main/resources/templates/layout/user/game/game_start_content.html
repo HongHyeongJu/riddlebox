@@ -1,5 +1,5 @@
-<!-- game_story_content.html -->
-<div th:fragment="gameStoryContent">
+<!-- game_start_content.html -->
+<div th:fragment="gameSnapshotContent">
     <div class="container mt-3">
 
 
@@ -8,7 +8,7 @@
             <div class="row align-items-center">
                 <div class="col-md-12 col-lg-3 text-center text-light fw-bolder d-flex align-items-center"
                      id="gameTitleDiv">
-                    <p class="m-1 fs-2" th:text="${gameInfo.title}" id="gameTitleText">게임이름</p>
+                    <h3 class="m-1 fs-2" th:text="${gameInfo.title}" id="gameTitleText">게임이름</h3>
                 </div>
                 <div class="col-md-12 col-lg-6">
                     <div id="time-bar-container">
@@ -33,7 +33,7 @@
             <div class="col-12 mb-3 ">
                 <!-- 첫 번째 큰 div -->
                 <div class=" bg-light" style="width: 100%;">
-                    <img src="/img/gameSnapshot.jpg" alt="gameSnapshot" style="width: 100%; height: auto;">
+                    <img src="/img/camping.png" alt="gameSnapshot" style="width: 100%; height: auto;">
                     <!--                    <img th:src="@{'/images/' + ${gameInfo.fileUrl}}" style="width: 100%; height: auto;"  alt="gameSnapshot">-->
 
                 </div>
@@ -55,7 +55,21 @@
 </div>
 
 
+<div th:fragment="gameStoryContent" class="container-fluid">
+ <div class="row" style="height: 500px;">
 
+     <!--일러스트-->
+    <div class="col-illustration pa-5" style="border: solid black 2px;">
+      <img src="your-image-url.jpg" alt="Illustration" style="width: 100%; height: auto; object-fit: contain;">
+    </div>
+
+     <!--소설 텍스트-->
+    <div class="col-text novel-text p-3"  style="border: solid black 2px;">
+      <p th:utext="${@commonUtil.markdownToHtml(gameStoryDto.storyText)}">Here is the text of the novel...</p>
+    </div>
+
+  </div>
+</div>
 
 <!--
 <div th:fragment="fragment_test">

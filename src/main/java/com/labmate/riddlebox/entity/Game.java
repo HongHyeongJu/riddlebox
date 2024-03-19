@@ -46,6 +46,9 @@ public class Game extends BaseEntity {
     private LocalDateTime officialReleaseDate;  //정식 공개일
     private LocalDateTime officialUpdateDate;  //공식 업데이트일
 
+    @OneToOne(mappedBy = "game", fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
+    private GameText gameText;  // This field represents the 1:1 association with GameText
+
     @OneToMany(mappedBy = "game")
     private List<GameRecord> gameRecords = new ArrayList<>();
 
@@ -122,9 +125,6 @@ public class Game extends BaseEntity {
         gameEvent.setGame(null);
     }
 
-
-
-
     public void setGameCategory(GameCategory gameCategory) {
         if (this.gameCategory != null) {
             this.gameCategory.getGames().remove(this);
@@ -132,6 +132,17 @@ public class Game extends BaseEntity {
         this.gameCategory = gameCategory;
     }
 
+    public void setGameText(GameText gameText) {
+        if (gameText == null) {
+            if (this.gameText != null) {
+                this.gameText.setGame(null);
+            }
+            this.gameText = null;
+        } else {
+            gameText.setGame(this);
+            this.gameText = gameText;
+        }
+    }
 
 
     /*    변경 메서드    */

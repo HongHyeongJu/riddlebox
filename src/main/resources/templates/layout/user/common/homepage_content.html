@@ -1,7 +1,7 @@
 <!-- homepage_content.html -->
 <div th:fragment="top_content" class=" custom-width">
-        <img src="img/indexTop.png" alt="Description"
-             style="width: 100%; height: auto; object-fit: cover;">
+    <img src="img/indexTop.png" alt="Description"
+         style="width: 100%; height: auto; object-fit: cover;">
 
 </div>
 
@@ -14,7 +14,8 @@
 
             <!-- th:each를 사용하여 반복 -->
             <div th:each="gameDto : ${gameListDtos}">
-                <a href="/game/1/story" class="text-decoration-none">
+                <a th:href="@{|/game/${gameDto.id}/${gameDto.gameCategory.subject.name() == 'SNAPSHOT_DEDUCTION' ? 'snapshot' : (gameDto.gameCategory.subject == 'SHORT_STORY' ? 'story' : '')}|}"
+                   class="text-decoration-none">
                     <!--                <a th:href="@{/game/{gameId}/story(gameId=${gameDto.id})}" class="text-decoration-none">-->
                     <div class="gameCard-card card position-relative">  <!--게임 ID ${gameDto.id}-->
                         <span class="position-absolute top-0 end-0 gameCard-badge badge rounded-pill bg-danger">NEW</span>
@@ -28,6 +29,7 @@
                         <div class="gameCard-card-body mx-auto p-0 d-flex align-items-center">
                             <h3 th:text="${gameDto.title}" class="gameCard-card-title mx-auto p-0 m-0 px-2">Mystery
                                 Quest</h3>
+
                         </div>
                     </div>
                 </a>

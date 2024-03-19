@@ -8,6 +8,7 @@ import com.labmate.riddlebox.entity.*;
 import com.labmate.riddlebox.enumpackage.GameLevel;
 import com.labmate.riddlebox.enumpackage.GameResultType;
 import com.labmate.riddlebox.enumpackage.GameStatus;
+import com.labmate.riddlebox.enumpackage.GameSubject;
 import com.labmate.riddlebox.repository.GameRecordRepository;
 import com.labmate.riddlebox.repository.GameRepository;
 import com.labmate.riddlebox.repository.UserRepository;
@@ -132,6 +133,7 @@ public class GameServiceImpl implements GameService {
 
         return gameplayInfoDto;
     }
+
 
 
     /*각 게임의 질문리스트 반환하는 메서드

@@ -20,7 +20,7 @@
 
                 <!-- th:each를 사용하여 반복 -->
                 <div th:each="gameDto : ${gameListDtos}">
-                    <a th:href="@{/game/{gameId}/story(gameId=${gameDto.id})}" class="text-decoration-none">
+                    <a th:href="@{/game/{gameId}/(gameId=${gameDto.id}, type=${gameType})}" class="text-decoration-none">
                         <div class="gameCard-card card position-relative">  <!--게임 ID ${gameDto.id}-->
                             <span class="position-absolute top-0 end-0 gameCard-badge badge rounded-pill bg-danger">99+</span>
                             <!--게임난이도 ${gameDto.gameLevel}-->
@@ -35,6 +35,7 @@
                                     Quest</h3>
                             </div>
                         </div>
+
                     </a>
                 </div>
                 <!-- ... -->

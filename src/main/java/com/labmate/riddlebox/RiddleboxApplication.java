@@ -8,7 +8,7 @@ public class RiddleboxApplication {
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(RiddleboxApplication.class);
-        app.setAdditionalProfiles("oauth");
+        app.setAdditionalProfiles("dev");
         app.run(args);
     }
 
