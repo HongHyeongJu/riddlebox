@@ -11,7 +11,7 @@ public class TestController {
     @Autowired
     GameService gameService;
 
-    @GetMapping("/hello")
+    @GetMapping("/test/hello")
     public String hello() {
         return "hello";
     }

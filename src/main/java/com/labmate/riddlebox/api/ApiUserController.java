@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 @RestController
-@RequestMapping
+@RequestMapping("/signup")
 public class ApiUserController {
 
     @Autowired
@@ -51,7 +51,7 @@ public class ApiUserController {
 
 
     /* 인증 메일 전송 */
-    @PostMapping("/signup/send-email")
+    @PostMapping("/send-email")
     public ResponseEntity<String> sendEmail(@RequestBody EmailRequestDto request) {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(host);
@@ -92,13 +92,13 @@ public class ApiUserController {
 
 
     /* 메일 인증번호 검증 */
-    @PostMapping("/signup/validate-code")
+    @PostMapping("/validate-code")
     public boolean validateCode(@RequestBody EmailRequestDto request) {
         return redisService.validateCode(AUTH_CODE_PREFIX + request.getToEmail(), request.getCode());
     }
 
 
-    @PostMapping("/signup/validate-nickname")
+    @PostMapping("/validate-nickname")
     public ResponseEntity<Boolean> validateNickname(@RequestParam("nickname") String nickname) {
         boolean isValid = userService.isValidNickname(nickname);
         return ResponseEntity.ok(isValid);
