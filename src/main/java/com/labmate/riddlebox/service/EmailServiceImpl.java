@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -42,21 +44,23 @@ public class EmailServiceImpl implements EmailService {
     private RedisService redisService;
 
 
-    @Override
     //사용자 이메일로 코드 전송
-    public Map<String, String> makeMailContentAndSaveCodeToRedis(String toEmail) {
+    @Override
+    @Async  // 이 메서드를 비동기적으로 실행하기 위해 @Async 애너테이션 추가하기
+    public CompletableFuture<Map<String, String>> makeMailContentAndSaveCodeToRedis(String toEmail) {
+        Map<String, String> map = new ConcurrentHashMap<>();
+
         if (!userService.checkDuplicateEmail(toEmail)) {
-            return new ConcurrentHashMap<>();
+            return CompletableFuture.completedFuture(map);
         }
 
-        Map map = new ConcurrentHashMap<>();
 
         String title = "RiddleBox 회원가입 이메일 인증번호";
         String authCode = createCode();
         String sendText = "<h2>RiddleBox 회원가입 이메일 인증번호</h2>" +
                 "<p>귀하의 회원가입 이메일 인증번호는 <h3>" + authCode + "</h3> 입니다. " +
                 "인증번호는 30분 이후 만료됩니다.</p>" +
-                "<p>사이트 방문하기: <a href='http://RiddleBox.com'>RiddleBox.com</a></p>" +
+                "<p>사이트 방문하기 : <a href='https://riddle-box.com'> riddle-box.com </a></p>" +
                 "<p>문의사항이 있으시면, <a href='mailto:riddlebox2024@gmail.com'>riddlebox2024@gmail.com</a>로 연락주세요.</p>";
         String sendTextTest = "RiddleBox 회원가입 인증번호 ["+authCode+"] (30분 뒤 만료)";
 
@@ -69,7 +73,10 @@ public class EmailServiceImpl implements EmailService {
         // 이메일 인증 요청 시 인증 번호 Redis에 저장 ( key = "AuthCode " + Email / value = AuthCode )
         redisService.setValues(AUTH_CODE_PREFIX + toEmail , authCode, Duration.ofMinutes(30)); //만료시간 30분!
 
-        return map;
+        // CompletableFuture를 사용해서 비동기적으로 결과 반환하기!
+        return CompletableFuture.completedFuture(map);
+                                //completedFuture 메서드는
+                                // 인자로 주어진 값을 가지고 즉시 완료 상태인 CompletableFuture 객체를 생성함
     }
 
 
@@ -116,41 +123,6 @@ public class EmailServiceImpl implements EmailService {
         }
 
     }
-
-
-    //코드 인증하기
-    //redisService.validateCode(AUTH_CODE_PREFIX + email, authCode)
-
-//    @Override
-//    public void sendEmail(String toEmail,
-//                          String title,
-//                          String text) {
-//
-//        SimpleMailMessage emailForm = createEmailForm(toEmail, title, text);
-//
-//        try {
-//            javaMailSender.send(emailForm);
-//        } catch (RuntimeException e) {
-////            log.debug("MailService.sendEmail exception occur toEmail: {}, " +
-////                    "title: {}, text: {}", toEmail, title, text);
-////            throw new BusinessLogicException(ExceptionCode.UNABLE_TO_SEND_EMAIL);
-//        }
-//    }
-//
-//    @Override
-//    // 발신할 이메일 데이터 세팅
-//    public SimpleMailMessage createEmailForm(String toEmail,
-//                                             String title,
-//                                             String text) {
-//
-//        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-//
-//        simpleMailMessage.setTo(toEmail);
-//        simpleMailMessage.setSubject(title);
-//        simpleMailMessage.setText(text);
-//
-//        return simpleMailMessage;
-//    }
 
 
 }
