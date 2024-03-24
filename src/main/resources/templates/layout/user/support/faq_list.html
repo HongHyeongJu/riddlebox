@@ -26,11 +26,11 @@
         </div>
         <!-- FAQ 항목 -->
 
-        <div th:each="faq : ${faqList}" class="card my-3">
-            <div class="card-header">
+        <div th:each="faq : ${faqList}" class="card my-3 faq-item">
+            <div class="card-header  faq-question">
                 <h5 class="mb-0" th:text="${faq.question}">FAQ 질문</h5>
             </div>
-            <div class="card-body" th:text="${faq.answer}">
+            <div class="card-body faq-answer"  th:text="${faq.answer}" style="display: none;" >
                 여기에 FAQ 답변의 내용이 들어갑니다...
             </div>
         </div>

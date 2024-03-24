@@ -22,7 +22,8 @@ public class GameText extends BaseEntity {
     // Game과 1:1 관계 설정, unique = true로 설정하여 Game과 GameText 간에 1:1 관계가 유일함을 보장
     private Game game;  //게임 번호
 
-    @Lob  // 큰 텍스트 데이터
+    @Lob  // 긴 텍스트를 위한 애너테이션
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String text;  //내용
 
     @Enumerated(EnumType.STRING)

@@ -135,7 +135,6 @@ public class GameServiceImpl implements GameService {
     }
 
 
-
     /*각 게임의 질문리스트 반환하는 메서드
      * @param gameId
      * @return List<Question>  : Question(gameContentId, question, ordering)
@@ -270,8 +269,9 @@ public class GameServiceImpl implements GameService {
                         gameImage.fileUrl
                 ))
                 .from(recommendGame)
-                .innerJoin(recommendGame.game, game) // recommendGame과 game을 조인합니다.
-                .leftJoin(game.gameImages, gameImage) // game과 gameImage를 조인합니다. 여러 이미지가 있는 경우 추가 처리가 필요할 수 있습니다.
+                .innerJoin(recommendGame.game, game) // recommendGame과 game을 조인
+                .leftJoin(game.gameImages, gameImage) // game과 gameImage를 조인
+                .where(recommendGame.game.status.eq(GameStatus.ACTIVE))
                 .fetch();
 
         return results;
@@ -287,7 +287,7 @@ public class GameServiceImpl implements GameService {
     @Override
     // 게임 결과 기록 메서드
     @Transactional
-    public void recordGameResult(Long gameId, Long userId, int totalQuestions, int correctAnswersCount, boolean isFail) {
+    public void recordGameResult( Long userId, Long gameId, int playTime, int totalQuestions, int correctAnswersCount, boolean isFail) {
 
         // 사용자와 게임 엔티티 조회
         RBUser user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -295,12 +295,39 @@ public class GameServiceImpl implements GameService {
 
         // 게임 기록 생성
         float successRate = ((float) correctAnswersCount / totalQuestions) * 100;
-        GameResultType resultType = isFail ? GameResultType.UNSOLVED : GameResultType.SOLVED;
-        GameRecord gameRecord = new GameRecord(user, game, correctAnswersCount, 0 , successRate, resultType);
+        GameResultType resultType = isFail==false ? GameResultType.UNSOLVED : GameResultType.SOLVED;
+
+        GameRecord gameRecord = new GameRecord(user, game, playTime, correctAnswersCount,  successRate, resultType);
 
         // 게임 기록 저장
         gameRecordRepository.save(gameRecord);
     }
+
+
+    /*도중포기*/
+    @Override
+    @Transactional
+    public void exitGameRecoding(Long userId, Long gamePK, int playTime, String gameResult) {
+
+        // 사용자와 게임 엔티티 조회
+        RBUser user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        Game game = gameRepository.findById(gamePK).orElseThrow(() -> new EntityNotFoundException("Game not found"));
+
+        // 게임 결과를 GameResultType 열거형으로 변환
+        GameResultType resultType = GameResultType.valueOf(gameResult.toUpperCase());
+
+        int score = 0; // 예시 값
+        float successRate = 0.0f; // 예시 값
+
+        // GameRecord 엔티티 생성
+        GameRecord gameRecord = new GameRecord(user, game,  playTime, score, successRate, resultType);
+
+        // GameRecord 저장
+        gameRecordRepository.save(gameRecord);
+
+    }
+
+
 
 }
 

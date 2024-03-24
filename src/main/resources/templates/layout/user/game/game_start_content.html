@@ -33,16 +33,18 @@
             <div class="col-12 mb-3 ">
                 <!-- 첫 번째 큰 div -->
                 <div class=" bg-light" style="width: 100%;">
-                    <img src="/img/camping.png" alt="gameSnapshot" style="width: 100%; height: auto;">
+                    <img th:src="@{${staticUrl} + 'img/camping.png'}" alt="gameSnapshot" style="width: 100%; height: auto;">
                     <!--                    <img th:src="@{'/images/' + ${gameInfo.fileUrl}}" style="width: 100%; height: auto;"  alt="gameSnapshot">-->
 
                 </div>
             </div>
+            <span th:text="${gameInfo.id}" id="gameId" hidden="hidden"></span>
 
             <div class="col-12 position-relative" style="width: 100%; height: 50px;">
                 <!-- 두 번째 큰 div -->
                 <button type="button"
-                        class="btn btn-dark position-absolute top-50 end-0 translate-middle-y btnRightMargin">
+                        class="btn btn-dark position-absolute top-50 end-0 translate-middle-y btnRightMargin"
+                        id="exitGame">
                     나가기
                 </button>
 
@@ -60,7 +62,7 @@
 
      <!--일러스트-->
     <div class="col-illustration pa-5" style="border: solid black 2px;">
-      <img src="your-image-url.jpg" alt="Illustration" style="width: 100%; height: auto; object-fit: contain;">
+      <img th:src="@{${staticUrl} + 'img/111.jpg'}" alt="Illustration" style="width: 100%; height: auto; object-fit: contain;">
     </div>
 
      <!--소설 텍스트-->

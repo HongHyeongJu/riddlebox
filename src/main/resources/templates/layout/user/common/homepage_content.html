@@ -1,6 +1,6 @@
 <!-- homepage_content.html -->
 <div th:fragment="top_content" class=" custom-width">
-    <img src="img/indexTop.png" alt="Description"
+    <img th:src="@{${staticUrl} + 'img/indexTop.png'}" alt="Description"
          style="width: 100%; height: auto; object-fit: cover;">
 
 </div>
@@ -23,7 +23,7 @@
                         <!--게임카테고리 ${gameDto.gameCategory}-->
                         <!--<span th:text="${gameDto.gameLevel}" class="position-absolute top-0 end-0 gameCard-badge badge rounded-pill bg-danger">99+</span>-->
 
-                        <img src="img/cardImg.png" alt="Game Image">
+                        <img th:src="@{${staticUrl} + 'img/cardImg.png'}" alt="Game Image">
                         <!-- <img th:src="@{${gameDto.thumbnailUrl}}" alt="Game Image">-->
 
                         <div class="gameCard-card-body mx-auto p-0 d-flex align-items-center">

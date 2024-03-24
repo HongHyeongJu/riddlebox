@@ -28,5 +28,8 @@ public interface GameService {
 
     // 게임 결과 기록 메서드
     @Transactional
-    void recordGameResult(Long gameId, Long userId, int totalQuestions, int correctAnswersCount, boolean isFail);
+    void recordGameResult( Long userId, Long gameId, int playTime, int totalQuestions, int correctAnswersCount, boolean isFail);
+
+    @Transactional
+    void exitGameRecoding(Long userId, Long gamePK, int playTime, String gameResult);
 }

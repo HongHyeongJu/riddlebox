@@ -1,11 +1,15 @@
 package com.labmate.riddlebox.controller;
 
+import com.labmate.riddlebox.dto.GameCompletionRequest;
 import com.labmate.riddlebox.dto.GameListDto;
 import com.labmate.riddlebox.dto.GameSearchCondition;
 import com.labmate.riddlebox.dto.GameplayInfoDto;
 import com.labmate.riddlebox.security.PrincipalDetails;
 import com.labmate.riddlebox.service.GameService;
 import com.labmate.riddlebox.util.GameScoreResult;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -95,32 +99,17 @@ public class WebGameController {
     }
 
 
-    /* [4] 게임 결과 페이지 - 성공 or 실패 */
-    @GetMapping("/{gameId}/result")
-    public String gameResult(@PathVariable("gameId") Long gameId,
-                             @RequestParam("totalQuestions") int totalQuestions,
-                             @RequestParam("correctAnswersCount") int correctAnswersCount,
-                             @RequestParam(value = "isFail", defaultValue = "false") boolean isFail,
+
+   /* [4] 게임 결과 페이지 - 성공 or 실패 */
+    @GetMapping("/result")
+    public String gameResult(@ModelAttribute GameCompletionRequest gameCompletionRequest,
                              Model model) {
 
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = 1001L;
-        if (auth != null && auth.getPrincipal() instanceof PrincipalDetails) {
-            PrincipalDetails principalDetails = (PrincipalDetails) auth.getPrincipal();
-            userId = principalDetails.getUserPK();
-        }
-
-        // 게임 결과 기록
-        gameService.recordGameResult(gameId, userId, totalQuestions, correctAnswersCount, isFail);
-
-
         // 파라미터를 모델에 추가
-        model.addAttribute("totalQuestions", totalQuestions);
-        model.addAttribute("correctAnswersCount", correctAnswersCount);
-        model.addAttribute("gameId", gameId);
+        model.addAttribute("totalQuestions", gameCompletionRequest.getTotalQuestions());
+        model.addAttribute("correctAnswersCount", gameCompletionRequest.getCorrectAnswersCount());
         model.addAttribute("pageType", "gameResult");
-        model.addAttribute("gameResult", !isFail ? "success" : "fail");
+        model.addAttribute("gameResult", !gameCompletionRequest.isFail() ? "success" : "fail");
 
         return "layout/layout_base"; // HTML 뷰 이름
     }
@@ -141,10 +130,12 @@ public class WebGameController {
     /* 게임 결과 페이지 => 랜덤게임 */
     @GetMapping("/random")
     public String showRandomGame() {
-        Long randomGameNumber = 10L;
+        Long randomGameNumber = 14L;
 
-        return "redirect:/game/" + randomGameNumber + "/story";
+        return "redirect:/game/" + randomGameNumber + "/snapshot";
     }
+
+
 
 }
 

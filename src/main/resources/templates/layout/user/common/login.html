@@ -68,12 +68,13 @@
 <div th:fragment="signup" class="container">
     <div class="signup-container">
         <h4 class="signup-title">회원가입</h4>
-        <form action="/signup" method="post"> <!--회원가입 전송-->
-
+        <form action="#" th:action="@{/signup}" th:object="${signupRequestDto}" id="signupForm" method="post"> <!--회원가입 전송-->
+            <div th:replace="~{error/form_errors :: formErrorsFragment}"></div>
             <div class="form-group mt-2 mb-2">
-                <label for="emailInput" class="signup-label mb-2">ID(이메일)</label>
+                <label for="emailHead" class="signup-label mb-2">ID(이메일)</label>
                 <div class="input-group mb-2">
-                    <input type="text" class="form-control" id="emailInput" placeholder="이메일" required>
+                    <input type="text" class="form-control" id="emailHead" placeholder="이메일" th:field="*{emailHead}" required>
+                    <input type="hidden" th:field="*{email}" id="hiddenEmailInput" />
                     <div class="input-group-append">
                         <span class="input-group-text">@</span>
                     </div>
@@ -104,8 +105,8 @@
 
 
             <div class="form-group mt-4">
-                <label for="inputPassword1" class="signup-label mb-2">Password</label>
-                <input type="new-password" class="form-control" id="inputPassword1" placeholder="Password" minlength="8"
+                <label for="password1" class="signup-label mb-2">Password</label>
+                <input type="password" class="form-control" th:field="*{password1}" id="password1" placeholder="Password" name="password1" minlength="8"
                        maxlength="12" required>
                 <small id="passwordHelpBlock" class="validation-message mt-2">
                     비밀번호는 영문자와 숫자를 포함한 8~12글자로 제한됩니다.
@@ -113,7 +114,7 @@
             </div>
 
             <div class="form-group mt-2">
-                <input type="new-password" class="form-control" id="inputPassword2" placeholder="Password 확인"
+                <input type="password" class="form-control" th:field="*{password2}" id="password2" placeholder="Password 확인" name="password2"
                        onkeyup="matchPasswords()" required>
                 <small id="confirmHelpBlock" class="validation-message   mt-2">
                     동일한 패스워드를 입력하세요.
@@ -122,9 +123,9 @@
 
 
             <div class="form-group mt-4">
-                <label for="inputNickname" class="signup-label mb-2">닉네임</label>
-                <input type="text" class="form-control" id="inputNickname" placeholder="닉네임" required>
-                <button type="button" class="btn btn-secondary mt-2" disabled id="nicknameBtn">중복 체크</button>
+                <label for="nickname" class="signup-label mb-2">닉네임</label>
+                <input type="text" class="form-control" th:field="*{nickname}"  id="nickname" name="nickname" placeholder="닉네임" required>
+                <button type="button" class="btn btn-secondary mt-2" id="nicknameBtn">중복 체크</button>
             </div>
             <div id="nicknameCheckResult"></div>
 

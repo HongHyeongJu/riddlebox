@@ -1,16 +1,11 @@
-window.onbeforeunload = function () {
-    //사이트에서 나가시겠습니까?
-    //변경사항이 저장되지 않을 수 있습니다.
-    return true;
-    //문제 다 풀면  window.onbeforeunload = null; (페이지 이동 가능 할까말까)
-};
-
-
-
 window.onload = function () {
 
+    // 게임 시작 시간
+    let gameStartTime = new Date();
+
+
     /*게임 난이도에 따라서 초기 목숨 개수 설정*/
-    let gameLevel  = document.getElementById('lifeCount').textContent;
+    let gameLevel = document.getElementById('lifeCount').textContent;
     let lifeCount;
 
     switch (gameLevel) {
@@ -30,6 +25,7 @@ window.onload = function () {
 
     /*틀릴때 마다 life-cube 차감(색깔 변화 + 전부 소진시 현재 정답률 가지고 실패결과 페이지로 redirect)*/
     function onWrongAnswerDeleteOneLife() {
+        lifeCount--;
         if (lifeCount > 0) {
             // 아이콘 상태 업데이트
             let lifeCubeElement = document.getElementById(`lifeCube${lifeCount + 1}`);
@@ -37,21 +33,19 @@ window.onload = function () {
                 lifeCubeElement.classList.remove('life-cube'); // 기존 클래스 제거
                 lifeCubeElement.classList.add('fail-cube');    // 새로운 클래스 추가
             }
-        }
+        } else {
+            let gameEndTime = new Date();
+            // 플레이 타임 계산 (초 단위)
+            let playTime = (gameEndTime - gameStartTime) / 1000;
 
-        if (lifeCount === 0) {
             // 실패 페이지로 이동 todo : 게임 기회 전부 소모시 어떻게 할것인가.. 일단 페이지 이동
-            setTimeout(() => {
-                window.location.href = '/game/' + gameId + '/result?isFail=true&totalQuestions=' + totalQuestions + '&correctAnswersCount=' + currentCorrectAnswers;
-            }, 5000); // 5초 딜레이
+            sendGameResult(gameId, totalQuestions, currentCorrectAnswers, playTime, 'lifeless');
         }
     }
 
 
     /*게임 식별자 얻기*/
     const gameId = document.getElementById('gameId').textContent;
-    console.log('gameId ' + gameId);
-    console.log('gameLevel2 ' + gameLevel2);
 
     /*공통으로 사용하는 변수 선언: 총 문제수, 정답수, 오답수*/
     let totalQuestions;
@@ -79,19 +73,37 @@ window.onload = function () {
                         return; // 입력값이 비어있으면 함수 실행 중단
                     }
                     const answerResponse = await submitUserAnswerEvent(gameContentId, this.value, this);
-                    console.log('isCorrect ' + answerResponse.correct);
+                    // console.log('isCorrect ' + answerResponse.correct);
+
                     if (answerResponse.correct) {
                         currentCorrectAnswers++;
                     } else {
                         currentIncorrectAnswers++;
-                        lifeCount--;
-                        console.log('틀림 '+lifeCount);
+
+                        console.log('틀림 ' + lifeCount);
                         onWrongAnswerDeleteOneLife();
                     }
 
                     const inputElement = document.getElementById('questionInput' + (index + 1));
                     displayResult(answerResponse.correct, inputElement);
                     resolve();
+
+                    let numberOfQuestions = currentCorrectAnswers + currentIncorrectAnswers;
+                    console.log("===currentCorrectAnswers " + currentCorrectAnswers);
+                    console.log("===currentIncorrectAnswers " + currentIncorrectAnswers);
+                    console.log("===numberOfQuestions " + numberOfQuestions);
+                    console.log("===totalQuestions " + totalQuestions);
+
+                    let gameEndTime = new Date();
+
+                    // 플레이 타임 계산 (초 단위)
+                    let playTime = (gameEndTime - gameStartTime) / 1000;
+
+                    //마지막 문제일시 결과페이지로
+                    if (totalQuestions === numberOfQuestions) {
+                        sendGameResult(gameId, totalQuestions, currentCorrectAnswers, playTime, 'completion');
+                    }
+
                 }
             });
         });
@@ -104,7 +116,6 @@ window.onload = function () {
     async function fetchQuestions() {
         //시작버튼은 한 번 누르면 비활성화
         document.getElementById('solveStartBtn').disabled = true;
-
 
         try {
             const response = await fetch('/api/games/' + gameId + '/getQuestions');
@@ -126,16 +137,63 @@ window.onload = function () {
                 await processQuestion(questions[index], index);
             }
 
-            // 마지막 문제 처리 후 결과 페이지로 이동
-            setTimeout(() => {
-                window.location.href = '/game/' + gameId + '/result?totalQuestions=' + totalQuestions + '&correctAnswersCount=' + currentCorrectAnswers;
-            }, 5000); // 5초 딜레이
-
 
         } catch (error) {
             console.error('There has been a problem with your fetch operation:', error);
         }
     }
+
+
+    // 게임 결과를 서버에 전송하는 함수
+    function sendGameResult(gameId, totalQuestions, correctAnswersCount, playTime, sendType) {
+        let isFail = '';
+
+        if (sendType === 'lifeless') {
+            isFail = true
+        } else {
+            isFail = false;
+        }
+
+        fetch('/api/games/' + gameId + '/result', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                gameId: gameId,
+                totalQuestions: totalQuestions,
+                correctAnswersCount: correctAnswersCount,
+                playTime: playTime,
+                isFail: isFail
+            }),
+        })
+            .then(response => {
+                if (response.ok) {
+
+                    setupBeforeUnloadListener(false); // 경고 비활성화
+                    // 성공적으로 전송 후 결과 페이지로 리디렉션
+                    window.location.href = `/game/result?totalQuestions=` + totalQuestions
+                        + '&correctAnswersCount=' + correctAnswersCount + '&isFail=' + isFail;
+                } else {
+                    console.error('Failed to record game result.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function beforeUnloadHandler(event) {
+        event.returnValue = "변경사항이 저장되지 않을 수 있습니다.";
+        return event.returnValue;
+    }
+
+    function setupBeforeUnloadListener(shouldWarn) {
+        window.removeEventListener('beforeunload', beforeUnloadHandler);
+
+        if (shouldWarn) {
+            window.addEventListener('beforeunload', beforeUnloadHandler);
+        }
+    }
+
 
     document.getElementById('solveStartBtn').addEventListener('click', fetchQuestions);
 
@@ -195,7 +253,7 @@ window.onload = function () {
                 , {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({gameContentId: gameContentId, userAnswer: '-'+userAnswer+'-'})
+                    body: JSON.stringify({gameContentId: gameContentId, userAnswer: '-' + userAnswer + '-'})
                 });
 
             if (!response.ok) {
