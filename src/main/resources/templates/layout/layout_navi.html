@@ -1,7 +1,7 @@
 <div th:fragment="layoutNavi" class="container" xmlns:sec="http://www.w3.org/1999/xhtml">
 
     <a class="navbar-brand d-flex align-items-center" href="/" style="margin-right: 50px;">
-        <img src="/img/RiddleBox.png" width="30" height="30" style="margin-right: 10px;">
+        <img th:src="@{${staticUrl} + 'img/RiddleBox.png'}" width="30" height="30" style="margin-right: 10px;">
         <p class="fs-4 m-0 fw-semibold">RIDDLE BOX</p>
     </a>
 

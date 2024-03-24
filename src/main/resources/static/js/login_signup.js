@@ -6,7 +6,7 @@ window.onload = function () {
 
 
     /* 이메일 유효성 검사 */
-    let emailInput = document.getElementById('emailInput');
+    let emailInput = document.getElementById('emailHead');
     let domainSelect = document.getElementById('custom-select');
 
     emailInput.addEventListener("input", validateEmail);
@@ -71,6 +71,7 @@ window.onload = function () {
             if (response.ok) {
                 console.log(result); // 성공 메시지 로깅
                 document.getElementById('verificationSection').classList.remove('hidden'); // 인증번호 입력 섹션 표시
+
             } else {
                 alert("이미 사용중인 이메일 입니다");
             }
@@ -83,9 +84,10 @@ window.onload = function () {
     /* 인증번호 검사 */
     document.getElementById('verifyCodeBtn').addEventListener('click', async function () {
 
-        const fullEmail = emailInput.value + '@' + domainSelect.value; // 이메일 입력 필드의 ID를 'emailInput'이라고 가정합니다.
-        let codeInput = document.getElementById('verificationCode');
+        const fullEmail = emailInput.value + '@' + domainSelect.value;
+        let codeInput = document.getElementById('inputVerificationCode');
         const code = codeInput.value;
+        alert("code " + code);
 
         try {
             const response = await fetch('/signup/validate-code', {
@@ -93,7 +95,7 @@ window.onload = function () {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({email: fullEmail, code: code})
+                body: JSON.stringify({toEmail: fullEmail, code: code})
             });
 
             if (response.ok) {
@@ -115,7 +117,9 @@ window.onload = function () {
 
     /* 닉네임 중복 검사 */
     document.getElementById('nicknameBtn').addEventListener('click', async function checkNickname() {
-        const nickname = document.getElementById('inputNickname').value;
+        const nickname = document.getElementById('nickname').value;
+        let nicknameCheckResult = document.getElementById('nicknameCheckResult');
+
         try {
             const response = await fetch('/signup/validate-nickname', {
                 method: 'POST',
@@ -126,21 +130,22 @@ window.onload = function () {
             });
             const isAvailable = await response.json();
             if (isAvailable) {
-                document.getElementById('nicknameCheckResult').textContent = '사용 가능한 닉네임입니다.';
+                nicknameCheckResult.textContent = '사용 가능한 닉네임입니다.';
             } else {
-                document.getElementById('nicknameCheckResult').textContent = '사용할 수 없는 닉네임입니다.';
+                nicknameCheckResult.textContent = '사용할 수 없는 닉네임입니다.';
+                nicknameCheckResult.style.color = 'blue'; // 경고 메시지 색상을 빨간색 으로 설정
             }
         } catch (error) {
             console.error('Error:', error);
-            document.getElementById('nicknameCheckResult').textContent = '닉네임 검사 중 오류가 발생했습니다.';
+            nicknameCheckResult.textContent = '닉네임 검사 중 오류가 발생했습니다.';
         }
     })
 
 
     /* 비밀번호 */
 
-    let inputPassword1 = document.getElementById('inputPassword1');
-    let inputPassword2 = document.getElementById('inputPassword2');
+    let inputPassword1 = document.getElementById('password1');
+    let inputPassword2 = document.getElementById('password2');
 
     inputPassword1.addEventListener('input', validatePassword);
     inputPassword2.addEventListener('input', matchPasswords);
@@ -154,7 +159,7 @@ window.onload = function () {
 
         if (!regex.test(password)) {
             // 조건에 맞지 않으면 경고 메시지 표시
-            passwordHelpBlock.textContent = '비밀번호는 영문자와 숫자를 포함한 8~12글자로 제한됩니다.';
+            passwordHelpBlock.textContent = '비밀번호는 영문자, 특수문자, 숫자를 포함한 8~12글자로 입력해주세요';
             passwordHelpBlock.style.display = 'block';
             passwordHelpBlock.style.color = 'red'; // 경고 메시지 색상을 빨간색 으로 설정
         } else {
@@ -166,7 +171,7 @@ window.onload = function () {
 
     function matchPasswords() {
         let password1 = inputPassword1.value;
-        let password2 = document.getElementById('inputPassword2').value;
+        let password2 = document.getElementById('password2').value;
         let confirmHelpBlock = document.getElementById('confirmHelpBlock');
 
         if (password1 !== password2) {
@@ -181,6 +186,11 @@ window.onload = function () {
             confirmHelpBlock.style.display = 'block';
         }
     }
+
+    document.getElementById('signupForm').addEventListener('submit', function (e) {
+        let combinedEmail = emailInput.value + '@' + domainSelect.value;
+        document.getElementById('hiddenEmailInput').value = combinedEmail;
+    });
 
 
 }

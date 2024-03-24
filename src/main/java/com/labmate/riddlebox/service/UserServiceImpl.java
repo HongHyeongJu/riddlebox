@@ -1,15 +1,21 @@
 package com.labmate.riddlebox.service;
 
+import com.labmate.riddlebox.dto.SignupRequestDto;
 import com.labmate.riddlebox.dto.SocialProfileDto;
 import com.labmate.riddlebox.entity.*;
 import com.labmate.riddlebox.enumpackage.UserStatus;
 import com.labmate.riddlebox.repository.*;
+import com.labmate.riddlebox.security.PrincipalDetails;
+import com.labmate.riddlebox.util.CustomException;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -88,7 +94,7 @@ public class UserServiceImpl implements UserService {
                 .where(rBUser.loginEmail.eq(email)) // 이메일이 일치하는 조건
                 .fetchCount(); // 조건에 맞는 결과의 수를 가져옴
 
-        return exists == 0; // 결과가 1개 이상이면 true, 아니면 false 반환
+        return exists == 1; // 결과가 1개 이상이면 true, 아니면 false 반환
     }
 
 
@@ -165,6 +171,55 @@ public class UserServiceImpl implements UserService {
         return newUser;
     }
 
+    @Override
+    @Transactional
+    public void signupNewUser(SignupRequestDto signupRequestDto) throws CustomException {
+        String loginEmail = signupRequestDto.getEmail();
+        String nickname = signupRequestDto.getNickname();
+        String password = signupRequestDto.getPassword1();
+
+        // 이메일 중복 검사
+        if (checkDuplicateEmail(loginEmail)) {
+            throw new CustomException("이미 사용 중인 이메일입니다.", "ERR-EMAIL-DUPLICATED");
+        }
+
+        // 닉네임 중복 검사
+        if (!isValidNickname(nickname)) {
+            throw new CustomException("이미 사용 중이거나 유효하지 않은 닉네임", "ERR-NICKNAME-NOTVALID");
+        }
+
+
+        // RBUser 객체 생성
+        RBUser newUser = RBUser.builder()
+                .loginEmail(loginEmail)
+                .name(null)
+                .nickname(nickname)
+                .password(passwordEncoder.encode(password)) // 실제 사용 시 비밀번호는 암호화 과정을 거쳐야 함
+                .passwordSetDate(LocalDate.now())
+                .regDate(LocalDateTime.now())
+                .lastLoginDate(LocalDateTime.now())
+                .status(UserStatus.ACTIVE)
+                .build();
+
+        // RBUser 저장
+        newUser = userRepository.save(newUser);
+
+        // PLAYER 역할 할당
+        RBRole playerRole = roleRepository.findByName("PLAYER").orElseThrow(() -> new RuntimeException("Role not found"));
+        UserRole userRole = new UserRole(newUser, playerRole, LocalDateTime.now(), "RiddleBox", true, "회원가입");
+        userRoleRepository.save(userRole);
+
+        // 웰컴 포인트 500 부여
+        UserPoint welcomePoint = new UserPoint(newUser, "회원가입 웰컴 포인트", 500, LocalDateTime.now(), 500);
+        userPointRepository.save(welcomePoint);
+
+        PrincipalDetails principalDetails = new PrincipalDetails(newUser, null);
+
+        // 인증 객체 생성 및 SecurityContextHolder에 저장
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    }
 
 }
 

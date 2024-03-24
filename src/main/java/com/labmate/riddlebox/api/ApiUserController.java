@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/signup")
@@ -37,57 +39,44 @@ public class ApiUserController {
 
     private final Logger logger = LoggerFactory.getLogger(ApiUserController.class);
 
-    @Value("${spring.mail.host}")
-    private String host;
-
-    @Value("${spring.mail.port:587}")
-    private int port;
-
     @Value("${spring.mail.username}")
     private String username;
 
-    @Value("${spring.mail.password}")
-    private String password;
+    @Autowired
+    private JavaMailSender mailSender;
 
 
     /* 인증 메일 전송 */
     @PostMapping("/send-email")
-    public ResponseEntity<String> sendEmail(@RequestBody EmailRequestDto request) {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(host);
-        mailSender.setPort(port);
-        mailSender.setUsername(username);
-        mailSender.setPassword(password);
+    public CompletableFuture<ResponseEntity<String>> sendEmail(@RequestBody EmailRequestDto request) {
 
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
-
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            Map<String, String> map = emailService.makeMailContentAndSaveCodeToRedis(request.getToEmail());
+                                                                      //thenApply() : 비동기 연산의 결과를 받아 다른 형태로 변환할 때 사용
+                                                                      //              비동기 연산의 결과를 연쇄적으로 변환하고 처리 가능
+                                                                      //CompletableFuture 객체가 완료되었을 때 실행될 함수를 인자로 받음
+        return emailService.makeMailContentAndSaveCodeToRedis(request.getToEmail()).thenApply(map -> {
             if (map.isEmpty()) {
                 logger.error("이메일 전송 실패. 받는 사람: {}", request.getToEmail());
                 return ResponseEntity.badRequest().body("이미 사용 중인 이메일 주소입니다.");
             }
 
-            helper.setFrom(username);
-            helper.setTo(request.getToEmail());
-            helper.setSubject(map.get("title"));
-            helper.setText(map.get("sendText"), true); // HTML 형식으로 설정
+            try {
+                MimeMessage message = mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            mailSender.send(message);
+                helper.setFrom(username);
+                helper.setTo(request.getToEmail());
+                helper.setSubject(map.get("title"));
+                helper.setText(map.get("sendText"), true); // HTML 형식으로 설정
 
-            logger.info("이메일로 인증번호가 성공적으로 전송되었습니다. 받는 사람: {}", request.getToEmail());
-            return ResponseEntity.ok("이메일로 인증번호가 전송되었습니다.");
-        } catch (MessagingException e) {
-            logger.error("이메일 전송 중 오류 발생: {}", e.getMessage());
-            return ResponseEntity.internalServerError().body("이메일 전송 중 오류가 발생했습니다.");
-        }
+                mailSender.send(message);
+
+                logger.info("이메일로 인증번호가 성공적으로 전송되었습니다. 받는 사람: {}", request.getToEmail());
+                return ResponseEntity.ok("이메일로 인증번호가 전송되었습니다.");
+            } catch (MessagingException e) {
+                logger.error("이메일 전송 중 오류 발생: {}", e.getMessage());
+                return ResponseEntity.internalServerError().body("이메일 전송 중 오류가 발생했습니다.");
+            }
+        });
     }
 
 
