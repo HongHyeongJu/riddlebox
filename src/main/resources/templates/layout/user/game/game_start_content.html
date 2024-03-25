@@ -17,7 +17,7 @@
                 </div>
                 <div class="col-md-12 col-lg-3 position-absolute top-50 end-0 translate-middle-y d-flex justify-content-between align-items-center">
                     <p class="game-level-text text-light" th:text="'난이도 ' + ${gameInfo.gameLevel}"></p>
-                    <button type="button" class="btn btn-primary me-0 solveBtn"
+                    <button type="button" class="btn btn-primary me-0 solveBtn shine-button"
                             th:onclick="'window.location.href=\'/game/' + ${gameInfo.id} + '/solve\''">문제풀기
                     </button>
                 </div>
@@ -57,21 +57,46 @@
 </div>
 
 
+
+
+
 <div th:fragment="gameStoryContent" class="container-fluid">
- <div class="row" style="height: 500px;">
+    <div class="row">
+        <!-- 타이머와 문제풀기 버튼 -->
+        <div class="col-12 mb-3">
+            <div class="d-flex justify-content-end align-items-center">
+                <p class="game-level-text text-light mt-3" th:text="'난이도 ' + ${gameInfo.gameLevel}" style="margin-right: 1rem;"></p>
+                <a th:href="@{/game/{id}/solve(id=${gameInfo.id})}" class="btn btn-primary solveBtn shine-button">문제풀기</a>
 
-     <!--일러스트-->
-    <div class="col-illustration pa-5" style="border: solid black 2px;">
-      <img th:src="@{${staticUrl} + 'img/111.jpg'}" alt="Illustration" style="width: 100%; height: auto; object-fit: contain;">
+            </div>
+        </div>
+
+        <!-- 일러스트 -->
+        <div class="col-md-3" style="overflow: hidden;">
+            <img th:src="@{|${staticUrl}${gameStoryDto.illustUrl}|}" alt="Illustration" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+
+
+        <!-- 소설 텍스트 -->
+        <div class="col-md-9">
+            <div class="p-3 text-div" style="border: solid black 2px; max-height: 400px; overflow-y: auto;">
+                <p th:utext="${@commonUtil.markdownToHtml(gameStoryDto.storyText)}">Here is the text of the novel...</p>
+            </div>
+        </div>
+
+
+        <span th:text="${gameInfo.id}" id="gameId" hidden="hidden"></span>
+        <!-- 나가기 버튼 -->
+        <div class="col-12 mt-3">
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-dark" id="exitGame">나가기</button>
+            </div>
+        </div>
     </div>
-
-     <!--소설 텍스트-->
-    <div class="col-text novel-text p-3"  style="border: solid black 2px;">
-      <p th:utext="${@commonUtil.markdownToHtml(gameStoryDto.storyText)}">Here is the text of the novel...</p>
-    </div>
-
-  </div>
 </div>
+
+
+
 
 <!--
 <div th:fragment="fragment_test">

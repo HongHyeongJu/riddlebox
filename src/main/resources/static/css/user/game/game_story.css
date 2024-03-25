@@ -1,55 +1,41 @@
-#gameTitleDiv {
-    display: flex;
-    align-items: center;
-    height: 3rem; /* 적절한 높이 설정 */
+
+.game-story-content .solveBtn,
+.game-story-content .btn-exit {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
-#gameTitleText {
-    margin: 0;
-    padding: 0;
-    line-height: 1.5; /* 적절한 line-height 설정 */
-    max-height: 3rem; /* 두 줄까지 허용 */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal;
+.game-story-content .btn-exit {
+    margin-right: 15px; /* 조정 가능 */
 }
 
-
-#time-bar-container {
-    /*border: 1px solid #000;*/
-    background-color: #ddd;
-}
-
-#time-bar {
-    height: 18px;
-    background-color: skyblue;
-    width: 100%;
-    transition: width 0.05s linear;
-    /* 너비 변화에 대한 부드러운 전환 효과 */
-}
-
-/*나가기 버튼 마진*/
-.btnRightMargin {
-    margin-right: 30px;
-}
-
-/*게임 난이도 정렬*/
-.game-level-text {
-    margin-bottom: 0; /* 아래 마진 제거 */
-    text-align: center; /* 텍스트를 중앙 정렬 */
+.game-story-content .col-illustration,
+.game-story-content .col-text {
+    margin-bottom: 20px;
 }
 
 
-/* 화면이 특정 크기 이하일 때 적용될 스타일 */
-@media screen and (max-width: 768px) {
-    .custom-font-size {
-        font-size: 1rem; /* 폰트 크기 조정 */
-    }
+.text-div {
+    background-color: white;
 }
 
-/* 화면이 더 작을 때 적용될 스타일 */
-@media screen and (max-width: 576px) {
-    .custom-font-size {
-        font-size: 0.8rem; /* 폰트 크기 조정 */
-    }
+.shine-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(60deg, rgba(255, 255, 255, 0) 48%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 52%);
+  animation: shine 2s linear infinite;
+  transform: rotate(60deg);
+}
+
+@keyframes shine {
+  from {
+    transform: translateX(-50%) rotate(60deg);
+  }
+  to {
+    transform: translateX(200%) rotate(60deg);
+  }
 }

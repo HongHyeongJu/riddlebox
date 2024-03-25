@@ -16,7 +16,7 @@
 
         <!-- 버튼 컨테이너 -->
         <div class="btn-container">
-            <a th:href="@{/game/{id}/story(id=${gameId})}">
+            <a th:href="@{/game/{id}/{gameType}(id=${gameId}, gameType=${gameType})}">
                 <button type="button" class="btn btn-primary">다시하기</button>
             </a>
             <a th:href="@{/}">

@@ -16,6 +16,9 @@ public class GameStoryDto {
     private String illustUrl;  //이미지 url
     private String storyText;  //소설 내용
 
-
-
+    public GameStoryDto(Long id, String illustUrl, String storyText) {
+        this.id = id;
+        this.illustUrl = illustUrl;
+        this.storyText = storyText;
+    }
 }

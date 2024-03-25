@@ -1,9 +1,6 @@
 package com.labmate.riddlebox.controller;
 
-import com.labmate.riddlebox.dto.GameCompletionRequest;
-import com.labmate.riddlebox.dto.GameListDto;
-import com.labmate.riddlebox.dto.GameSearchCondition;
-import com.labmate.riddlebox.dto.GameplayInfoDto;
+import com.labmate.riddlebox.dto.*;
 import com.labmate.riddlebox.security.PrincipalDetails;
 import com.labmate.riddlebox.service.GameService;
 import com.labmate.riddlebox.util.GameScoreResult;
@@ -37,26 +34,30 @@ public class WebGameController {
     /* [1-1] 게임 문제 제시 페이지 [스냅샷]*/   /*TODO 지금은 스냅샷 url을 story로 하지만 이후에는 단편소설 url과 바꿔야 할듯. 현재는 문제제시의 의미로 사용*/
     @GetMapping("/{gameId}/snapshot")
     public String getGameSnapShot(@PathVariable("gameId") Long gameId, Model model) {
+
         GameplayInfoDto gameInfo = gameService.findGameInfo(gameId);
+
         model.addAttribute("gameInfo", gameInfo);
         model.addAttribute("gameType", "snapshot");
         model.addAttribute("pageType", "snapshot");
-        model.addAttribute("title", "RiddleBox [" + gameInfo.getTitle() + "]");
-        System.out.println(" [1] 게임 스토리 페이지 ");
-        System.out.println(" title " + gameInfo.getTitle());
+        model.addAttribute("title", gameInfo.getTitle());
+
         return "layout/layout_base";
     }
 
     /* [1-2] 게임 문제 제시 페이지 [단편소설]*/   /*TODO 지금은 스냅샷 url을 story로 하지만 이후에는 단편소설 url과 바꿔야 할듯. 현재는 문제제시의 의미로 사용*/
     @GetMapping("/{gameId}/story")
     public String getGameStory(@PathVariable("gameId") Long gameId, Model model) {
+
         GameplayInfoDto gameInfo = gameService.findGameInfo(gameId);
+        GameStoryDto gameStoryDto = gameService.findGameStoryContent(gameId);
+
         model.addAttribute("gameInfo", gameInfo);
+        model.addAttribute("gameStoryDto", gameStoryDto);
         model.addAttribute("gameType", "story");
         model.addAttribute("pageType", "gameStory");
-        model.addAttribute("title", "RiddleBox [" + gameInfo.getTitle() + "]");
-        System.out.println(" [1] 게임 스토리 페이지 ");
-        System.out.println(" title " + gameInfo.getTitle());
+        model.addAttribute("title", gameInfo.getTitle());
+
         return "layout/layout_base";
     }
 
@@ -64,14 +65,14 @@ public class WebGameController {
      * 스냅샷과 단편소설이 같이 사용할 수 있음*/
     @GetMapping("/{gameId}/solve")
     public String getGameSolve(@PathVariable("gameId") Long gameId, Model model) {
+
         GameplayInfoDto gameInfo = gameService.findGameInfo(gameId);
+
         model.addAttribute("gameInfo", gameInfo);
         model.addAttribute("pageType", "gameSolve");
-        model.addAttribute("title", "RiddleBox [ " + gameInfo.getTitle() + "] 문제풀기 ");
-        System.out.println("gameSolve");
-        System.out.println("gameInfo.level " + gameInfo.getGameLevel());
-        System.out.println("RiddleBox [" + gameInfo.getTitle() + "] 문제풀기 ");
+        model.addAttribute("title", gameInfo.getTitle() + " solve ");
         return "layout/layout_base";
+
     }
 
 
@@ -85,7 +86,6 @@ public class WebGameController {
         //게임결과 List 채점 + 게임 기록 저장
         GameScoreResult gameScoreResult = gameService.checkAnswers(answers, memberId);
         // todo : 나중에 이 메서드 사용할 때 isFail 여부 함께 보내줘야하는 것 잊지 말기
-
 
         //작업 완료 후 리다이렉트할 URL을 지정
         String redirectUrl = "/game/result?totalQuestions=" + gameScoreResult.getTotalQuestions() +
@@ -102,17 +102,25 @@ public class WebGameController {
 
    /* [4] 게임 결과 페이지 - 성공 or 실패 */
     @GetMapping("/result")
-    public String gameResult(@ModelAttribute GameCompletionRequest gameCompletionRequest,
+    public String gameResult(@RequestParam("totalQuestions") int totalQuestions,
+                             @RequestParam("correctAnswersCount") int correctAnswersCount,
+                             @RequestParam("gameResult") String gameResult,
+                             @RequestParam("gameId") Long gameId,
                              Model model) {
 
-        // 파라미터를 모델에 추가
-        model.addAttribute("totalQuestions", gameCompletionRequest.getTotalQuestions());
-        model.addAttribute("correctAnswersCount", gameCompletionRequest.getCorrectAnswersCount());
+        String result = gameResult.equals("fail") ? "fail" : "success";
+        String gameType = gameService.getGameType(gameId);
+
+        model.addAttribute("totalQuestions", totalQuestions);
+        model.addAttribute("correctAnswersCount", correctAnswersCount);
         model.addAttribute("pageType", "gameResult");
-        model.addAttribute("gameResult", !gameCompletionRequest.isFail() ? "success" : "fail");
+        model.addAttribute("gameResult", result);
+        model.addAttribute("gameId", gameId);
+        model.addAttribute("gameType", gameType);
 
         return "layout/layout_base"; // HTML 뷰 이름
     }
+
 
 
     /* [5] 중도포기

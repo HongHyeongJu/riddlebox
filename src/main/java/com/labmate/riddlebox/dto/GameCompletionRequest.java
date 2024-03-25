@@ -22,4 +22,5 @@ public class GameCompletionRequest {
         this.playTime = playTime;
         this.isFail = isFail;
     }
+
 }

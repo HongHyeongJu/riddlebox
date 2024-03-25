@@ -1,8 +1,7 @@
 package com.labmate.riddlebox.service;
 
-import com.labmate.riddlebox.dto.GameListDto;
-import com.labmate.riddlebox.dto.GameSearchCondition;
-import com.labmate.riddlebox.dto.GameplayInfoDto;
+import com.labmate.riddlebox.api.ApiGameController;
+import com.labmate.riddlebox.dto.*;
 import com.labmate.riddlebox.admindto.Question;
 import com.labmate.riddlebox.util.GameScoreResult;
 import org.springframework.data.domain.Page;
@@ -31,5 +30,10 @@ public interface GameService {
     void recordGameResult( Long userId, Long gameId, int playTime, int totalQuestions, int correctAnswersCount, boolean isFail);
 
     @Transactional
-    void exitGameRecoding(Long userId, Long gamePK, int playTime, String gameResult);
+    void exitGameRecoding(Long userId, Long gamePK, GameExitRequest gameExitRequest);
+
+    /*게임 타입 반환하는 메서드*/
+    String getGameType(Long gameId);
+
+    GameStoryDto findGameStoryContent(Long gameId);
 }

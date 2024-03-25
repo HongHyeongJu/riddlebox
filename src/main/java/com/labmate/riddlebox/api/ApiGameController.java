@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/games")
@@ -67,8 +68,6 @@ public class ApiGameController {
     }
 
 
-
-
     /* [4] 게임 결과 기록 */
     @PostMapping("/{gameId}/result")
     public ResponseEntity<?> recordGameResult(@PathVariable("gameId") Long gameId,
@@ -80,19 +79,26 @@ public class ApiGameController {
             PrincipalDetails principalDetails = (PrincipalDetails) auth.getPrincipal();
             userId = principalDetails.getUserPK();
         }
-        System.out.println("userId "+userId);
+        System.out.println("userId " + userId);
 
         // 게임 결과 기록
         gameService.recordGameResult(userId, gameId, gameCompletionRequest.getPlayTime(),
-                                                        gameCompletionRequest.getTotalQuestions(),
-                                                        gameCompletionRequest.getCorrectAnswersCount(),
-                                                        gameCompletionRequest.isFail());
+                gameCompletionRequest.getTotalQuestions(),
+                gameCompletionRequest.getCorrectAnswersCount(),
+                gameCompletionRequest.isFail());
 
-        // 처리 완료 후 클라이언트에게 HTTP 상태 코드 200 OK와 함께 메시지 반환
-        return ResponseEntity.ok("Game result recorded successfully");
+        String result = gameCompletionRequest.isFail() ? "fail" : "success";
+        String gameType = gameService.getGameType(gameId);
+        // 결과 페이지로 리디렉션
+        String redirectUrl = String.format("/game/result?totalQuestions=%d&correctAnswersCount=%d&gameResult=%s&gameId=%d",
+                gameCompletionRequest.getTotalQuestions(),
+                gameCompletionRequest.getCorrectAnswersCount(),
+                result, gameId);
+
+        return ResponseEntity.ok(Collections.singletonMap("redirectUrl", redirectUrl));
+
+
     }
-
-
 
 
     // 게임 중단 기록
@@ -107,34 +113,20 @@ public class ApiGameController {
         }
 
         //기록
-        gameService.exitGameRecoding(userId, gameExitRequest.getGamePK(), gameExitRequest.getPlayTime(), gameExitRequest.getGameResult());
+        gameService.exitGameRecoding(userId, gameExitRequest.getGamePK(), gameExitRequest);
+
+
+        // 결과 페이지로 리디렉션
+        String redirectUrl = String.format("/game/result?totalQuestions=%d&correctAnswersCount=%d&gameResult=%s&gameId=%d",
+                gameExitRequest.getCorrectAnswers()+gameExitRequest.getIncorrectAnswers(),
+                gameExitRequest.getCorrectAnswers(),
+                "fail", gameExitRequest.getGamePK());
+
+        return ResponseEntity.ok(Collections.singletonMap("redirectUrl", redirectUrl));
 
         // index 페이지로 리디렉션
-        return ResponseEntity.ok(Collections.singletonMap("redirectUrl", "/index"));
+//        return ResponseEntity.ok(Collections.singletonMap("redirectUrl", "/game/result"));
     }
-
-
-
-    @ToString
-    @Getter
-    @NoArgsConstructor
-    // 게임 중단 정보를 담는 클래스
-    public static class GameExitRequest {
-        private Long gamePK;
-        private int playTime;
-        private String gameResult;
-
-        public GameExitRequest(Long gamePK, int playTime, String gameResult) {
-            this.gamePK = gamePK;
-            this.playTime = playTime;
-            this.gameResult = gameResult;
-        }
-    }
-
-
-
-
-
 
 
 }

@@ -14,7 +14,7 @@
 
             <!-- th:each를 사용하여 반복 -->
             <div th:each="gameDto : ${gameListDtos}">
-                <a th:href="@{|/game/${gameDto.id}/${gameDto.gameCategory.subject.name() == 'SNAPSHOT_DEDUCTION' ? 'snapshot' : (gameDto.gameCategory.subject == 'SHORT_STORY' ? 'story' : '')}|}"
+                <a th:href="@{|/game/${gameDto.id}/${gameDto.gameUrlType}|}"
                    class="text-decoration-none">
                     <!--                <a th:href="@{/game/{gameId}/story(gameId=${gameDto.id})}" class="text-decoration-none">-->
                     <div class="gameCard-card card position-relative">  <!--게임 ID ${gameDto.id}-->

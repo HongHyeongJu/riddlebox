@@ -167,18 +167,15 @@ window.onload = function () {
                 isFail: isFail
             }),
         })
-            .then(response => {
-                if (response.ok) {
-
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirectUrl) {
                     setupBeforeUnloadListener(false); // 경고 비활성화
-                    // 성공적으로 전송 후 결과 페이지로 리디렉션
-                    window.location.href = `/game/result?totalQuestions=` + totalQuestions
-                        + '&correctAnswersCount=' + correctAnswersCount + '&isFail=' + isFail;
-                } else {
-                    console.error('Failed to record game result.');
+                    window.location.href = data.redirectUrl; // 서버에서 받은 URL로 페이지 리디렉션
                 }
             })
             .catch(error => console.error('Error:', error));
+
     }
 
     function beforeUnloadHandler(event) {
@@ -294,6 +291,53 @@ window.onload = function () {
         }
         // 입력태그 바로 다음에 결과태그 삽입
         inputTagElement.after(resultTag);
+    }
+
+
+    /*중도포기*/
+    document.getElementById('isAbandoned').addEventListener('click',function () {
+
+        // 게임 종료 시간을 기록
+        let gameEndTime = new Date();
+
+        // 플레이 타임 계산 (초 단위)
+        let playTime = (gameEndTime - gameStartTime) / 1000;
+
+        //결과 설정
+        let gameResult = "ABANDONED"; // 게임 중도 포기
+
+        // 서버에 기록을 전송하는 함수 호출
+        sendGameRecord(gameId, playTime, gameResult);
+
+    })
+
+
+    // 게임 기록을 서버에 전송하는 함수
+    function sendGameRecord(gamePK, playTime, gameResult) {
+        // console.log(`게임 PK: ${gamePK}, 플레이 시간: ${playTime}ms, 결과: ${gameResult}`);
+
+        fetch('/api/games/user_exit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                gamePK: gamePK,
+                playTime: playTime,
+                correctAnswers: currentCorrectAnswers,
+                incorrectAnswers: currentIncorrectAnswers,
+                gameResult: gameResult
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirectUrl) {
+                    setupBeforeUnloadListener(false); // 경고 비활성화
+                    window.location.href = data.redirectUrl; // 서버에서 받은 URL로 페이지 리디렉션
+                }
+            })
+            .catch(error => console.error('Error:', error));
+
     }
 
 

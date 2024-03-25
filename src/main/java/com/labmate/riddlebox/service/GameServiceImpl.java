@@ -5,6 +5,7 @@ import com.labmate.riddlebox.dto.*;
 import com.labmate.riddlebox.dto.QGameListDto;
 import com.labmate.riddlebox.dto.QGameplayInfoDto;
 import com.labmate.riddlebox.entity.*;
+import com.labmate.riddlebox.entity.QGame;
 import com.labmate.riddlebox.enumpackage.GameLevel;
 import com.labmate.riddlebox.enumpackage.GameResultType;
 import com.labmate.riddlebox.enumpackage.GameStatus;
@@ -13,6 +14,7 @@ import com.labmate.riddlebox.repository.GameRecordRepository;
 import com.labmate.riddlebox.repository.GameRepository;
 import com.labmate.riddlebox.repository.UserRepository;
 import com.labmate.riddlebox.util.GameScoreResult;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -32,7 +34,9 @@ import java.util.Map;
 import static com.labmate.riddlebox.entity.QGame.game;
 import static com.labmate.riddlebox.entity.QGameContent.gameContent;
 import static com.labmate.riddlebox.entity.QGameImage.gameImage;
+import static com.labmate.riddlebox.entity.QGameText.gameText;
 import static com.labmate.riddlebox.entity.QRecommendGame.recommendGame;
+import static com.labmate.riddlebox.enumpackage.ImageType.ILLUSTRATION;
 
 @Service
 //@RequiredArgsConstructor
@@ -273,7 +277,6 @@ public class GameServiceImpl implements GameService {
                 .leftJoin(game.gameImages, gameImage) // game과 gameImage를 조인
                 .where(recommendGame.game.status.eq(GameStatus.ACTIVE))
                 .fetch();
-
         return results;
     }
 
@@ -287,7 +290,7 @@ public class GameServiceImpl implements GameService {
     @Override
     // 게임 결과 기록 메서드
     @Transactional
-    public void recordGameResult( Long userId, Long gameId, int playTime, int totalQuestions, int correctAnswersCount, boolean isFail) {
+    public void recordGameResult(Long userId, Long gameId, int playTime, int totalQuestions, int correctAnswersCount, boolean isFail) {
 
         // 사용자와 게임 엔티티 조회
         RBUser user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -295,9 +298,9 @@ public class GameServiceImpl implements GameService {
 
         // 게임 기록 생성
         float successRate = ((float) correctAnswersCount / totalQuestions) * 100;
-        GameResultType resultType = isFail==false ? GameResultType.UNSOLVED : GameResultType.SOLVED;
+        GameResultType resultType = isFail == false ? GameResultType.UNSOLVED : GameResultType.SOLVED;
 
-        GameRecord gameRecord = new GameRecord(user, game, playTime, correctAnswersCount,  successRate, resultType);
+        GameRecord gameRecord = new GameRecord(user, game, playTime, correctAnswersCount, successRate, resultType);
 
         // 게임 기록 저장
         gameRecordRepository.save(gameRecord);
@@ -307,20 +310,21 @@ public class GameServiceImpl implements GameService {
     /*도중포기*/
     @Override
     @Transactional
-    public void exitGameRecoding(Long userId, Long gamePK, int playTime, String gameResult) {
+    public void exitGameRecoding(Long userId, Long gamePK, GameExitRequest gameExitRequest) {
 
         // 사용자와 게임 엔티티 조회
         RBUser user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
         Game game = gameRepository.findById(gamePK).orElseThrow(() -> new EntityNotFoundException("Game not found"));
 
         // 게임 결과를 GameResultType 열거형으로 변환
-        GameResultType resultType = GameResultType.valueOf(gameResult.toUpperCase());
+        GameResultType resultType = GameResultType.valueOf(gameExitRequest.getGameResult().toUpperCase());
 
-        int score = 0; // 예시 값
-        float successRate = 0.0f; // 예시 값
+        int score = gameExitRequest.getCorrectAnswers() != 0 ? gameExitRequest.getCorrectAnswers() : 0;
+        int playQuite = score != 0 ? gameExitRequest.getIncorrectAnswers() : 0; // 예시 값
+        float successRate = score != 0 ? score / (score + playQuite) : 0.0f; // 예시 값
 
         // GameRecord 엔티티 생성
-        GameRecord gameRecord = new GameRecord(user, game,  playTime, score, successRate, resultType);
+        GameRecord gameRecord = new GameRecord(user, game, gameExitRequest.getPlayTime(), score, successRate, resultType);
 
         // GameRecord 저장
         gameRecordRepository.save(gameRecord);
@@ -328,6 +332,45 @@ public class GameServiceImpl implements GameService {
     }
 
 
+    /*게임 타입 반환하는 메서드*/
+    @Override
+    public String getGameType(Long gameId) {
+        GameSubject gameSubject = queryFactory.select(game.gameCategory.subject).from(game).where(game.id.eq(gameId)).fetchOne();
+        String gameType = switch (gameSubject) {
+            case SNAPSHOT_DEDUCTION -> "snapshot";
+            case SHORT_STORY -> "story";
+            case EMOJI_GAME -> "emoji";
+            case MYSTERY -> null;
+            case ADVENTURE -> null;
+            case EVERYDAY -> null;
+        };
+
+        /*나중에 성능차이 비교해보기 궁금하다*/
+//        Game game = gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException("Game not found"));
+//        String gameType = switch (game.getGameCategory().getSubject()){
+//            case SNAPSHOT_DEDUCTION -> "snapshot";
+//            case SHORT_STORY -> "story";
+//            case EMOJI_GAME -> "emoji";
+//            case MYSTERY -> null;
+//            case ADVENTURE -> null;
+//            case EVERYDAY -> null;
+//        };
+
+        return gameType;
+    }
+
+    @Override
+    public GameStoryDto findGameStoryContent(Long gameId) {
+        return queryFactory
+                .select(Projections.constructor(GameStoryDto.class,
+                        gameText.game.id,
+                        gameImage.filePath.coalesce("img/sendstory.png"), // 이 부분은 QueryDSL에서 직접적으로 지원하지 않으므로, 대안을 모색해야 합니다.
+                        gameText.text))
+                .from(gameText)
+                .leftJoin(gameImage).on(gameImage.game.eq(gameText.game).and(gameImage.fileType.eq(ILLUSTRATION))) // 조건에 맞는 이미지가 없으면, gameImage는 null이 될 수 있습니다.
+                .where(gameText.game.id.eq(gameId))
+                .fetchOne();
+    }
 
 }
 

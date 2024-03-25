@@ -47,3 +47,25 @@ input::placeholder {
     font-style: italic; /* 기울임꼴 */
     font-size: 0.9em !important;
 }
+
+
+.shine-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(60deg, rgba(255, 255, 255, 0) 48%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 52%);
+  animation: shine 2s linear infinite;
+  transform: rotate(60deg);
+}
+
+@keyframes shine {
+  from {
+    transform: translateX(-50%) rotate(60deg);
+  }
+  to {
+    transform: translateX(200%) rotate(60deg);
+  }
+}
