@@ -48,7 +48,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             });
 
             RBUser user = userService.findUserByEmail(userInfo.getId() + "@kakao.com");
-            System.out.println("userInfo:   " + userInfo.toString());
+//            System.out.println("userInfo:   " + userInfo.toString());
             if (user == null) {
                 //없으면 저장. userRole. socialProfile
                 SocialProfileDto socialProfileDto = new SocialProfileDto("KAKAO",

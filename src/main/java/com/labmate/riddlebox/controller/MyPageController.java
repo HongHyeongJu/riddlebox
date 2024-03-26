@@ -5,6 +5,7 @@ import com.labmate.riddlebox.dto.MyPageProfileDto;
 import com.labmate.riddlebox.dto.MyRecordDto;
 import com.labmate.riddlebox.dto.UserAnswerDto;
 import com.labmate.riddlebox.security.PrincipalDetails;
+import com.labmate.riddlebox.security.SecurityUtils;
 import com.labmate.riddlebox.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,8 @@ public class MyPageController {
     //@ModelAttribute를 사용하여 MyPageDto를 모든 뷰에 자동으로 추가
     @ModelAttribute("MyPageDto")
     public MyPageDto myPageDto() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getPrincipal() instanceof PrincipalDetails) {
-            PrincipalDetails principalDetails = (PrincipalDetails) auth.getPrincipal();
-            Long userId = principalDetails.getUserPK();
-            return myPageService.getUserMyPageDto(userId);
-        }
-        return null; // 적절한 예외 처리나 기본 값 반환을 고려해야 할 수 있음
+        Long userId = SecurityUtils.getCurrentUserId();
+        return myPageService.getUserMyPageDto(userId);
     }
 
 
@@ -66,11 +62,9 @@ public class MyPageController {
     @GetMapping("/record")
     public String myGameRecords(Model model) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        PrincipalDetails principalDetails = (PrincipalDetails) auth.getPrincipal();
-        Long userId = principalDetails.getUserPK();
-
+        Long userId = SecurityUtils.getCurrentUserId();
         List<MyRecordDto> myRecordDtoList = myPageService.getUserRecordDtoList(userId);
+
         model.addAttribute("myPageType", "record");
         model.addAttribute("myRecordDtoList", myRecordDtoList);
 

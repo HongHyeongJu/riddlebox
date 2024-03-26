@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/*관리자 페이지용*/
 @Data
 @NoArgsConstructor
 public class GameSearchCondition {

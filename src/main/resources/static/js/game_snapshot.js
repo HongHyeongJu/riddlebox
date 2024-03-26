@@ -1,14 +1,17 @@
 window.onload = function () {
-//테스트
-//     alert('gameStoryPage');
 
-//게임 레벨
+    // CSRF 토큰 값과 헤더 이름 가져오기
+    const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+    const csrfHeaderName = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+
+
+    //게임 레벨
     const gameLevel = document.getElementById('gameLevel').textContent;
 
-// 게임 시작 시간을 기록
+    // 게임 시작 시간을 기록
     let gameStartTime = new Date();
 
-//게임 타이머
+    //게임 타이머
     function startTimer(duration, element) {
         let start = Date.now();
         let timerInterval = setInterval(function () {
@@ -29,7 +32,7 @@ window.onload = function () {
     }
 
 
-// 상태바 시작
+    // 상태바 시작
     if (gameLevel == 'EASY') {
         // alert("gameLevel" + gameLevel);
         startTimer(420000, document.getElementById('time-bar')); // 7분 동안 줄어듦
@@ -38,10 +41,10 @@ window.onload = function () {
     } else if (gameLevel == 'HARD') {
         startTimer(180000, document.getElementById('time-bar')); // 3분 동안 줄어듦
     }
-//1초 = 10,000
+    //1초 = 10,000
 
 
-// 숨겨진 필드에서 게임 ID 읽기 = 게임 PK
+    // 숨겨진 필드에서 게임 ID 읽기 = 게임 PK
     const gameId = document.getElementById('gameId').textContent;
 
     // '게임 나가기' 버튼에 이벤트 리스너 추가
@@ -69,6 +72,7 @@ window.onload = function () {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                [csrfHeaderName]: csrfToken
             },
             body: JSON.stringify({
                 gamePK: gamePK,

@@ -19,23 +19,34 @@
     background-color: white;
 }
 
+a.shine-button {
+    /* 반짝이는 효과에 관한 스타일 */
+}
+
+/* 예시: 간단한 반짝이는 효과 */
+.shine-button {
+    position: relative;
+    overflow: hidden;
+}
+
 .shine-button::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(60deg, rgba(255, 255, 255, 0) 48%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 52%);
-  animation: shine 2s linear infinite;
-  transform: rotate(60deg);
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+    transform: rotate(30deg);
+    animation: shine 2s infinite;
+    pointer-events: none;
 }
 
 @keyframes shine {
-  from {
-    transform: translateX(-50%) rotate(60deg);
-  }
-  to {
-    transform: translateX(200%) rotate(60deg);
-  }
+    from {
+        left: -50%;
+    }
+    to {
+        left: 150%;
+    }
 }

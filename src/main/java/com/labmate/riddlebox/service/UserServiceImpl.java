@@ -1,5 +1,6 @@
 package com.labmate.riddlebox.service;
 
+import com.labmate.riddlebox.api.ApiUserController;
 import com.labmate.riddlebox.dto.SignupRequestDto;
 import com.labmate.riddlebox.dto.SocialProfileDto;
 import com.labmate.riddlebox.entity.*;
@@ -9,6 +10,8 @@ import com.labmate.riddlebox.security.PrincipalDetails;
 import com.labmate.riddlebox.util.CustomException;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,6 +48,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final SocialProfileRepository socialProfileRepository;
 
+    private final Logger logger = LoggerFactory.getLogger(ApiUserController.class);
 
     @Autowired
     public UserServiceImpl(EntityManager em, UserRepository userRepository,
@@ -89,12 +93,18 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public boolean checkDuplicateEmail(String email) {
-        long exists = queryFactory.selectFrom(rBUser) // Q클래스를 사용하여 from 절을 구성
-                .where(rBUser.loginEmail.eq(email)) // 이메일이 일치하는 조건
-                .fetchCount(); // 조건에 맞는 결과의 수를 가져옴
+    public boolean isEmailUnique(String email) {
+        try {
+            long count = queryFactory.selectFrom(rBUser) // Q클래스를 사용하여 from 절을 구성
+                    .where(rBUser.loginEmail.eq(email)) // 이메일이 일치하는 조건
+                    .fetchCount(); // 조건에 맞는 결과의 수를 가져옴
 
-        return exists == 1; // 결과가 1개 이상이면 true, 아니면 false 반환
+            return count == 0; // 결과가 없으면 true (이메일이 중복되지 않음), 있으면 false 반환
+        } catch (Exception e) {
+            // 로깅 또는 예외 처리 로직
+            logger.error("이메일 중복 확인 중 오류 발생", e);
+            return false; // 예외 상황에 대한 처리, 필요에 따라 변경 가능
+        }
     }
 
 
@@ -179,7 +189,7 @@ public class UserServiceImpl implements UserService {
         String password = signupRequestDto.getPassword1();
 
         // 이메일 중복 검사
-        if (checkDuplicateEmail(loginEmail)) {
+        if (!isEmailUnique(loginEmail)) {
             throw new CustomException("이미 사용 중인 이메일입니다.", "ERR-EMAIL-DUPLICATED");
         }
 

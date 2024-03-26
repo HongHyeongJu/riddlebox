@@ -3,7 +3,7 @@
     <div class="col-md-3 mb-3 flex-column">
         <div class="list-group">
             <a href="#" class="list-group-item list-group-item-action active d-flex flex-column align-items-center p-3">
-                <img src="path_to_profile_image.jpg" alt="Profile Image" class="img-thumbnail rounded-circle mb-2"
+                <img th:src="@{${staticUrl} + 'img/detective.png'}" alt="Profile Image" class="img-thumbnail rounded-circle mb-2"
                      style="width: 80px; height: 80px;">
                 <h4 th:text="${MyPageDto.nickname}" class="mb-3">닉네임</h4>
                 <span th:text="'포인트 ' + ${MyPageDto.point}" class="mb-1"></span>

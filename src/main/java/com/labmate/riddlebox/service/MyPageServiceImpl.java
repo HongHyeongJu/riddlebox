@@ -42,36 +42,38 @@ public class MyPageServiceImpl implements MyPageService {
     public MyPageDto getUserMyPageDto(long userId) {
 
         RBUser user = queryFactory.selectFrom(rBUser).where(rBUser.id.eq(userId)).fetchOne();
-        UserPoint userPoint = queryFactory
-                .selectFrom(QUserPoint.userPoint)
-                .where(QUserPoint.userPoint.user.id.eq(userId))
-                .fetchOne();
-        long solvedCount = queryFactory
-                .selectFrom(QGameRecord.gameRecord)
-                .where(
-                        QGameRecord.gameRecord.user.id.eq(userId),
-                        QGameRecord.gameRecord.resultType.eq(GameResultType.SOLVED)
-                )
-                .fetchCount();
-        long totalRecordCount = queryFactory
-                .selectFrom(QGameRecord.gameRecord)
-                .where(QGameRecord.gameRecord.user.id.eq(userId))
-                .fetchCount();
 
-        int point = userPoint == null ? 0 : userPoint.getTotal_points();
+        Integer userPoint = queryFactory.select(QUserPoint.userPoint.total_points)
+                                        .from(QUserPoint.userPoint)
+                                        .where(QUserPoint.userPoint.user.id.eq(userId))
+                                        .orderBy(QUserPoint.userPoint.earned_date.desc())
+                                        .fetchFirst();
 
-        return new MyPageDto(user.getId(), user.getNickname(), point, solvedCount + "/" + totalRecordCount, null);
+        long solvedCount = queryFactory.select(QGameRecord.gameRecord.game.id)
+                                        .from(QGameRecord.gameRecord)
+                                        .distinct()
+                                        .where(
+                                              QGameRecord.gameRecord.user.id.eq(userId),
+                                              QGameRecord.gameRecord.resultType.eq(GameResultType.SOLVED)
+                                        )
+                                        .fetchCount();
+
+        long totalRecordCount = queryFactory.select(QGameRecord.gameRecord.game.id)
+                                            .from(QGameRecord.gameRecord)
+                                            .distinct()
+                                            .where(
+                                                  QGameRecord.gameRecord.user.id.eq(userId)
+                                            )
+                                            .fetchCount();
+
+
+        return new MyPageDto(user.getId(), user.getNickname(), userPoint, solvedCount + "/" + totalRecordCount, null);
     }
 
 
     @Override
     /*profile-프로필*/
     public List<MyRecordDto> getUserRecordDtoList(Long userId) {
-        if (userId == null) {
-            // userId가 null인 경우, 빈 리스트 반환 또는 예외 처리
-            return Collections.emptyList();
-        }
-
         return queryFactory.select(Projections.constructor(MyRecordDto.class,
                         QGameRecord.gameRecord.user.id,
                         QGameRecord.gameRecord.game.id,
@@ -85,6 +87,7 @@ public class MyPageServiceImpl implements MyPageService {
                 .where(QGameRecord.gameRecord.user.id.eq(userId))
                 .fetch();
     }
+
 
     @Override
     public MyPageProfileDto getMyPageProfileDto(Long userId) {

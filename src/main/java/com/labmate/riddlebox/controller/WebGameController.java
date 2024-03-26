@@ -1,7 +1,10 @@
 package com.labmate.riddlebox.controller;
 
 import com.labmate.riddlebox.dto.*;
+import com.labmate.riddlebox.entity.Game;
+import com.labmate.riddlebox.repository.GameRepository;
 import com.labmate.riddlebox.security.PrincipalDetails;
+import com.labmate.riddlebox.service.GameSearchService;
 import com.labmate.riddlebox.service.GameService;
 import com.labmate.riddlebox.util.GameScoreResult;
 import lombok.Getter;
@@ -27,6 +30,12 @@ public class WebGameController {
 
     @Autowired
     GameService gameService;
+
+    @Autowired
+    GameSearchService gameSearchService;
+
+    @Autowired
+    GameRepository gameRepository;
 
 
     //공통 레이아웃 layout_base
@@ -99,8 +108,7 @@ public class WebGameController {
     }
 
 
-
-   /* [4] 게임 결과 페이지 - 성공 or 실패 */
+    /* [4] 게임 결과 페이지 - 성공 or 실패 */
     @GetMapping("/result")
     public String gameResult(@RequestParam("totalQuestions") int totalQuestions,
                              @RequestParam("correctAnswersCount") int correctAnswersCount,
@@ -120,7 +128,6 @@ public class WebGameController {
 
         return "layout/layout_base"; // HTML 뷰 이름
     }
-
 
 
     /* [5] 중도포기
@@ -143,6 +150,34 @@ public class WebGameController {
         return "redirect:/game/" + randomGameNumber + "/snapshot";
     }
 
+
+    /*게임 검색. 검색어 -> 제목 /설명이나 내용/카테고리 */
+    @GetMapping("/search")
+    public String showSearchResults(@RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+                                    @RequestParam(value = "category", required = false) String category,
+                                    Pageable pageable,
+                                    Model model) {
+
+        Page<GameListDto> results;
+
+        if (category != null && !category.isEmpty()) {
+            // 카테고리에 따른 검색 결과 처리
+            results = gameSearchService.searchByCategory(category, pageable);
+        } else if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            // 검색어가 있을 경우 검색 결과 처리
+            results = gameSearchService.searchByKeyword(searchKeyword, pageable);
+        } else {
+            // 기본 게임 목록 표시 or 빈 결과 처리
+            results = Page.empty();
+        }
+
+        model.addAttribute("results", results.getContent());
+        model.addAttribute("currentPage", results.getNumber());
+        model.addAttribute("totalPages", results.getTotalPages());
+        model.addAttribute("pageType", "search_result");
+
+        return "layout/layout_base"; // 검색 결과 페이지의 뷰 이름
+    }
 
 
 }

@@ -1,0 +1,44 @@
+<div th:fragment="search_results">
+    <!-- 검색어 및 검색 결과 수 표시 -->
+    <div class="search-header bg-light p-3">
+        <h2>검색 결과</h2>
+        <p th:text="'검색어: \'' + ${searchKeyword} + '\', 검색 결과: ' + ${searchResults.size()} + '건'"></p>
+    </div>
+
+
+    <!-- 검색 결과 리스트 -->
+    <div class="gameCard-container mt-1 pt-4 bg-dark pb-3">
+        <div class="gameCard-cards">
+            <div th:if="${not #lists.isEmpty(gameListDtos)}">
+                <div th:each="gameDto : ${searchResults}">
+                    <a th:href="@{|/game/${gameDto.id}/${gameDto.gameUrlType}|}" class="text-decoration-none">
+                        <div class="gameCard-card card position-relative">
+                            <span class="position-absolute top-0 end-0 gameCard-badge badge rounded-pill bg-danger">NEW</span>
+                            <img th:src="@{${staticUrl} + 'img/cardImg.png'}" alt="Game Image">
+                            <div class="gameCard-card-body mx-auto p-0 d-flex align-items-center">
+                                <h3 th:text="${gameDto.title}" class="gameCard-card-title mx-auto p-0 m-0 px-2"></h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- "더보기" 버튼 (JavaScript로 구현된 추가 로딩 로직 필요) -->
+                <div class="load-more-container text-center mt-4">
+                    <button type="button" class="btn btn-secondary" id="loadMoreBtn">더보기</button>
+                </div>
+            </div>
+            <!-- 검색 결과가 없는 경우 -->
+            <div th:if="${#lists.isEmpty(gameListDtos)}" class="no-results">
+                <p>검색 결과가 없습니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // "더보기" 버튼 클릭 이벤트 핸들러
+    document.getElementById('loadMoreBtn').addEventListener('click', function () {
+        // 여기에 추가 결과를 로드하는 AJAX 요청 구현
+        // 예시: fetch API를 사용하여 서버에 요청을 보내고, 응답으로 받은 결과를 페이지에 동적으로 추가
+    });
+</script>

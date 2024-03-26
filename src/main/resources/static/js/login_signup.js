@@ -1,8 +1,8 @@
 window.onload = function () {
 
     // CSRF 토큰 값과 헤더 이름 가져오기
-    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
-    const csrfHeaderName = document.querySelector('meta[name="_csrf_header"]').content;
+    const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+    const csrfHeaderName = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
 
 
     /* 이메일 유효성 검사 */
@@ -37,11 +37,12 @@ window.onload = function () {
     let allowRequest = true;
 
 
+
     /* 인증번호 전송 */
     document.getElementById('verifyButton').addEventListener('click', async function () {
 
-        const fullEmail = emailInput.value + '@' + domainSelect.value;
-        // console.log("fullEmail " + fullEmail);
+        let fullEmail = emailInput.value + '@' + domainSelect.value;
+        console.log("fullEmail " + fullEmail);
 
         if (!allowRequest) {
             console.log("잠시 후 다시 시도해주세요.");
@@ -62,6 +63,7 @@ window.onload = function () {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    [csrfHeaderName]: csrfToken
                 },
                 body: JSON.stringify({toEmail: fullEmail})
             });
@@ -87,13 +89,14 @@ window.onload = function () {
         const fullEmail = emailInput.value + '@' + domainSelect.value;
         let codeInput = document.getElementById('inputVerificationCode');
         const code = codeInput.value;
-        alert("code " + code);
+        // alert("code " + code);
 
         try {
             const response = await fetch('/signup/validate-code', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    [csrfHeaderName]: csrfToken
                 },
                 body: JSON.stringify({toEmail: fullEmail, code: code})
             });
@@ -125,6 +128,7 @@ window.onload = function () {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    [csrfHeaderName]: csrfToken
                 },
                 body: JSON.stringify({nickname: nickname})
             });

@@ -1,0 +1,135 @@
+<div th:fragment="point_store" class="container mt-3 text-bg-light p-3" >
+
+    <!-- 포인트 카드 섹션 -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-sm-6 col-md-4 col-lg-3"> <!-- 카드의 너비를 조정 -->
+            <div class="card border border-warning">
+                <img class="card-img-top half-size-img" th:src="@{${staticUrl} + 'img/100point.png'}" alt="100 포인트">
+                <div class="card-body text-center">
+                    <h5 class="card-title">🪙100 포인트</h5>
+                    <a href="#" class="btn btn-outline-secondary mt-3" id="point_100_add">담기</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3"> <!-- 카드의 너비를 조정 -->
+            <div class="card border border-warning">
+                <img class="card-img-top half-size-img" th:src="@{${staticUrl} + 'img/1000point.png'}" alt="1000 포인트">
+                <div class="card-body text-center">
+                    <h5 class="card-title">💰1000 포인트</h5>
+                    <a href="#" class="btn btn-outline-secondary  mt-3" id="point_1000_add">담기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 장바구니 요약 표 -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col" class="text-center">상품</th>
+            <th scope="col" class="text-center">단가</th>
+            <th scope="col" class="text-center">수량</th>
+            <th scope="col" class="text-center">주문금액</th>
+            <th scope="col" class="text-center"></th> <!-- 삭제 버튼을 위한 공간 -->
+        </tr>
+        </thead>
+        <tbody id="point_tbody">
+        <tr id="emptyMsgRow">
+            <td colspan="6" style="text-align: center;">🛒장바구니가 비어있습니다.</td>
+        </tr>
+        <tr id="point_100_tr" hidden>
+            <td class="text-center">🪙100 포인트</td>
+            <td id="point_100_price" class="text-center">110원</td>
+            <td class="text-center">
+                <div class="input-group input-group-sm col-auto d-flex justify-content-center">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-outline-secondary" type="button" id="point_100_minus">🔽</button>
+                    </div>
+                    <input type="text" class="form-control text-center" value="1" style="max-width: 50px;"
+                           id="point_100_Quantity">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="point_100_plus">🔼</button>
+                    </div>
+                </div>
+            </td>
+
+            <td id="point_100_totalAmount" class="text-center"><strong>110원</strong></td>
+            <td>
+                <button class="btn btn-outline-secondary btn-sm" id="point_100_delete">✖️</button>
+            </td>
+        </tr>
+        <tr id="point_1000_tr" hidden>
+            <td class="text-center">💰1000 포인트</td>
+            <td id="point_1000_price" class="text-center">1000원</td>
+            <td class="text-center">
+                <div class="input-group input-group-sm col-auto d-flex justify-content-center">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-outline-secondary" type="button" id="point_1000_minus">🔽</button>
+                    </div>
+                    <input type="text" class="form-control text-center" value="1" style="max-width: 50px;"
+                           id="point_1000_Quantity">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="point_1000_plus">🔼</button>
+                    </div>
+                </div>
+            </td>
+
+            <td id="point_1000_totalAmount" class="text-center"><strong>1000원</strong></td>
+            <td>
+                <button class="btn btn-outline-secondary btn-sm" id="point_1000_delete">✖️</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <!-- 최종 결제금액 -->
+    <main class="d-flex justify-content-end mt-4">
+        <h4>최종 결제금액: <span class="text-primary" id="totalAmount">30,000원</span></h4>
+    </main>
+
+    <!-- 결제수단 -->
+    <div class="payment-methods mt-4">
+        <h5 class=" mt-4 ml-5">결제수단</h5>
+        <div class="d-flex justify-content-around mt-4 mb-4">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="kakaoPay" value="kakaoPay"
+                       checked>
+                <label class="form-check-label" for="kakaoPay">
+                    카카오페이
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="naverPay" value="naverPay"
+                       disabled>
+                <label class="form-check-label" for="naverPay">
+                    네이버페이
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="payco" value="payco" disabled>
+                <label class="form-check-label" for="payco">
+                    페이코
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" value="creditCard"
+                       disabled>
+                <label class="form-check-label" for="creditCard">
+                    신용카드
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- 결제하기 버튼 -->
+    <div class="d-flex justify-content-end mt-4">
+        <div class="d-flex justify-content-end mt-4">
+            <button type="button" class="btn btn-primary btn-lg" id="payingBtn">결제하기</button>
+        </div>
+
+    </div>
+
+</div>
+

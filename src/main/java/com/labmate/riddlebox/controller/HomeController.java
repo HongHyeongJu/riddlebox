@@ -36,22 +36,22 @@ public class HomeController {
         //추천게임 목록 받기
         List<GameListDto> gameListDtos = gameService.fetchRecommendedGamesForHomepage();
 
-            // 콘솔에 인증된 사용자 정보 출력
-//            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//            if (auth != null && auth.isAuthenticated()) {
-//                // 사용자 이름 출력
-//                String username = auth.getName(); // 또는 principalDetails.getUsername() 사용
-//                System.out.println("인증된 사용자 이름: " + username);
+        // 콘솔에 인증된 사용자 정보 출력
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        if (auth != null && auth.isAuthenticated()) {
+//            // 사용자 이름 출력
+//            String username = auth.getName(); // 또는 principalDetails.getUsername() 사용
+//            System.out.println("인증된 사용자 이름: " + username);
 //
-//                // 권한(역할) 목록 출력
-//                Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
-//                System.out.println("권한 목록:");
-//                for (GrantedAuthority authority : authorities) {
-//                    System.out.println(" - " + authority.getAuthority());
-//                }
-//            } else {
-//                System.out.println("인증된 사용자가 없습니다.");
+//            // 권한(역할) 목록 출력
+//            Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
+//            System.out.println("권한 목록:");
+//            for (GrantedAuthority authority : authorities) {
+//                System.out.println(" - " + authority.getAuthority());
 //            }
+//        } else {
+//            System.out.println("인증된 사용자가 없습니다.");
+//        }
 
 
         //모델에 담기

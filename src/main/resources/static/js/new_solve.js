@@ -1,5 +1,9 @@
 window.onload = function () {
 
+    const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+    const csrfHeaderName = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+
+
     // 게임 시작 시간
     let gameStartTime = new Date();
 
@@ -101,7 +105,7 @@ window.onload = function () {
 
                     //마지막 문제일시 결과페이지로
                     if (totalQuestions === numberOfQuestions) {
-                        sendGameResult(gameId, totalQuestions, currentCorrectAnswers, playTime, 'completion');
+                        sendGameRecord(gameId, totalQuestions, currentCorrectAnswers, playTime, 'completion');
                     }
 
                 }
@@ -145,38 +149,40 @@ window.onload = function () {
 
 
     // 게임 결과를 서버에 전송하는 함수
-    function sendGameResult(gameId, totalQuestions, correctAnswersCount, playTime, sendType) {
-        let isFail = '';
+    async function fetchQuestions() {
+        //시작버튼은 한 번 누르면 비활성화
+        document.getElementById('solveStartBtn').disabled = true;
 
-        if (sendType === 'lifeless') {
-            isFail = true
-        } else {
-            isFail = false;
-        }
-
-        fetch('/api/games/' + gameId + '/result', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                gameId: gameId,
-                totalQuestions: totalQuestions,
-                correctAnswersCount: correctAnswersCount,
-                playTime: playTime,
-                isFail: isFail
-            }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.redirectUrl) {
-                    setupBeforeUnloadListener(false); // 경고 비활성화
-                    window.location.href = data.redirectUrl; // 서버에서 받은 URL로 페이지 리디렉션
+        try {
+            const response = await fetch('/api/games/' + gameId + '/getQuestions', {
+                method: 'GET', // 또는 'POST' 등 요청 방식에 맞춰 설정
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeaderName]: csrfToken // CSRF 토큰을 헤더에 추가
                 }
-            })
-            .catch(error => console.error('Error:', error));
-
+            });
+            if (!response.ok) {
+                throw new Error('fetchQuestions Error!! Network response was not ok');
+            }
+            const questions = await response.json(); // 응답을 JSON 형식으로 변환
+            /*
+            * data : List<Question>  : Question(Long gameContentId, String question, Integer ordering)
+            * 문제 하나 추출 => 제시하기(문제, input 태그 추가)
+            * 사용자 입력 enter에 이벤트 함수 => 비동기로 결과 받기 (공백이나 아무것도 입력 안하고 엔터치는건 막기 -> 답을 입력하세여)
+            * 받은 결과에 따라 표시
+            * (반복
+            * 그러나 마지막 문제인 경우
+            * // 마지막 문제 채점 후...
+            * */
+            totalQuestions = questions.length;
+            for (let index = 0; index < questions.length; index++) {
+                await processQuestion(questions[index], index);
+            }
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
+        }
     }
+
 
     function beforeUnloadHandler(event) {
         event.returnValue = "변경사항이 저장되지 않을 수 있습니다.";
@@ -249,7 +255,11 @@ window.onload = function () {
             const response = await fetch('/api/games/submitAnswer'
                 , {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [csrfHeaderName]: csrfToken
+                    },
+
                     body: JSON.stringify({gameContentId: gameContentId, userAnswer: '-' + userAnswer + '-'})
                 });
 
@@ -260,9 +270,16 @@ window.onload = function () {
             inputElement.disabled = true; // 입력 필드 비활성화
             const answerResponse = await response.json();
 
-            console.log('Answer Response:', answerResponse);
+            if (totalQuestions == (currentCorrectAnswers + currentIncorrectAnswers)) {
+                // 게임 종료 시간을 기록
+                let gameEndTime = new Date();
 
-            return answerResponse; // 변환된 JSON 객체 반환
+                // 플레이 타임 계산 (초 단위)
+                let playTime = (gameEndTime - gameStartTime) / 1000;
+
+                sendGameRecord(gameId, playTime, true);
+            }
+
 
         } catch (error) {
             console.error('There has been a problem with your fetch operation:', error);
@@ -295,7 +312,7 @@ window.onload = function () {
 
 
     /*중도포기*/
-    document.getElementById('isAbandoned').addEventListener('click',function () {
+    document.getElementById('isAbandoned').addEventListener('click', function () {
 
         // 게임 종료 시간을 기록
         let gameEndTime = new Date();
@@ -313,13 +330,16 @@ window.onload = function () {
 
 
     // 게임 기록을 서버에 전송하는 함수
-    function sendGameRecord(gamePK, playTime, gameResult) {
+    function sendGameResult(gamePK, playTime, gameResult) {
         // console.log(`게임 PK: ${gamePK}, 플레이 시간: ${playTime}ms, 결과: ${gameResult}`);
+
+
 
         fetch('/api/games/user_exit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                [csrfHeaderName]: csrfToken
             },
             body: JSON.stringify({
                 gamePK: gamePK,

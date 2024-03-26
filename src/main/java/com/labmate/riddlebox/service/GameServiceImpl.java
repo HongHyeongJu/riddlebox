@@ -187,7 +187,7 @@ public class GameServiceImpl implements GameService {
                 .fetch();
     }
 
-    /*게임 목록 검색하기 (조건, 페이져블)*/
+    /*게임 목록 검색하기 (조건, 페이져블)*/ /*관리자 용으로 남기기*/
     public Page<GameListDto> searchGameSimple(GameSearchCondition condition, Pageable pageable) {
         List<GameListDto> results = queryFactory.select(new QGameListDto(game.id, game.gameCategory, game.title, game.gameLevel, gameImage.fileUrl))
                 .from(game)

@@ -71,7 +71,7 @@ body { /* 전체 배경색 */
 @media (min-width: 992px) {
     /* 예를 들어 'lg' 브레이크포인트 사용 */
     .search-form {
-        margin-left: 170px; /* 왼쪽 여백 추가 */
+        margin-left: 70px; /* 왼쪽 여백 추가 */
     }
 }
 
@@ -79,7 +79,7 @@ body { /* 전체 배경색 */
 @media (min-width: 900px) {
     /* 예를 들어 'lg' 브레이크포인트 사용 */
     .search-form {
-        margin-left: 150px; /* 왼쪽 여백 추가 */
+        margin-left: 50px; /* 왼쪽 여백 추가 */
     }
 
     /*.mypage-fixed-div {*/

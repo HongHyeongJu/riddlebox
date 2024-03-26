@@ -72,6 +72,7 @@ public class UserController {
         // 회원가입 완료 후 로그인 페이지 또는 인덱스 페이지로 리디렉션
         return "redirect:/index";
     }
+
     /* 로그인 */
 //    @PostMapping("/login")
 //    public String loginBasic(Model model) {

@@ -50,7 +50,7 @@ public class EmailServiceImpl implements EmailService {
     public CompletableFuture<Map<String, String>> makeMailContentAndSaveCodeToRedis(String toEmail) {
         Map<String, String> map = new ConcurrentHashMap<>();
 
-        if (!userService.checkDuplicateEmail(toEmail)) {
+        if (!userService.isEmailUnique(toEmail)) {
             return CompletableFuture.completedFuture(map);
         }
 

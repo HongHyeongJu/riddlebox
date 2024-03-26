@@ -50,7 +50,7 @@
                     <p class="card-text mt-2">홈페이지 오픈 이벤트</p>
                     <div class="img-container" style="height: 5rem; overflow: hidden;">
                         <!-- 이미지가 있을 경우 -->
-                        <a th:href="@{/test/this-event}"><img src="event.png" alt="Image"></a>
+                        <a th:href="@{/test/this-event}"><img th:src="@{${staticUrl} + 'img/event.png'}" alt="Image"></a>
 
                     </div>
                 </div>

@@ -9,7 +9,7 @@ public interface UserService {
 
     boolean isValidNickname(String nickname);
 
-    boolean checkDuplicateEmail(String email);
+    boolean isEmailUnique (String email);
 
 
     RBUser findUserByEmail(String email);

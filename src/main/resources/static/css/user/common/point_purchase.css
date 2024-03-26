@@ -1,0 +1,7 @@
+.half-size-img {
+    width: 50% !important; /* 이미지의 폭을 반으로 조정 */
+    height: auto; /* 비율 유지 */
+    display: block; /* 이미지를 블록 요소로 설정 */
+    margin-left: auto; /* 중앙 정렬 */
+    margin-right: auto; /* 중앙 정렬 */
+}

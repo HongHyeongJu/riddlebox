@@ -27,27 +27,39 @@
             <li class="nav-item">
                 <a class="nav-link" href="#">📙단편소설</a>
             </li>
-<!--            <li class="nav-item">-->
-<!--                <a class="nav-link" href="#">😋이모지'S</a>-->
-<!--            </li>-->
+            <!--            <li class="nav-item">-->
+            <!--                <a class="nav-link" href="#">😋이모지'S</a>-->
+            <!--            </li>-->
+            <li class="nav-item">
+                <div sec:authorize="hasRole('PAY_PLAYER')">
+                    <button type="button" class="btn btn-outline-light btn-sm mt-1"
+                            onclick="location.href='/point/point-store'">💰
+                    </button>
+                </div>
+            </li>
 
             <li class="nav-item search-form">
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <form class="d-flex" action="/game/search" method="get" role="search">
+                    <input class="form-control me-2" type="search" name="searchKeyword" placeholder="Search"
+                           aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             </li>
 
+
             <li class="nav-item" id="loginButton" style="display: none;">
-                <button type="button" sec:authorize="isAnonymous()" class="btn btn-primary" onclick="location.href='/login'">
+                <button type="button" sec:authorize="isAnonymous()" class="btn btn-primary"
+                        onclick="location.href='/login'">
                     Login
                 </button>
-                <button type="button" sec:authorize="isAnonymous()" class="btn btn-secondary" onclick="location.href='/signup'">
+                <button type="button" sec:authorize="isAnonymous()" class="btn btn-secondary"
+                        onclick="location.href='/signup'">
                     Signup
                 </button>
             </li>
             <li class="nav-item" id="logoutButton">
-                <button type="button" sec:authorize="isAuthenticated()" class="btn btn-secondary" onclick="location.href='/logout'">
+                <button type="button" sec:authorize="isAuthenticated()" class="btn btn-secondary"
+                        onclick="location.href='/logout'">
                     Logout
                 </button>
             </li>

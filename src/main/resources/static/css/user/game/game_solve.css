@@ -49,6 +49,11 @@ input::placeholder {
 }
 
 
+.shine-button {
+  position: relative;
+  overflow: hidden;
+}
+
 .shine-button::after {
   content: '';
   position: absolute;
