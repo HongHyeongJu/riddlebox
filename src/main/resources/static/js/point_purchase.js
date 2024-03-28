@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function changeTotalAmount() {
         let totalAmountValue = 0;
-        let totalPoint = "";
+        let totalPoint = 0;
 
         // point_100_tr의 숨김 상태를 확인하고 값 추출
         if (!tr100.hidden) {
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // 총액을 표시
         document.getElementById("totalAmount").innerHTML = totalAmountValue + "원";
         // 총포인트 표시
-        document.getElementById("totalPoint").innerHTML = '🪙 ' + totalPoint + ' ';
+        document.getElementById("totalPoint").innerHTML = '🪙 ' + totalPoint + ' 포인트 ';
     }
 
 

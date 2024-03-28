@@ -86,13 +86,13 @@
 
     <!-- 최종 결제금액 -->
     <main class="d-flex justify-content-end mt-4">
-        <button class="btn mr-5" id="totalPoint">🪙</button>
+        <button class="btn mr-5" id="totalPoint" style="margin-right: 50px;">🪙</button>
         <h4>최종 결제금액: <span class="text-primary" id="totalAmount">0원</span></h4>
     </main>
 
     <!-- 결제수단 -->
-    <div class="payment-methods mt-4">
-        <h5 class=" mt-4 ml-5">결제수단</h5>
+    <div class="payment-methods">
+        <button class="btn mr-5" style="margin-left: 50px;"><h5 class=" mt-4 ml-5">결제수단</h5></button>
         <div class="d-flex justify-content-around mt-4 mb-4">
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="paymentMethod" id="kakaoPay" value="kakaoPay"
@@ -114,18 +114,11 @@
                     페이코
                 </label>
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" value="creditCard"
-                       disabled>
-                <label class="form-check-label" for="creditCard">
-                    신용카드
-                </label>
-            </div>
         </div>
     </div>
 
     <!-- 결제하기 버튼 -->
-    <div class="d-flex justify-content-end mt-4">
+    <div class="d-flex justify-content-end ">
         <div class="d-flex justify-content-end mt-4">
             <button type="button" class="btn btn-primary btn-lg" id="payingBtn">결제하기</button>
         </div>
