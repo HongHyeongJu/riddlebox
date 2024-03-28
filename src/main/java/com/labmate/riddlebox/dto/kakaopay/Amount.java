@@ -21,5 +21,4 @@ public class Amount {
     private Integer taxFreeAmount; // 비과세 금액
     private Integer vatAmount; // 부가세 금액
 
-
 }

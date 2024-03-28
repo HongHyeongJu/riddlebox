@@ -48,11 +48,9 @@ public class PaymentInfo extends BaseEntity {
 
 
     public void setUser(RBUser user) {
-        // 이전에 참조하던 관계를 제거
         if (this.user != null) {
             this.user.getGameRecords().remove(this);
         }
-        // 새로운 객체 참조 설정
         this.user = user;
     }
 

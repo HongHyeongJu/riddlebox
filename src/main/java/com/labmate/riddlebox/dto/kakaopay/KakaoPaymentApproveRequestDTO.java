@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PaymentApprovalDTO {
+public class KakaoPaymentApproveRequestDTO {
 
     private String cid; // 가맹점 코드
     private String cid_secret; // 가맹점 코드 인증키
@@ -18,8 +18,7 @@ public class PaymentApprovalDTO {
     private String payload; // 결제 승인 요청에 대해 저장하고 싶은 값
     private Integer total_amount; // 상품 총액
 
-    // 필수 필드를 포함한 생성자
-    public PaymentApprovalDTO(String cid, String tid, String partner_order_id, String partner_user_id, String pg_token) {
+    public KakaoPaymentApproveRequestDTO(String cid, String tid, String partner_order_id, String partner_user_id, String pg_token) {
         this.cid = cid;
         this.tid = tid;
         this.partner_order_id = partner_order_id;

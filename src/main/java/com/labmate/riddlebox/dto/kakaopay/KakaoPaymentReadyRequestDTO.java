@@ -10,7 +10,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PaymentRequestDTO {
+public class KakaoPaymentReadyRequestDTO {
 
     private String cid;
     private String cid_secret;

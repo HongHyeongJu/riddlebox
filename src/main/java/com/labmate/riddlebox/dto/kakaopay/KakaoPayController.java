@@ -6,36 +6,26 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.labmate.riddlebox.api.ApiUserController;
 import com.labmate.riddlebox.config.StaticResourceConfig;
-import com.labmate.riddlebox.dto.PurchaseInformation;
+import com.labmate.riddlebox.dto.OrderInfoDTO;
 import com.labmate.riddlebox.entity.PaymentInfo;
 import com.labmate.riddlebox.entity.RBUser;
 import com.labmate.riddlebox.enumpackage.PaymentStatus;
 import com.labmate.riddlebox.repository.PaymentInfoRepository;
 import com.labmate.riddlebox.repository.UserRepository;
-import com.labmate.riddlebox.security.PrincipalDetails;
 import com.labmate.riddlebox.security.SecurityUtils;
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 public class KakaoPayController {
@@ -63,108 +53,109 @@ public class KakaoPayController {
         this.paymentInfoRepository = paymentInfoRepository;
     }
 
-//    public String kakaoPayRequest_02(@RequestBody PurchaseInformation purchaseInformation) throws JsonProcessingException {
+//    public String kakaoPayRequest_02(@RequestBody orderInfoDTO orderInfoDTO) throws JsonProcessingException {
 
 
     //    @Autowired
 //    private KakaoPayService kakaoPayService;
     @Transactional
     @PostMapping("/api/pay/kakaopay")
-    public ResponseEntity<?> kakaoPayRequest_02(@RequestBody PurchaseInformation purchaseInformation) throws JsonProcessingException {
-        //인증객체 꺼내기
-        String userEmail = SecurityUtils.getCurrentUserEmail();
-        Long userId = SecurityUtils.getCurrentUserId();
-
-        int total_amount = purchaseInformation.getPoint_100_Quantity() * 110 + purchaseInformation.getPoint_1000_Quantity() * 1000;
-        int totalPointAmount = purchaseInformation.getPoint_100_Quantity() * 100 + purchaseInformation.getPoint_1000_Quantity() * 1000;
-//        String partnerOrderId = generateOrderId(userId);
-
-        PaymentRequestDTO requestDTO = PaymentRequestDTO.builder()
-                .cid(kakaoPayConfig.getCid())
-                .partner_order_id(purchaseInformation.getPaymentId())
-                .partner_user_id(userEmail)
-                .item_name("RiddleBox 포인트")
-                .item_code("RB-Point")
-                .quantity(1)
-                .total_amount(total_amount)
-                .tax_free_amount(500)
-                .approval_url("http://localhost:8080/kakaopay/approval_url")
-                .cancel_url("http://localhost:8080/kakaopay/approval_url")
-                .fail_url("http://localhost:8080/kakaopay/approval_url")
-                .build();
-
-        PaymentInfo paymentInfo = new PaymentInfo();
-        RBUser user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        paymentInfo.firstPaymentInformation(user, purchaseInformation.getPaymentId(), userEmail,
-                "RiddleBox 포인트", "RB-Point",
-                total_amount, totalPointAmount);
-        paymentInfo.updatePaymentStatus(PaymentStatus.INITIATED);
-
-        RestTemplate restTemplate1 = new RestTemplate();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "SECRET_KEY " + kakaoPayConfig.getSecretKeyDev());
-
-        // PaymentRequestDTO 객체를 JSON 문자열로 변환
-        String jsonRequest;
+    public ResponseEntity<?> processKakaoPayRequest(@RequestBody OrderInfoDTO orderInfoDTO) {
         try {
-            jsonRequest = objectMapper.writeValueAsString(requestDTO);
+            //사용자 정보
+            String userEmail = SecurityUtils.getCurrentUserEmail();
+            Long userId = SecurityUtils.getCurrentUserId();
+
+            // 포인트 및 결제 금액 계산
+            int total_amount = orderInfoDTO.getPoint_100_Quantity() * 110 + orderInfoDTO.getPoint_1000_Quantity() * 1000;
+            int totalPointAmount = orderInfoDTO.getPoint_100_Quantity() * 100 + orderInfoDTO.getPoint_1000_Quantity() * 1000;
+
+            // 결제 요청 객체 준비
+            KakaoPaymentReadyRequestDTO requestDTO = KakaoPaymentReadyRequestDTO.builder()
+                                                                                .cid(kakaoPayConfig.getCid())
+                                                                                .partner_order_id(orderInfoDTO.getPaymentId())
+                                                                                .partner_user_id(userEmail)
+                                                                                .item_name("RiddleBox 포인트")
+                                                                                .item_code("RB-Point")
+                                                                                .quantity(1)
+                                                                                .total_amount(total_amount)
+                                                                                .tax_free_amount(500)
+                                                                                .approval_url("http://localhost:8080/kakaopay/approval_url")
+                                                                                .cancel_url("http://localhost:8080/kakaopay/approval_url")
+                                                                                .fail_url("http://localhost:8080/kakaopay/approval_url")
+                                                                                .build();
+
+            // 결제 정보 생성
+            PaymentInfo paymentInfo = new PaymentInfo();
+            RBUser user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+            paymentInfo.firstPaymentInformation(user, orderInfoDTO.getPaymentId(), userEmail, "RiddleBox 포인트", "RB-Point", total_amount, totalPointAmount);
+            paymentInfo.updatePaymentStatus(PaymentStatus.INITIATED);
+            paymentInfoRepository.save(paymentInfo);
+
+            // 카카오페이 API 호출
+            RestTemplate restTemplate1 = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "SECRET_KEY " + kakaoPayConfig.getSecretKeyDev());
+
+            // PaymentRequestDTO 객체를 JSON 문자열로 변환
+            String jsonRequest;
+            try {
+                jsonRequest = objectMapper.writeValueAsString(requestDTO);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Error converting PaymentRequestDTO to JSON", e);
+            }
+
+            logger.debug("\n");
+            logger.debug(" ===================  1  =================== ");
+            logger.debug("Request Headers: {}", headers);
+            logger.debug("Request Body: {}", jsonRequest);
+            logger.debug("\n");
+
+            String kakaopayReadyRequestUrl = kakaoPayConfig.getReadyRequestUriCompletion();
+            HttpEntity<String> entity = new HttpEntity<>(jsonRequest, headers);
+
+            logger.debug("\n");
+            logger.debug(" ===================  2  =================== ");
+            logger.debug("HttpEntity<String> entity: {}", entity);
+            logger.debug("\n");
+
+            ResponseEntity<String> response = restTemplate1.postForEntity(kakaopayReadyRequestUrl, entity, String.class);
+
+            logger.debug("\n");
+            logger.debug(" ===================  3  =================== ");
+            logger.debug("Response Status Code: {}", response.getStatusCode());
+            logger.debug("Response Body: {}", response.getBody());
+            logger.debug("\n");
+
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new RuntimeException("카카오페이 호출 실패");
+            }
+
+            // 응답 처리
+            String responseBody = String.valueOf(response.getBody());
+
+            // objectMapper.registerModule(new JavaTimeModule());  //생성자에서 일괄주입으로 변경
+            KakaoPaymentReadyResponseDTO responseDTO = objectMapper.readValue(responseBody, KakaoPaymentReadyResponseDTO.class);
+
+            paymentInfo.secondPaymentInformation(responseDTO.getTid(), responseDTO.getCreated_at()); //카카오 서버 응답값 저장 (tid, created_at)
+            paymentInfo.updatePaymentStatus(PaymentStatus.AWAITING_PAYMENT);
+            paymentInfoRepository.save(paymentInfo);
+
+            //사용자에게 카카오 결제 QR 링크 전달 Next_redirect_pc_url
+            return ResponseEntity.ok(Collections.singletonMap("nextRedirectPcUrl", responseDTO.getNext_redirect_pc_url()));
+
+        } catch (EntityNotFoundException e) {
+            logger.error("User not found: {}", e.getMessage());
+            return new ResponseEntity<>("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error converting PaymentRequestDTO to JSON", e);
+            logger.error("JSON parsing error: {}", e.getMessage());
+            return new ResponseEntity<>("서버 오류로 인해 처리할 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (RuntimeException e) {
+            logger.error("Internal server error: {}", e.getMessage());
+            return new ResponseEntity<>("내부 서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        logger.debug("\n");
-        logger.debug(" ===================  1  =================== ");
-        logger.debug("Request Headers: {}", headers);
-        logger.debug("Request Body: {}", jsonRequest);
-        logger.debug("\n");
-
-        String kakaopayRequestUrl = "https://" + kakaoPayConfig.getHost() + kakaoPayConfig.getRequestUri(); //"https://open-api.kakaopay.com/online/v1/payment/ready HTTP/1.1"
-        String requestUrl = "https://open-api.kakaopay.com/online/v1/payment/ready";
-        String requestUrlMockup = "https://online-pay.kakao.com/mockup/online/v1/payment/ready";
-        HttpEntity<String> entity = new HttpEntity<>(jsonRequest, headers);
-        paymentInfoRepository.save(paymentInfo);
-
-        logger.debug("\n");
-        logger.debug(" ===================  2  =================== ");
-        logger.debug("HttpEntity<String> entity: {}", entity);
-        logger.debug("\n");
-
-
-        //[1] restTemplate.postForEntity(url, new HttpEntity<>(jsonRequest, headers), String.class);
-        //[2] restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(jsonRequest, headers), String.class);
-        // POST 요청 보내기
-        ResponseEntity<String> response = restTemplate1.postForEntity(requestUrl,
-                entity,
-                String.class);
-
-        logger.debug("\n");
-        logger.debug(" ===================  3  =================== ");
-        logger.debug("Response Status Code: {}", response.getStatusCode());
-        logger.debug("Response Body: {}", response.getBody());
-        logger.debug("\n");
-
-
-        // 응답 처리
-        String responseBody = String.valueOf(response.getBody());
-
-
-        // JSON 응답을 PaymentResponseDTO 객체로 변환
-        // Java 8 날짜/시간 모듈 등록
-//        objectMapper.registerModule(new JavaTimeModule());  //생성자에서 일괄주입
-        PaymentResponseDTO responseDTO = objectMapper.readValue(responseBody, PaymentResponseDTO.class);
-
-        paymentInfo.secondPaymentInformation(responseDTO.getTid(), responseDTO.getCreated_at());
-        paymentInfo.updatePaymentStatus(PaymentStatus.AWAITING_PAYMENT);
-        paymentInfoRepository.save(paymentInfo);
-
-        String nextRedirectPcUrl = responseDTO.getNext_redirect_pc_url();
-
-        return ResponseEntity.ok(Collections.singletonMap("nextRedirectPcUrl", nextRedirectPcUrl));
-
     }
-
 
 
     @PostMapping("/api/pay/check-status")
@@ -177,7 +168,7 @@ public class KakaoPayController {
 
         if (paymentInfo != null) {
 
-            String paymentStatus = paymentInfo.getStatus()==PaymentStatus.APPROVED ? "Success" : "Failure";
+            String paymentStatus = paymentInfo.getStatus() == PaymentStatus.APPROVED ? "Success" : "Failure";
             int totalPointAmount = paymentInfo.getTotalPointAmount();
 
             // 응답 생성
@@ -206,8 +197,8 @@ public class KakaoPayController {
 //    approval_url + ?pg_token= 파라미터
 
 
-    public String requestPaymentReady(PaymentRequestDTO paymentRequestDTO) throws Exception {
-        String url = "https://" + kakaoPayConfig.getHost() + kakaoPayConfig.getRequestUri();
+    public String requestPaymentReady(KakaoPaymentReadyRequestDTO paymentRequestDTO) throws Exception {
+        String url = "https://" + kakaoPayConfig.getHost() + kakaoPayConfig.getReadyRequestUri();
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -229,3 +220,73 @@ public class KakaoPayController {
 
 
 }
+
+
+// processKakaoPayRequest 리팩토링
+/*
+@Transactional
+@PostMapping("/api/pay/kakaopay")
+public ResponseEntity<?> processKakaoPayRequest(@RequestBody OrderInfoDTO orderInfo) throws JsonProcessingException {
+    String userEmail = SecurityUtils.getCurrentUserEmail();
+    Long userId = SecurityUtils.getCurrentUserId();
+
+    int totalAmount = orderInfo.getPoint100Quantity() * 110 + orderInfo.getPoint1000Quantity() * 1000;
+    int totalPoint = orderInfo.getPoint100Quantity() * 100 + orderInfo.getPoint1000Quantity() * 1000;
+
+    KakaoPaymentReadyRequestDTO requestDTO = buildPaymentRequestDTO(orderInfo, userEmail, totalAmount);
+    PaymentInfo paymentInfo = initializePaymentInfo(userId, orderInfo, totalPoint);
+    ResponseEntity<String> response = sendPaymentRequest(requestDTO);
+
+    if (processPaymentResponse(response, paymentInfo)) {
+        return ResponseEntity.ok(Map.of("nextRedirectPcUrl", paymentInfo.getRedirectUrl()));
+    } else {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Payment processing failed");
+    }
+}
+
+private KakaoPaymentReadyRequestDTO buildPaymentRequestDTO(OrderInfoDTO orderInfo, String userEmail, int totalAmount) {
+    return KakaoPaymentReadyRequestDTO.builder()
+        .cid(kakaoPayConfig.getCid())
+        .partner_order_id(orderInfo.getPaymentId())
+        .partner_user_id(userEmail)
+        .item_name("RiddleBox 포인트")
+        .quantity(1)
+        .total_amount(totalAmount)
+        .tax_free_amount(500)
+        .approval_url(kakaoPayConfig.getApprovalUrl())
+        .cancel_url(kakaoPayConfig.getCancelUrl())
+        .fail_url(kakaoPayConfig.getFailUrl())
+        .build();
+}
+
+private PaymentInfo initializePaymentInfo(Long userId, OrderInfoDTO orderInfo, int totalPoint) {
+    PaymentInfo paymentInfo = new PaymentInfo(userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found")),
+                                              orderInfo.getPaymentId(), "RiddleBox 포인트", totalPoint);
+    paymentInfoRepository.save(paymentInfo);
+    return paymentInfo;
+}
+
+private ResponseEntity<String> sendPaymentRequest(KakaoPaymentReadyRequestDTO requestDTO) throws JsonProcessingException {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("Authorization", "KakaoAK " + kakaoPayConfig.getApiKey());
+
+    String requestJson = objectMapper.writeValueAsString(requestDTO);
+    logger.debug("Sending payment request: {}", requestJson);
+
+    return restTemplate.postForEntity(kakaoPayConfig.getPaymentRequestUrl(), new HttpEntity<>(requestJson, headers), String.class);
+}
+
+private boolean processPaymentResponse(ResponseEntity<String> response, PaymentInfo paymentInfo) throws JsonProcessingException {
+    if (response.getStatusCode().is2xxSuccessful()) {
+        KakaoPaymentReadyResponseDTO responseDTO = objectMapper.readValue(response.getBody(), KakaoPaymentReadyResponseDTO.class);
+        paymentInfo.updateWithResponse(responseDTO);
+        paymentInfoRepository.save(paymentInfo);
+        logger.debug("Payment processed successfully: {}", response.getBody());
+        return true;
+    } else {
+        logger.error("Payment processing failed: {}", response.getStatusCode());
+        return false;
+    }
+}
+*/

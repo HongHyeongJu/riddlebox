@@ -11,8 +11,11 @@ public class KakaoPayConfig {
     @Value("${kakaopay.host}")
     private String host;
 
-    @Value("${kakaopay.request-uri}")
-    private String requestUri;
+    @Value("${kakaopay.ready-request-uri}")
+    private String readyRequestUri;
+
+    @Value("${kakaopay.approve-request-uri}")
+    private String approveRequestUri;
 
     @Value("${kakaopay.secret-key}")
     private String secretKey;
@@ -29,6 +32,9 @@ public class KakaoPayConfig {
     @Value("${kakaopay.client-secret}")
     private String clientSecret;
 
+    private String readyRequestUriCompletion = "https://open-api.kakaopay.com/online/v1/payment/ready";
+
+    private String approveRequestUriCompletion = "https://open-api.kakaopay.com/online/v1/payment/approve";
 
 
 }

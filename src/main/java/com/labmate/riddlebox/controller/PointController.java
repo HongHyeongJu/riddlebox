@@ -5,15 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.labmate.riddlebox.api.ApiUserController;
-import com.labmate.riddlebox.config.StaticResourceConfig;
 import com.labmate.riddlebox.dto.kakaopay.KakaoPayConfig;
 import com.labmate.riddlebox.dto.kakaopay.KakaoPayService;
-import com.labmate.riddlebox.dto.kakaopay.PaymentApprovalDTO;
-import com.labmate.riddlebox.dto.kakaopay.PaymentCompletionDTO;
+import com.labmate.riddlebox.dto.kakaopay.KakaoPaymentApproveRequestDTO;
+import com.labmate.riddlebox.dto.kakaopay.KakaoPaymentApproveResponseDTO;
 import com.labmate.riddlebox.entity.PaymentInfo;
 import com.labmate.riddlebox.enumpackage.PaymentStatus;
 import com.labmate.riddlebox.repository.PaymentInfoRepository;
-import com.labmate.riddlebox.repository.UserRepository;
 import com.labmate.riddlebox.security.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -23,13 +21,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequestMapping("")
@@ -77,18 +71,32 @@ public class PointController {
     }
 
 
-    //성공페이지에서 받을 것
+    //카카오페이의 응답(성공, 취소, 실패)을 다루기
     @Transactional
     @GetMapping("/kakaopay/approval_url")
-    public String kakaoPayRequest_Success(HttpServletRequest request, Model model) throws JsonProcessingException {
-        // pg_token 추출
+    public String handleKakaoPayResponse(@RequestParam(value = "pg_token", required = false) String pgToken,
+                                          HttpServletRequest request, Model model) throws JsonProcessingException {
+        // 현재 로그인한 사용자 ID를 통해 대기 중인 결제 정보 조회
         Long currentUserId = SecurityUtils.getCurrentUserId();
         PaymentInfo paymentInfo = kakaoPayService.findAwaitingPaymentPaymentInfo(currentUserId);
 
+        // pg_token 유무 확인
+        if (pgToken == null || pgToken.isEmpty()) {
+            paymentInfo.updatePaymentStatus(PaymentStatus.FAILED);
+            paymentInfoRepository.save(paymentInfo);
+
+            // pg_token이 없는 경우, 결제 실패로 간주하고 사용자에게 안내
+            model.addAttribute("pageType", "paymentCompleted");
+            model.addAttribute("title", "paymentCompleted");
+            model.addAttribute("paymentResult", "Fail");
+            return "layout/layout_base"; // 결제 실패 페이지로 리다이렉트
+        }
+
+        // pg_token이 있는 경우, 결제 승인 처리 진행
         String tid = paymentInfo.getTid();
         String partner_order_id = paymentInfo.getPartnerOrderId();
         String partner_user_id = paymentInfo.getPartnerUserId();
-        String cid = kakaoPayConfig.getCid(); // 예시 CID, 실제 사용 시 변경 필요
+        String cid = kakaoPayConfig.getCid(); //
 
         paymentInfo.updatePaymentStatus(PaymentStatus.AUTHORIZED);
         paymentInfoRepository.save(paymentInfo);
@@ -101,25 +109,21 @@ public class PointController {
         logger.debug("\n");
 
 
-        // PaymentApprovalDTO 객체 생성
-        PaymentApprovalDTO approvalDTO = new PaymentApprovalDTO(cid, tid, partner_order_id, partner_user_id, pg_token);
-
-        // 결제 승인 요청 로직 구현 필요 (예: RestTemplate 사용)
-        // 예제 코드
+        // 카카오페이 결제 승인 요청
+        KakaoPaymentApproveRequestDTO approvalDTO = new KakaoPaymentApproveRequestDTO(cid, tid, partner_order_id, partner_user_id, pg_token);
         RestTemplate restTemplate2 = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "SECRET_KEY " + kakaoPayConfig.getSecretKeyDev());
 
-        HttpEntity<PaymentApprovalDTO> entity = new HttpEntity<>(approvalDTO, headers);
+        HttpEntity<KakaoPaymentApproveRequestDTO> entity = new HttpEntity<>(approvalDTO, headers);
 
         logger.debug("\n");
         logger.debug(" ===================  5  =================== ");
         logger.debug("HttpEntity<String> entity: {}", entity);
         logger.debug("\n");
 
-
-        ResponseEntity<String> response = restTemplate2.postForEntity("https://open-api.kakaopay.com/online/v1/payment/approve?pg_token=" + pg_token, entity, String.class);
+        ResponseEntity<String> response = restTemplate2.postForEntity(kakaoPayConfig.getApproveRequestUriCompletion(), entity, String.class);
 
         logger.debug("\n");
         logger.debug(" ===================  6  =================== ");
@@ -127,41 +131,38 @@ public class PointController {
         logger.debug("Response Body: {}", response.getBody());
         logger.debug("\n");
 
-        HttpStatus statusCode = (HttpStatus) response.getStatusCode();
         String responseBody = response.getBody();
 
-        if (statusCode.is2xxSuccessful()) {
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
 
-            // 응답 처리
-            // JSON 응답을 PaymentResponseDTO 객체로 변환
-            PaymentCompletionDTO completionDTO = objectMapper.readValue(responseBody, PaymentCompletionDTO.class);
+            // 결제 승인 성공, 결제 정보 업데이트
+            KakaoPaymentApproveResponseDTO completionDTO = objectMapper.readValue(responseBody, KakaoPaymentApproveResponseDTO.class);
             paymentInfo.thirdPaymentInformation(completionDTO.getAid(), completionDTO.getAmount(), completionDTO.getCardInfo(), completionDTO.getApprovedAt());
-
             paymentInfo.updatePaymentStatus(PaymentStatus.APPROVED);
             paymentInfoRepository.save(paymentInfo);
 
-            //포인트 저장해야해
+            //포인트 저장
             kakaoPayService.updateAccountBalanceAfterPurchase(currentUserId, paymentInfo.getTotalPointAmount());
-
 
             model.addAttribute("pageType", "paymentCompleted");
             model.addAttribute("title", "paymentCompleted");
             model.addAttribute("newPoint", paymentInfo.getTotalPointAmount());
             model.addAttribute("paymentResult", "Success");
 
-            return "layout/layout_base";
+            return "layout/layout_base";  // 결제 성공 페이지로 리다이렉트
         } else {
-            // 실패 또는 에러 응답 처리
+            // 결제 승인 실패 처리
+            paymentInfo.updatePaymentStatus(PaymentStatus.FAILED);
+            paymentInfoRepository.save(paymentInfo);
+
             model.addAttribute("pageType", "paymentCompleted");
             model.addAttribute("title", "paymentCompleted");
             model.addAttribute("paymentResult", "Fail");
-            // 실패 메시지 추가 등
-            // 실패 뷰 반환
-            return "payment/failure";
+
+            return "layout/layout_base"; // 결제 실패 페이지로 리다이렉트
         }
 
-    }
-
+}
 
 //
 //    @Setter(onMethod_ = @Autowired)

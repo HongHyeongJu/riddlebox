@@ -208,7 +208,6 @@ document.addEventListener('DOMContentLoaded', function () {
         let quantity1000 = 0;
         const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
 
-        // tr100과 tr1000이 정의되어 있지 않습니다. 해당 요소를 얻는 코드가 필요할 수 있습니다.
         if (!tr100.hidden) {
             quantity100 = document.getElementById('point_100_Quantity').value;
         }
@@ -239,7 +238,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 }),
             });
 
-            const data = await response.json();
+            const data = await response.json(); // 응답 본문을 JSON 형태로 한 번만 읽음
+
+            if (!response.ok) { // 응답 상태 코드가 2xx가 아닌 경우
+                alert('처리 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.'); // 오류 메시지 표시
+                return;
+            }
             const paymentPopup = window.open(data.nextRedirectPcUrl, 'paymentPopup', 'width=1000,height=600');
 
             // 팝업 창이 닫힘을 감지
@@ -253,6 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch
             (error) {
             console.error('An error occurred:', error);
+            alert('네트워크 오류로 요청을 완료할 수 없습니다. 인터넷 연결을 확인해주세요.'); // 네트워크 오류 등의 경우
         }
     });
 

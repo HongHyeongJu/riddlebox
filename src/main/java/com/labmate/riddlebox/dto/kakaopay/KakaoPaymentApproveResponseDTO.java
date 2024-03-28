@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PaymentCompletionDTO {
+public class KakaoPaymentApproveResponseDTO {
 
     private String aid;
     private String tid;

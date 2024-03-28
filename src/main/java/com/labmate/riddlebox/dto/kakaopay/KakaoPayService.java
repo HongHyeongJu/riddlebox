@@ -1,15 +1,10 @@
 package com.labmate.riddlebox.dto.kakaopay;
 
-import com.labmate.riddlebox.dto.GameplayInfoDto;
-import com.labmate.riddlebox.entity.Game;
 import com.labmate.riddlebox.entity.PaymentInfo;
 import com.labmate.riddlebox.entity.RBUser;
 import com.labmate.riddlebox.entity.UserPoint;
 import com.labmate.riddlebox.enumpackage.PaymentStatus;
 import com.labmate.riddlebox.repository.*;
-import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.dsl.DateTimeExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,10 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 
 import static com.labmate.riddlebox.entity.QPaymentInfo.paymentInfo;
 import static com.labmate.riddlebox.entity.QUserPoint.userPoint;
@@ -108,8 +101,8 @@ public class KakaoPayService {
     }
 
 
-    public String requestPaymentReady(PaymentRequestDTO paymentRequestDTO) throws Exception {
-        String url = "https://" + kakaoPayConfig.getHost() + kakaoPayConfig.getRequestUri();
+    public String requestPaymentReady(KakaoPaymentReadyRequestDTO paymentRequestDTO) throws Exception {
+        String url = "https://" + kakaoPayConfig.getHost() + kakaoPayConfig.getReadyRequestUri();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

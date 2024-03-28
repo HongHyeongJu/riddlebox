@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PaymentResponseDTO {
+public class KakaoPaymentReadyResponseDTO {
 
     private String tid;
     private String next_redirect_app_url;
