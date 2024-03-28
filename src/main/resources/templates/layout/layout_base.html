@@ -24,7 +24,7 @@
     <link  th:href="@{${staticUrl} + 'css/user/mypage/mypage_detail.css'}"  th:if="${pageType == 'myPageDetail'}" rel="stylesheet">
     <link  th:href="@{${staticUrl} + 'css/user/common/login.css'}"  th:if="${pageType == 'login'}" rel="stylesheet">
     <link  th:href="@{${staticUrl} + 'css/user/common/signup.css'}"  th:if="${pageType == 'signup'}" rel="stylesheet">
-    <link  th:href="@{${staticUrl} + 'css/user/common/point_purchase.css'}"  th:if="${pageType == 'pointStore'}" rel="stylesheet">
+    <link  th:href="@{${staticUrl} + 'css/user/common/point_purchase.css'}"  th:if="${pageType == 'pointPurchase'}" rel="stylesheet">
     <link  th:href="@{${staticUrl} + 'css/user/common/payment_completed.css'}"  th:if="${pageType == 'paymentCompleted'}" rel="stylesheet">
 
     <meta name="_csrf" th:content="${_csrf.token}"/>
@@ -128,9 +128,9 @@
     </section>
 
 
-    <section th:case="'pointStore'">
+    <section th:case="'pointPurchase'">
         <!-- 공지사항 목록 -->
-        <p th:replace="~{layout/user/common/point_store :: point_store}">point_store</p>
+        <p th:replace="~{layout/user/common/point_purchase :: point_purchase}">point_purchase</p>
     </section>
 
     <section th:case="'paymentCompleted'">
@@ -192,8 +192,8 @@
     <script th:src="@{${staticUrl} + 'js/game_story.js'}"></script>
 </div>
 
-<div th:if="${pageType == 'pointStore'}">
-    <script th:src="@{${staticUrl} + 'js/point_store.js'}"></script>
+<div th:if="${pageType == 'pointPurchase'}">
+    <script th:src="@{${staticUrl} + 'js/point_purchase.js'}"></script>
 </div>
 
 <div th:if="${pageType == 'gameSolve'}">
@@ -236,6 +236,8 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
+
         const token = localStorage.getItem('jwtToken'); // 'jwtToken'은 로그인 시 저장된 JWT의 키입니다.
         if (token) {
             document.getElementById('logoutButton').style.display = 'block';

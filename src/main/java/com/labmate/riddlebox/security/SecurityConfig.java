@@ -32,13 +32,14 @@ public class SecurityConfig {  //Spring Security의 보안 구성을 정의하�
                         .requestMatchers("/game/**", "/api/games/**", "/support/inquiry/**",
                                 "/mypage/**","/mypage/record").hasRole("PLAYER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/point/**", "/api/point/**").hasRole("PAY_PLAYER")
+                        .requestMatchers("/point/**", "/api/pay/**", "/kakaopay/**").hasRole("PAY_PLAYER")
                         .requestMatchers("/logout").authenticated()
                         .requestMatchers("/", "/index", "/games", "/resources/**", "/css/**", "/js/**", "/img/**", "/formlogin", "/test/**",
                                 "/supports/**", "/login", "/account/recovery", "/signup/**", "/oauth2/**", "/auth/**","/favicon.ico","/error/**","/health").permitAll())
                 .csrf((csrf) -> csrf.ignoringRequestMatchers("/","/index", "/games", "/login", "/supports/**",
                                             "/oauth2/**", "/auth/**",
-                                            "/error/**","/test/**","/health", "/game/search/**","/api/games/search/**")) //"/api/games/**", "/signup/send-email", "/signup/validate-code", "/formlogin",
+                                            "/error/**","/test/**","/health", "/game/search/**","/api/games/search/**",
+                                            "/api/pay/**", "/kakaopay/**")) //"/api/games/**", "/signup/send-email", "/signup/validate-code", "/formlogin",
                 .addFilterBefore(new SecurityContextPersistenceFilter(), BasicAuthenticationFilter.class)
 
                 .headers((headers) -> headers.addHeaderWriter(

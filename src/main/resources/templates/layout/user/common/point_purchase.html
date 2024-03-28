@@ -1,4 +1,4 @@
-<div th:fragment="point_store" class="container mt-3 text-bg-light p-3" >
+<div th:fragment="point_purchase" class="container mt-3 text-bg-light p-3" >
 
     <!-- 포인트 카드 섹션 -->
     <div class="row justify-content-center mb-4">
@@ -86,7 +86,8 @@
 
     <!-- 최종 결제금액 -->
     <main class="d-flex justify-content-end mt-4">
-        <h4>최종 결제금액: <span class="text-primary" id="totalAmount">30,000원</span></h4>
+        <button class="btn mr-5" id="totalPoint">🪙</button>
+        <h4>최종 결제금액: <span class="text-primary" id="totalAmount">0원</span></h4>
     </main>
 
     <!-- 결제수단 -->

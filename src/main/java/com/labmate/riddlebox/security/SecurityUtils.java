@@ -14,4 +14,14 @@ public class SecurityUtils {
         }
         return null; // or throw an exception if user is not found
     }
+
+    public static String getCurrentUserEmail() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof PrincipalDetails) {
+            PrincipalDetails principalDetails = (PrincipalDetails) auth.getPrincipal();
+            return principalDetails.getName();
+        }
+        return null; // or throw an exception if user is not found
+    }
+
 }

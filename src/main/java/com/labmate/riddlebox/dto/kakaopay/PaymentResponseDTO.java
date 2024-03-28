@@ -1,5 +1,6 @@
 package com.labmate.riddlebox.dto.kakaopay;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentResponseDTO {
 
     private String tid;
@@ -17,6 +19,7 @@ public class PaymentResponseDTO {
     private String next_redirect_pc_url;
     private String android_app_scheme;
     private String ios_app_scheme;
+    private boolean tms_result;
     private LocalDateTime created_at;
 
 }

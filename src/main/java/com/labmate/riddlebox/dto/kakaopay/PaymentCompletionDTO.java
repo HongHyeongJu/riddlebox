@@ -1,5 +1,6 @@
 package com.labmate.riddlebox.dto.kakaopay;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -9,11 +10,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentCompletionDTO {
 
     private String aid;
     private String tid;
     private String cid;
+    private String sid; // 필드 추가
     private String partnerOrderId;
     private String partnerUserId;
     private String paymentMethodType;

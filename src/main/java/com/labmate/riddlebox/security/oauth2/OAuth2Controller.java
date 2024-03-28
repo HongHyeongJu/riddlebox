@@ -62,7 +62,7 @@ public class OAuth2Controller {
     //Securing GET /auth/callback/kakao?code=bXQFS1sYVqzNXKOOafH3EZMpa9GootynqFU7RB3ch2GRK0ku6P0cq9X1cMkKPXOaAAABjiyi1NGoblpFv_zasg
 
     @GetMapping("/auth/callback/kakao")
-    public String kakaoCallback(@RequestParam("code") String code, Model model) throws IOException {
+    public String kakaoCallback(@RequestParam("code")    String code, Model model) throws IOException {
         System.out.println("!!!!!!!!!!!!!!!!!!!!"+"/auth/callback/kakao");
 
         RestTemplate restTemplate = new RestTemplate();
@@ -81,9 +81,9 @@ public class OAuth2Controller {
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
 
         ResponseEntity<String> response = restTemplate.postForEntity(
-                "https://kauth.kakao.com/oauth/token", // 카카오 토큰 요청 URI
-                kakaoTokenRequest,
-                String.class);
+                                                                    "https://kauth.kakao.com/oauth/token", // 카카오 토큰 요청 URI
+                                                                    kakaoTokenRequest,
+                                                                    String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         OAuthTokenKakao oAuthTokenKakao = null;

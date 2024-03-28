@@ -3,20 +3,22 @@
     <div class="result-card card p-5" style="height: 600px;">
         <!-- 포인트 로고 이미지 표시 -->
 
-<!--            <div class="card border border-warning">-->
-            <div class="card ">
-                <img class="card-img-top half-size-img" th:src="@{${staticUrl} + 'img/1000point.png'}" alt="포인트">
-            </div>
-
-        <!-- 구입 포인트 표시 -->
-        <div class="text-center">
-            <h2 class="my-4" th:text="${newPoint} + ' 포인트 획득!'">***포인트 획득!</h2>
+        <!--            <div class="card border border-warning">-->
+        <div class="card ">
+            <img class="card-img-top half-size-img" th:src="@{${staticUrl} + 'img/1000point.png'}" alt="포인트">
         </div>
+
+        <!-- 구입 결과 표시 -->
+        <div class="text-center">
+            <h2 class="my-4" th:if="${paymentResult} == 'Success'" th:text="${newPoint} + ' 포인트 획득!'">***포인트 획득!</h2>
+            <h2 class="my-4" th:if="${paymentResult} == 'Fail'" th:text="'결제 실패'">결제 실패</h2>
+        </div>
+
 
 
         <!-- 버튼 컨테이너 -->
         <div class="btn-container">
-          <a th:href="@{/}">
+            <a th:href="@{/}">
                 <button type="button" class="btn btn-primary">🏠홈으로</button>
             </a>
             <a th:href="@{/point/point-store}">
@@ -25,8 +27,19 @@
             <a th:href="@{/game/random}">
                 <button type="button" class="btn btn-dark">🎲랜덤게임</button>
             </a>
+            <!-- 창 닫기 버튼 -->
+            <div>
+                <button type="button" class="btn btn-danger btn-sm" onclick="closeWindow()">창 닫기</button>
+            </div>
         </div>
 
     </div>
+    <script>
+        // 창 닫기 버튼 클릭 시 실행될 함수
+        function closeWindow() {
+            window.close(); // 현재 창 닫기
+        }
+    </script>
+
 
 </div>

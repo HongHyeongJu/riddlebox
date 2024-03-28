@@ -37,6 +37,7 @@ public class PaymentInfo extends BaseEntity {
     private String itemCode;
     private Integer totalPointAmount; // 고객이 구매하는 총 포인트 금액
     private Integer totalAmount; // 상품 총액, 선택적 사용
+
     private LocalDateTime createdAt; // 결제 준비 요청 시각
     private LocalDateTime approvedAt; // 결제 승인 시각
 
@@ -44,7 +45,6 @@ public class PaymentInfo extends BaseEntity {
     private Amount amount;
     @Embedded
     private CardInfo cardInfo;
-
 
 
     public void setUser(RBUser user) {
@@ -56,8 +56,8 @@ public class PaymentInfo extends BaseEntity {
         this.user = user;
     }
 
-    public void firstPaymentInformation(RBUser user,  String partnerOrderId ,String partnerUserId,
-                                  String itemName, String itemCode, Integer totalAmount, Integer totalPointAmount){
+    public void firstPaymentInformation(RBUser user, String partnerOrderId, String partnerUserId,
+                                        String itemName, String itemCode, Integer totalAmount, Integer totalPointAmount) {
         this.user = user;
         this.partnerOrderId = partnerOrderId;
         this.partnerUserId = partnerUserId;
@@ -68,16 +68,16 @@ public class PaymentInfo extends BaseEntity {
 
     }
 
-    public void updatePaymentStatus(PaymentStatus status){
+    public void updatePaymentStatus(PaymentStatus status) {
         this.status = status;
     }
 
-    public void secondPaymentInformation(String tid, LocalDateTime createdAt){
+    public void secondPaymentInformation(String tid, LocalDateTime createdAt) {
         this.tid = tid;
         this.createdAt = createdAt;
     }
 
-    public void thirdPaymentInformation(String aid, Amount amount, CardInfo cardInfo, LocalDateTime approvedAt ){
+    public void thirdPaymentInformation(String aid, Amount amount, CardInfo cardInfo, LocalDateTime approvedAt) {
         this.aid = aid;
         this.amount = amount;
         this.cardInfo = cardInfo;
