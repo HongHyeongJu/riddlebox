@@ -2,9 +2,11 @@ package com.labmate.riddlebox.service;
 
 import com.labmate.riddlebox.dto.GameListDto;
 import com.labmate.riddlebox.dto.QGameListDto;
+import com.labmate.riddlebox.entity.GameCategory;
 import com.labmate.riddlebox.entity.QGame;
 import com.labmate.riddlebox.entity.QGameCategory;
 import com.labmate.riddlebox.entity.QGameImage;
+import com.labmate.riddlebox.enumpackage.GameSubject;
 import com.labmate.riddlebox.enumpackage.ImageType;
 import com.labmate.riddlebox.repository.GameRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -46,9 +48,8 @@ public class GameSearchService {
             ))
             .from(game)
             .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL))
-            .where(game.title.containsIgnoreCase(keyword)
-                   .or(game.description.containsIgnoreCase(keyword))
-                   .or(game.gameCategory.subject.stringValue().containsIgnoreCase(keyword)))
+            .where(game.title.like("%" + keyword + "%")
+                   .or(game.description.like("%" + keyword + "%")))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -56,15 +57,18 @@ public class GameSearchService {
         long total = queryFactory
             .selectFrom(game)
             .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL))
-            .where(game.title.containsIgnoreCase(keyword)
-                   .or(game.description.containsIgnoreCase(keyword))
-                   .or(game.gameCategory.subject.stringValue().containsIgnoreCase(keyword)))
+            .where(game.title.like("%" + keyword.toLowerCase() + "%")
+                   .or(game.description.like("%" + keyword.toLowerCase() + "%")))
             .fetchCount();
 
         return new PageImpl<>(results, pageable, total);
     }
 
+    @Transactional(readOnly = true)
     public Page<GameListDto> searchByCategory(String category, Pageable pageable) {
+        // category 문자열을 대응되는 ENUM 값으로 변환
+        GameSubject gameCategoryEnum = GameSubject.valueOf(category.toUpperCase());
+
         List<GameListDto> results = queryFactory
             .select(new QGameListDto(
                         game.id,
@@ -75,7 +79,7 @@ public class GameSearchService {
             ))
             .from(game)
             .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL))
-            .where(game.gameCategory.subject.stringValue().containsIgnoreCase(category))
+            .where(game.gameCategory.subject.eq(gameCategoryEnum))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -83,7 +87,7 @@ public class GameSearchService {
         long total = queryFactory
             .selectFrom(game)
             .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL))
-            .where(game.gameCategory.subject.stringValue().containsIgnoreCase(category))
+            .where(game.gameCategory.subject.eq(gameCategoryEnum))
             .fetchCount();
 
         return new PageImpl<>(results, pageable, total);

@@ -2,26 +2,29 @@ package com.labmate.riddlebox.controller;
 
 import com.labmate.riddlebox.dto.GameListDto;
 import com.labmate.riddlebox.dto.GameSearchCondition;
+import com.labmate.riddlebox.dto.SearchCriteria;
+import com.labmate.riddlebox.dto.SearchResponse;
+import com.labmate.riddlebox.service.GameSearchService;
 import com.labmate.riddlebox.service.GameService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @Controller
 public class HomeController {
 
-    @Autowired
-    GameService gameService;
+    private final GameService gameService;
+    private final GameSearchService gameSearchService;
+
+    public HomeController(GameService gameService, GameSearchService gameSearchService) {
+        this.gameService = gameService;
+        this.gameSearchService = gameSearchService;
+    }
 
 
     @GetMapping("/")
@@ -65,7 +68,7 @@ public class HomeController {
 
 
     /* 게임 목록 조회 */
-    @GetMapping("/games")
+    @GetMapping("/search2")
     public String showGames(Model model) {
         Pageable pageable = PageRequest.of(0, 10);
         Page<GameListDto> games = gameService.searchGameSimple(new GameSearchCondition(), pageable);
@@ -73,6 +76,52 @@ public class HomeController {
         return "layout/layout_base";
     }
 
+
+    /*게임 검색. 검색어 -> 제목 /설명이나 내용/카테고리 */
+    @GetMapping("/search")
+    public String showSearchResults(@ModelAttribute SearchCriteria criteria, Pageable pageable,
+                                    Model model) {
+        Page<GameListDto> results;
+
+        if (criteria.getCategory() != null && !criteria.getCategory().isEmpty()) {
+            // 카테고리에 따른 검색 결과 처리
+            results = gameSearchService.searchByCategory(criteria.getCategory(), pageable);
+        } else if (criteria.getSearchKeyword() != null && !criteria.getSearchKeyword().isEmpty()) {
+            // 검색어가 있을 경우 검색 결과 처리
+            results = gameSearchService.searchByKeyword(criteria.getSearchKeyword(), pageable);
+        } else {
+            // 기본 게임 목록 표시 or 빈 결과 처리
+            results = Page.empty();
+        }
+
+        model.addAttribute("results", results.getContent());
+        model.addAttribute("currentPage", results.getNumber());
+        model.addAttribute("totalPages", results.getTotalPages());
+        model.addAttribute("pageType", "search_result");
+
+        return "layout/layout_base"; // 검색 결과 페이지의 뷰 이름
+    }
+
+
+    @GetMapping("/search-more")
+    @ResponseBody
+    public SearchResponse showSearchResultsAjax(@ModelAttribute SearchCriteria criteria, Pageable pageable) {
+        Page<GameListDto> results;
+
+        if (criteria.getCategory() != null && !criteria.getCategory().isEmpty()) {
+            results = gameSearchService.searchByCategory(criteria.getCategory(), pageable);
+        } else if (criteria.getSearchKeyword() != null && !criteria.getSearchKeyword().isEmpty()) {
+            results = gameSearchService.searchByKeyword(criteria.getSearchKeyword(), pageable);
+        } else {
+            results = Page.empty();
+        }
+
+        return new SearchResponse(
+                results.getContent(),
+                results.getNumber(),
+                results.getTotalPages()
+        );
+    }
 
 
     /*

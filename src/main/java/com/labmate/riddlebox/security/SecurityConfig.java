@@ -34,12 +34,15 @@ public class SecurityConfig {  //Spring Security의 보안 구성을 정의하�
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/point/**", "/api/pay/**", "/kakaopay/**").hasRole("PAY_PLAYER")
                         .requestMatchers("/logout").authenticated()
-                        .requestMatchers("/", "/index", "/games", "/resources/**", "/css/**", "/js/**", "/img/**", "/formlogin", "/test/**",
-                                "/supports/**", "/login", "/account/recovery", "/signup/**", "/oauth2/**", "/auth/**","/favicon.ico","/error/**","/health").permitAll())
+                        .requestMatchers("/", "/index", "/games", "/resources/**",
+                                "/css/**", "/js/**", "/img/**", "/formlogin", "/test/**",
+                                "/supports/**", "/login", "/account/recovery", "/signup/**",
+                                "/oauth2/**", "/auth/**","/favicon.ico","/error/**","/health",
+                                "/search").permitAll())
                 .csrf((csrf) -> csrf.ignoringRequestMatchers("/","/index", "/games", "/login", "/supports/**",
                                             "/oauth2/**", "/auth/**",
                                             "/error/**","/test/**","/health", "/game/search/**","/api/games/search/**",
-                                            "/api/pay/**", "/kakaopay/**")) //"/api/games/**", "/signup/send-email", "/signup/validate-code", "/formlogin",
+                                            "/api/pay/**", "/kakaopay/**","/search")) //"/api/games/**", "/signup/send-email", "/signup/validate-code", "/formlogin",
                 .addFilterBefore(new SecurityContextPersistenceFilter(), BasicAuthenticationFilter.class)
 
                 .headers((headers) -> headers.addHeaderWriter(

@@ -124,7 +124,7 @@
 
     <section th:case="'search_result'">
         <!-- 공지사항 목록 -->
-        <p th:replace="~{layout/user/support/faq_list :: faqList}">faqList</p>
+        <p th:replace="~{layout/user/game/game_list_content :: gameList}">gameList</p>
     </section>
 
 
@@ -190,6 +190,11 @@
 <div th:if="${pageType == 'gameStory'}">
     <span th:text="${gameInfo.gameLevel}" id="gameLevel" hidden="hidden"></span>
     <script th:src="@{${staticUrl} + 'js/game_story.js'}"></script>
+</div>
+
+
+<div th:if="${pageType == 'search_result'}">
+    <script th:src="@{${staticUrl} + 'js/game_list.js'}"></script>
 </div>
 
 <div th:if="${pageType == 'pointPurchase'}">

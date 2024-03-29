@@ -217,7 +217,7 @@ public class GameServiceImpl implements GameService {
     }
 
 
-    // TODO: 2024-01-17 현재는 MariaDB 이용하기. 나중에 동시성 문제 고려해서 Redis로 변경하기
+    // todo: 2024-01-17 현재는 MariaDB 이용하기. 나중에 동시성 문제 고려해서 Redis로 변경하기
     /*단건 질문 채점*/
     @Override
     public boolean checkAnswer(Long gameContentId, String userAnswer, Long memberId) {

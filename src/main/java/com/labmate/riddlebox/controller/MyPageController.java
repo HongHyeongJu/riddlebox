@@ -1,14 +1,14 @@
 package com.labmate.riddlebox.controller;
 
-import com.labmate.riddlebox.dto.MyPageDto;
-import com.labmate.riddlebox.dto.MyPageProfileDto;
-import com.labmate.riddlebox.dto.MyRecordDto;
-import com.labmate.riddlebox.dto.UserAnswerDto;
+import com.labmate.riddlebox.dto.*;
 import com.labmate.riddlebox.security.PrincipalDetails;
 import com.labmate.riddlebox.security.SecurityUtils;
 import com.labmate.riddlebox.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -60,25 +61,28 @@ public class MyPageController {
 
     /* 내 게임 기록 보여주기*/
     @GetMapping("/record")
-    public String myGameRecords(Model model) {
+    public String myGameRecords(@RequestParam(value = "page", defaultValue = "0") int page,
+                                @RequestParam(value = "size", defaultValue = "10") int size,
+                                Model model) {
 
         Long userId = SecurityUtils.getCurrentUserId();
-        List<MyRecordDto> myRecordDtoList = myPageService.getUserRecordDtoList(userId);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<MyRecordDto> myRecordDtoPage = myPageService.getUserRecordDtoList(userId, pageable);
 
         model.addAttribute("myPageType", "record");
-        model.addAttribute("myRecordDtoList", myRecordDtoList);
+        model.addAttribute("myRecordDtoPage", myRecordDtoPage);
 
         return "layout/layout_base"; // HTML 뷰 이름
     }
 
-
     /* 나의 포인트 */
     @GetMapping("/point")
     public String myPoint(Model model) {
-        // 사용자 정보 로드 및 처리
+        Long userId = SecurityUtils.getCurrentUserId();
+        List<MyPointDto> myPointDtoList = myPageService.getUserPointDtoList(userId);
+
         model.addAttribute("myPageType", "point");
-
-
+        model.addAttribute("myPointDtoList", myPointDtoList);
         return "layout/layout_base"; // HTML 뷰 이름
 
     }

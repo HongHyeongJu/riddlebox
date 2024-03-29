@@ -55,7 +55,7 @@ public class OAuth2Controller {
 
     @GetMapping("/oauth2/naver")
     public void getKNaverAuthUrl(HttpServletResponse response) throws IOException {
-        System.out.println("!!!!!!!!!!!!!!!!!!!!"+naverOauth.getOauthRedirectUrl());
+//        System.out.println("!!!!!!!!!!!!!!!!!!!!"+naverOauth.getOauthRedirectUrl());
         response.sendRedirect(naverOauth.getOauthRedirectUrl());
     }
 
@@ -63,7 +63,7 @@ public class OAuth2Controller {
 
     @GetMapping("/auth/callback/kakao")
     public String kakaoCallback(@RequestParam("code")    String code, Model model) throws IOException {
-        System.out.println("!!!!!!!!!!!!!!!!!!!!"+"/auth/callback/kakao");
+//        System.out.println("!!!!!!!!!!!!!!!!!!!!"+"/auth/callback/kakao");
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -127,7 +127,7 @@ public class OAuth2Controller {
 
     @GetMapping("/auth/callback/google")
     public String googleCallback(@RequestParam("code") String code, Model model) throws IOException {
-        System.out.println("!!!!!!!!!!!!!!!!!!!!"+"/auth/callback/google");
+//        System.out.println("!!!!!!!!!!!!!!!!!!!!"+"/auth/callback/google");
 
         RestTemplate restTemplate = new RestTemplate();
 
