@@ -37,8 +37,9 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
             try {
                 SecretKey key = Keys.hmacShaKeyFor(JWT_KEY.getBytes(StandardCharsets.UTF_8));
 
-                Claims claims = Jwts.parser()
+                Claims claims = Jwts.parserBuilder()//.parser()  Deprecated
                                     .setSigningKey(key)
+                                    .build() // Updated
                                     .parseClaimsJws(jwt)
                                     .getBody();
                 String loginEmail = String.valueOf(claims.get("loginEmail"));

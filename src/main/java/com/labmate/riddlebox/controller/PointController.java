@@ -2,6 +2,7 @@ package com.labmate.riddlebox.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.labmate.riddlebox.api.ApiUserController;
@@ -41,7 +42,7 @@ public class PointController {
                            PaymentInfoRepository paymentInfoRepository) {
         this.objectMapper = new ObjectMapper();
         this.objectMapper.registerModule(new JavaTimeModule());
-        this.objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        this.objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
         this.kakaoPayConfig = kakaoPayConfig;
         this.kakaoPayService = kakaoPayService;
         this.paymentInfoRepository = paymentInfoRepository;

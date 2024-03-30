@@ -55,11 +55,12 @@ public class GameSearchService {
             .fetch();
 
         long total = queryFactory
-            .selectFrom(game)
+            .select(game.count())
+            .from(game)
             .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL))
             .where(game.title.like("%" + keyword.toLowerCase() + "%")
                    .or(game.description.like("%" + keyword.toLowerCase() + "%")))
-            .fetchCount();
+            .fetchOne();
 
         return new PageImpl<>(results, pageable, total);
     }
@@ -85,10 +86,10 @@ public class GameSearchService {
             .fetch();
 
         long total = queryFactory
-            .selectFrom(game)
+            .select(game.count()).from(game)
             .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL))
             .where(game.gameCategory.subject.eq(gameCategoryEnum))
-            .fetchCount();
+            .fetchOne();
 
         return new PageImpl<>(results, pageable, total);
     }

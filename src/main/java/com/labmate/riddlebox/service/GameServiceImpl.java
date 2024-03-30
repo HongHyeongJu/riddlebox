@@ -143,6 +143,7 @@ public class GameServiceImpl implements GameService {
      * @param gameId
      * @return List<Question>  : Question(gameContentId, question, ordering)
      * */
+    @Transactional(readOnly = true)
     @Override
     public List<Question> getQuestionList(Long gameId) {
         List<GameContent> gameContents = queryFactory
@@ -150,6 +151,7 @@ public class GameServiceImpl implements GameService {
                 .where(gameIdEquals(gameId), gameContentIsActive())
                 .orderBy(gameContent.ordering.asc()) // ordering 값으로 정렬
                 .fetch();
+
 
         List<Question> questions = new ArrayList<>();
         for (GameContent content : gameContents) {
@@ -159,6 +161,7 @@ public class GameServiceImpl implements GameService {
 
         return questions;
     }
+
 
     /*게임 관련 정보(카테고리, 게임정보, 게임컨텐츠, 게임이미지) 가져오기*/
     @Transactional(readOnly = true)
@@ -203,7 +206,7 @@ public class GameServiceImpl implements GameService {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory.select(game.id)
+        long total = queryFactory.select(game.id.count())
                 .from(game)
                 .where(titleContains(condition.getTitle()),
                         descriptionContains(condition.getDescription()),
@@ -211,7 +214,7 @@ public class GameServiceImpl implements GameService {
                         gameLevelEquals(condition.getGameLevel()),
                         officialReleaseDateBetween(condition.getOfficialReleaseStartDate(), condition.getOfficialReleaseEndDate())
                 )
-                .fetchCount();
+                .fetchOne();
 
         return new PageImpl<>(results, pageable, total);
     }
@@ -224,12 +227,13 @@ public class GameServiceImpl implements GameService {
         //UserAnswerDto: Long gameId; Long gameContentId; String userAnswer; boolean isCorrect;
 
         //answer의 gameContentId 꺼내서 답변 찾기 -> userAnswer 포함되었는지 확인. isCorrect에 저장
-        long count = queryFactory.selectFrom(gameContent)
+        long count = queryFactory.select(gameContent.count()).from(gameContent)
                 .where(
                         gameContent.id.eq(gameContentId),
                         gameContent.answer.contains(userAnswer)
                 )
-                .fetchCount();
+                .fetchOne();
+
         boolean isCorrect = count > 0;
 
         // TODO: 2024-01-15 오답 기록을 위한 Table 생성하고 기록 추가하기. gameContentId, 사용자 오답, 시스템컬럼

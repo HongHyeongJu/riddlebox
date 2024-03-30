@@ -33,7 +33,6 @@
 }
 
 
-
 .button-group {
     display: flex;
     justify-content: center;
@@ -58,4 +57,24 @@
         flex-direction: column; /* 작은 화면에서 버튼들을 세로로 정렬합니다 */
         align-items: center; /* 세로 중앙 정렬을 위해 사용합니다 */
     }
+}
+
+
+.pagination li {
+    margin-right: 5px; /* 오른쪽 마진으로 간격 추가 */
+}
+
+.pagination li a {
+    min-width: 35px; /* 버튼의 최소 너비 설정으로 숫자가 커져도 일정한 크기 유지 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+/* 활성화된 페이지와 비활성화된 페이지의 스타일 조정 */
+.pagination li.active a {
+    color: white;
+    background-color: #007bff; /* 활성 페이지 색상 */
+}
+
+.pagination li.disabled a {
+    color: #6c757d; /* 비활성 페이지 색상 */
 }

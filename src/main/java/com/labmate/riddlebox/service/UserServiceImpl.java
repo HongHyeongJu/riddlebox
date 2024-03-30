@@ -68,9 +68,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isValidNickname(String nickname) {
         // 사용 중인 닉네임인지 확인
-        long count = queryFactory.selectFrom(rBUser)
+        long count = queryFactory.select(rBUser.count()).from(rBUser)
                 .where(rBUser.nickname.eq(nickname))
-                .fetchCount();
+                .fetchOne();
 
         // 금지된 단어 목록 가져오기
         List<String> forbiddenWords = findAllWords(); // f모든 금지 단어를 리스트로 반환
@@ -95,9 +95,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isEmailUnique(String email) {
         try {
-            long count = queryFactory.selectFrom(rBUser) // Q클래스를 사용하여 from 절을 구성
-                    .where(rBUser.loginEmail.eq(email)) // 이메일이 일치하는 조건
-                    .fetchCount(); // 조건에 맞는 결과의 수를 가져옴
+            long count = queryFactory.select(rBUser.count())
+                                            .from(rBUser) // Q클래스를 사용하여 from 절을 구성
+                                            .where(rBUser.loginEmail.eq(email)) // 이메일이 일치하는 조건
+                                            .fetchOne(); // 조건에 맞는 결과의 수를 가져옴
 
             return count == 0; // 결과가 없으면 true (이메일이 중복되지 않음), 있으면 false 반환
         } catch (Exception e) {
