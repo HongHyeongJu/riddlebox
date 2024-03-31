@@ -35,7 +35,8 @@ public class GameplayInfoDto {
     private LocalDateTime officialUpdateDate;  //게임수정일
 
     private List<GameContent> gameContents = new ArrayList<>();
-    private List<GameImage> gameImages = new ArrayList<>();
+    private String thumnailImgPath;
+    private String illustrationImgPath;
 
     @QueryProjection
     public GameplayInfoDto(Long id, GameCategory gameCategory,
@@ -54,4 +55,6 @@ public class GameplayInfoDto {
         this.officialReleaseDate = officialReleaseDate;
         this.officialUpdateDate = officialUpdateDate;
     }
+
+
 }

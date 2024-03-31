@@ -23,7 +23,7 @@
                         <!--게임카테고리 ${gameDto.gameCategory}-->
                         <!--<span th:text="${gameDto.gameLevel}" class="position-absolute top-0 end-0 gameCard-badge badge rounded-pill bg-danger">99+</span>-->
 
-                        <img th:src="@{${staticUrl} + 'img/cardImg.png'}" alt="Game Image">
+                        <img th:src="@{${staticUrl} + ${gameDto.thumbnailFilePath}}" alt="Game Image">
                         <!-- <img th:src="@{${gameDto.thumbnailUrl}}" alt="Game Image">-->
 
                         <div class="gameCard-card-body mx-auto p-0 d-flex align-items-center">
