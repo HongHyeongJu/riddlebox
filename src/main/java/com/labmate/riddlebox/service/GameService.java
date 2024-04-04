@@ -14,6 +14,9 @@ import java.util.Map;
 public interface GameService {
 
     public GameplayInfoDto findGameInfo(Long gameId); //단 건 게임 찾기
+
+    void addGameViewCount(Long gameId);
+
     public List<Question> getQuestionList(Long gameId); //단 건 게임 질문리스트
 
     public Page<GameListDto> searchGameSimple(GameSearchCondition condition, Pageable pageable); //게임 검색

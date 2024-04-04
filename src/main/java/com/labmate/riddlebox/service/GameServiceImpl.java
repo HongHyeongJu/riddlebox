@@ -6,10 +6,7 @@ import com.labmate.riddlebox.dto.QGameListDto;
 import com.labmate.riddlebox.dto.QGameplayInfoDto;
 import com.labmate.riddlebox.entity.*;
 import com.labmate.riddlebox.entity.QGame;
-import com.labmate.riddlebox.enumpackage.GameLevel;
-import com.labmate.riddlebox.enumpackage.GameResultType;
-import com.labmate.riddlebox.enumpackage.GameStatus;
-import com.labmate.riddlebox.enumpackage.GameSubject;
+import com.labmate.riddlebox.enumpackage.*;
 import com.labmate.riddlebox.repository.GameRecordRepository;
 import com.labmate.riddlebox.repository.GameRepository;
 import com.labmate.riddlebox.repository.UserRepository;
@@ -20,6 +17,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -118,14 +116,12 @@ public class GameServiceImpl implements GameService {
 
     //단건 게임 데이터 전달
     /*게임 식별자로 게임, 게임컨텐츠, 게임이미지 조회해서 DTO 반환*/
-    @Transactional
+    @Transactional(readOnly = true)
+    @Cacheable(value = "gameInfoCache", key = "#gameId")
     public GameplayInfoDto findGameInfo(Long gameId) {
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new EntityNotFoundException("Game not found with ID: " + gameId));
 
-        // 조회수 증가
-        game.addViewCount();
-        gameRepository.save(game);
 
         GameplayInfoDto gameplayInfoDto = getGameplayInfoDto(gameId);
         if (gameplayInfoDto == null) {
@@ -133,9 +129,21 @@ public class GameServiceImpl implements GameService {
         }
 
         gameplayInfoDto.setGameContents(getGameContents(gameId));
-        gameplayInfoDto.setGameImages(getGameImages(gameId));
+        //이미지 찾기
+        gameplayInfoDto.setThumnailImgPath(getImagePath(gameId, ImageType.THUMBNAIL));
+        gameplayInfoDto.setIllustrationImgPath(getImagePath(gameId, ImageType.ILLUSTRATION));
 
         return gameplayInfoDto;
+    }
+
+    @Override
+    public void addGameViewCount(Long gameId){
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new EntityNotFoundException("Game not found with ID: " + gameId));
+
+        // 조회수 증가
+        game.addViewCount();
+        gameRepository.save(game);
     }
 
 
@@ -183,18 +191,26 @@ public class GameServiceImpl implements GameService {
     }
 
     /*게임 관련 이미지 가져오기*/
-    private List<GameImage> getGameImages(Long gameId) {
+    private String getImagePath(Long gameId, ImageType type) {
         return queryFactory
-                .selectFrom(gameImage)
-                .where(gameIdEquals(gameId), gameImageIsActive())
-                .fetch();
+                .select(gameImage.filePath)
+                .from(gameImage)
+                .where(gameImage.game.id.eq(gameId), gameImage.fileType.eq(type) ,gameImage.status.eq(GameStatus.ACTIVE))
+                .fetchOne();
     }
 
     /*게임 목록 검색하기 (조건, 페이져블)*/ /*관리자 용으로 남기기*/
     public Page<GameListDto> searchGameSimple(GameSearchCondition condition, Pageable pageable) {
-        List<GameListDto> results = queryFactory.select(new QGameListDto(game.id, game.gameCategory, game.title, game.gameLevel, gameImage.fileUrl))
+        List<GameListDto> results = queryFactory
+                .select(new QGameListDto(
+                        game.id,
+                        game.gameCategory,
+                        game.title,
+                        game.gameLevel,
+                        gameImage.fileUrl // 썸네일 이미지 URL
+                ))
                 .from(game)
-                .leftJoin(game.gameImages, gameImage)
+                .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL)) // 썸네일 이미지만 조인
                 .where(
                         titleContains(condition.getTitle()),
                         descriptionContains(condition.getDescription()),
@@ -267,22 +283,23 @@ public class GameServiceImpl implements GameService {
     /*홈페이지 추천 게임*/
     @Override
     public List<GameListDto> fetchRecommendedGamesForHomepage() {
-
         List<GameListDto> results = queryFactory
                 .select(new QGameListDto(
                         game.id,
                         game.gameCategory,
                         game.title,
                         game.gameLevel,
-                        gameImage.fileUrl
+                        gameImage.filePath // 이 부분이 THUMBNAIL 이미지의 filePath로 설정되어야 함
                 ))
                 .from(recommendGame)
                 .innerJoin(recommendGame.game, game) // recommendGame과 game을 조인
                 .leftJoin(game.gameImages, gameImage) // game과 gameImage를 조인
+                .on(gameImage.fileType.eq(ImageType.THUMBNAIL)) // THUMBNAIL 타입의 이미지만 선택
                 .where(recommendGame.game.status.eq(GameStatus.ACTIVE))
                 .fetch();
         return results;
     }
+
 
 /*       List<GameListDto> results = queryFactory.select(new QGameListDto(game.id,game.gameCategory, game.title, game.gameLevel, gameImage.fileUrl))
                                                 .from(game)
@@ -302,7 +319,7 @@ public class GameServiceImpl implements GameService {
 
         // 게임 기록 생성
         float successRate = ((float) correctAnswersCount / totalQuestions) * 100;
-        GameResultType resultType = isFail == false ? GameResultType.UNSOLVED : GameResultType.SOLVED;
+        GameResultType resultType = isFail == true ? GameResultType.UNSOLVED : GameResultType.SOLVED;
 
         GameRecord gameRecord = new GameRecord(user, game, playTime, correctAnswersCount, successRate, resultType);
 
@@ -339,7 +356,7 @@ public class GameServiceImpl implements GameService {
     /*게임 타입 반환하는 메서드*/
     @Override
     public String getGameType(Long gameId) {
-        GameSubject gameSubject = queryFactory.select(game.gameCategory.subject).from(game).where(game.id.eq(gameId)).fetchOne();
+        GameSubject gameSubject = queryFactory.select(game.gameCategory.subject).from(game).where(game.id.eq(gameId)).fetchFirst();
         String gameType = switch (gameSubject) {
             case SNAPSHOT_DEDUCTION -> "snapshot";
             case SHORT_STORY -> "story";

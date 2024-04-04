@@ -30,12 +30,12 @@ public class WebGameController {
 
     //공통 레이아웃 layout_base
 
-    /* [1-1] 게임 문제 제시 페이지 [스냅샷]*/   /*TODO 지금은 스냅샷 url을 story로 하지만 이후에는 단편소설 url과 바꿔야 할듯. 현재는 문제제시의 의미로 사용*/
+    /* [1-1] 게임 문제 제시 페이지 [스냅샷]*/
     @GetMapping("/{gameId}/snapshot")
     public String getGameSnapShot(@PathVariable("gameId") Long gameId, Model model) {
 
         GameplayInfoDto gameInfo = gameService.findGameInfo(gameId);
-
+        gameService.addGameViewCount(gameId);
         model.addAttribute("gameInfo", gameInfo);
         model.addAttribute("gameType", "snapshot");
         model.addAttribute("pageType", "snapshot");
@@ -44,11 +44,12 @@ public class WebGameController {
         return "layout/layout_base";
     }
 
-    /* [1-2] 게임 문제 제시 페이지 [단편소설]*/   /*TODO 지금은 스냅샷 url을 story로 하지만 이후에는 단편소설 url과 바꿔야 할듯. 현재는 문제제시의 의미로 사용*/
+    /* [1-2] 게임 문제 제시 페이지 [단편소설]*/
     @GetMapping("/{gameId}/story")
     public String getGameStory(@PathVariable("gameId") Long gameId, Model model) {
 
         GameplayInfoDto gameInfo = gameService.findGameInfo(gameId);
+        gameService.addGameViewCount(gameId);
         GameStoryDto gameStoryDto = gameService.findGameStoryContent(gameId);
 
         model.addAttribute("gameInfo", gameInfo);
@@ -66,7 +67,7 @@ public class WebGameController {
     public String getGameSolve(@PathVariable("gameId") Long gameId, Model model) {
 
         GameplayInfoDto gameInfo = gameService.findGameInfo(gameId);
-
+        gameService.addGameViewCount(gameId);
         model.addAttribute("gameInfo", gameInfo);
         model.addAttribute("pageType", "gameSolve");
         model.addAttribute("title", gameInfo.getTitle() + " solve ");
