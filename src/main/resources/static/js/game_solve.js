@@ -89,11 +89,11 @@ window.onload = function () {
 
     // 개별 문제를 처리하는 함수
     async function processQuestion(question, index) {
-        createQuestionTag(question, index + 1);
+        createQuestionTag(question, index );
         const gameContentId = question.gameContentId;
         // Promise를 반환하는 함수를 사용하여 사용자의 입력을 기다림
         await new Promise((resolve, reject) => {
-            const inputTagElement = document.getElementById('questionInput' + (index + 1));
+            const inputTagElement = document.getElementById('questionInput' + (index));
             inputTagElement.addEventListener('keyup', async function (event) {
                 if (event.key === 'Enter') {
                     // 앞뒤 공백 제거
@@ -114,7 +114,7 @@ window.onload = function () {
                         onWrongAnswerDeleteOneLife();
                     }
 
-                    const inputElement = document.getElementById('questionInput' + (index + 1));
+                    const inputElement = document.getElementById('questionInput' + (index));
                     displayResult(answerResponse, inputElement);
                     resolve();
 
@@ -157,12 +157,12 @@ window.onload = function () {
 
         // 질문 레이블 생성
         const questionLabel = document.createElement("label");
-        questionLabel.textContent = " Quiz" + questionNumber + ". " + questionText;
+        questionLabel.textContent = " Quiz" + (questionNumber) + ". " + questionText;
         questionLabel.classList.add("mb-2");
 
         // 입력 필드 생성
         const answerInput = document.createElement("input");
-        answerInput.id = "questionInput" + questionNumber;
+        answerInput.id = "questionInput" + (questionNumber);
         answerInput.type = "text";
         answerInput.classList.add("form-control");
         answerInput.placeholder = "정답을 입력하고 Enter";
@@ -173,7 +173,7 @@ window.onload = function () {
         newQuestionDiv.appendChild(answerInput);
 
         // 새로운 질문 div를 부모 div에 추가
-        if (questionNumber <= 6) {
+        if (questionNumber <= 5) {
             leftQAdiv.appendChild(newQuestionDiv);
         } else {
             rightQAdiv.appendChild(newQuestionDiv);

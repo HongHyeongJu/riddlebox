@@ -1,6 +1,7 @@
 package com.labmate.riddlebox.service;
 
 import com.labmate.riddlebox.admindto.Question;
+import com.labmate.riddlebox.api.ApiUserController;
 import com.labmate.riddlebox.dto.*;
 import com.labmate.riddlebox.dto.QGameListDto;
 import com.labmate.riddlebox.dto.QGameplayInfoDto;
@@ -16,6 +17,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -44,6 +47,8 @@ public class GameServiceImpl implements GameService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final GameRecordRepository gameRecordRepository;
+
+    private final Logger logger = LoggerFactory.getLogger(ApiUserController.class);
 
     @Autowired
     public GameServiceImpl(EntityManager em, GameRepository gameRepository,
@@ -117,16 +122,14 @@ public class GameServiceImpl implements GameService {
     //단건 게임 데이터 전달
     /*게임 식별자로 게임, 게임컨텐츠, 게임이미지 조회해서 DTO 반환*/
     @Transactional(readOnly = true)
-    @Cacheable(value = "gameInfoCache", key = "#gameId")
+    @Cacheable(value = "gameInfoCache")
     public GameplayInfoDto findGameInfo(Long gameId) {
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new EntityNotFoundException("Game not found with ID: " + gameId));
-
 
         GameplayInfoDto gameplayInfoDto = getGameplayInfoDto(gameId);
         if (gameplayInfoDto == null) {
             throw new EntityNotFoundException("Game not found with ID: " + gameId);
         }
+        logger.info("gameplayInfoDto.getId(), {}", gameplayInfoDto.getId());
 
         gameplayInfoDto.setGameContents(getGameContents(gameId));
         //이미지 찾기
@@ -380,7 +383,9 @@ public class GameServiceImpl implements GameService {
         return gameType;
     }
 
+
     @Override
+    @Cacheable(value = "gameStoryCache", key = "#gameId")
     public GameStoryDto findGameStoryContent(Long gameId) {
         return queryFactory
                 .select(Projections.constructor(GameStoryDto.class,

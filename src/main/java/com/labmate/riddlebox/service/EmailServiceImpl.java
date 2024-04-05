@@ -62,7 +62,7 @@ public class EmailServiceImpl implements EmailService {
                 "인증번호는 30분 이후 만료됩니다.</p>" +
                 "<p>사이트 방문하기 : <a href='https://riddle-box.com'> riddle-box.com </a></p>" +
                 "<p>문의사항이 있으시면, <a href='mailto:riddlebox2024@gmail.com'>riddlebox2024@gmail.com</a>로 연락주세요.</p>";
-        String sendTextTest = "RiddleBox 회원가입 인증번호 ["+authCode+"] (30분 뒤 만료)";
+        String sendTextTest = "RiddleBox 회원가입 인증번호 ["+authCode+"] (5분 뒤 만료)";
 
         map.put("title", title);
         map.put("sendText", sendText);
@@ -71,7 +71,7 @@ public class EmailServiceImpl implements EmailService {
         System.out.println("====="+toEmail+", "+title+", "+authCode);
 
         // 이메일 인증 요청 시 인증 번호 Redis에 저장 ( key = "AuthCode " + Email / value = AuthCode )
-        redisService.setValues(AUTH_CODE_PREFIX + toEmail , authCode, Duration.ofMinutes(30)); //만료시간 30분!
+        redisService.setValues(AUTH_CODE_PREFIX + toEmail , authCode, Duration.ofMinutes(5)); //만료시간 5분!
 
         // CompletableFuture를 사용해서 비동기적으로 결과 반환하기!
         return CompletableFuture.completedFuture(map);

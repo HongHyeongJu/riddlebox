@@ -42,7 +42,8 @@ public class SecurityConfig {  //Spring Security의 보안 구성을 정의하�
                 .csrf((csrf) -> csrf.ignoringRequestMatchers("/","/index", "/games", "/login", "/supports/**",
                                             "/oauth2/**", "/auth/**",
                                             "/error/**","/test/**","/health", "/game/search/**","/api/games/search/**",
-                                            "/api/pay/**", "/kakaopay/**","/search")) //"/api/games/**", "/signup/send-email", "/signup/validate-code", "/formlogin",
+                                            "/api/pay/**", "/kakaopay/**","/search",
+                                            "/api/games/**", "/game/**")) //"/api/games/**", "/signup/send-email", "/signup/validate-code", "/formlogin",
                 .addFilterBefore(new SecurityContextPersistenceFilter(), BasicAuthenticationFilter.class)
 
                 .headers((headers) -> headers.addHeaderWriter(

@@ -47,19 +47,19 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             Map<String, Object> userAttributes = objectMapper.readValue(userInfoJson, new TypeReference<Map<String, Object>>() {
             });
 
-            RBUser user = userService.findUserByEmail(userInfo.getId() + "@kakao.com");
+            // userInfo.getId()를 문자열로 변환
+            String userEmail = String.valueOf(userInfo.getId()) + "@kakao.com";
+            RBUser user = userService.findUserByEmail(userEmail);
 //            System.out.println("userInfo:   " + userInfo.toString());
+
             if (user == null) {
                 //없으면 저장. userRole. socialProfile
                 SocialProfileDto socialProfileDto = new SocialProfileDto("KAKAO",
-                        userInfo.getId() + ""
-                        , null,
-                        null);
-                user = userService.createAndSaveRBUser(userInfo.getId() + "@kakao.com",
+                        String.valueOf(userInfo.getId()), null, null);
+                user = userService.createAndSaveRBUser(userEmail,
                         userInfo.getNickname(),
                         userInfo.getNickname(), null,
                         socialProfileDto);
-
                 //그리고 조회
             } else {
                 user.setLastLoginDate(LocalDateTime.now());
@@ -84,8 +84,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
 
-
-
     @Transactional
     public boolean customLoadOAuth2UserForGoogle(String userInfoJson) {
         try {
@@ -101,7 +99,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                         , userInfo.getPicture(),
                         null);
                 user = userService.createAndSaveRBUser(userInfo.getEmail(),
-                        userInfo.getFamilyName()+userInfo.getGivenName(),
+                        userInfo.getFamilyName() + userInfo.getGivenName(),
                         userInfo.getName(), null,
                         socialProfileDto);
 
@@ -128,8 +126,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 
     }
-
-
 
 
     @Transactional
@@ -200,7 +196,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey());
     }
-
 
 
     private RBUser saveOrSelect(OAuthAttributesDto attributes) {
