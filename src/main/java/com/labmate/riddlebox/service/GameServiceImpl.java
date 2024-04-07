@@ -129,7 +129,7 @@ public class GameServiceImpl implements GameService {
         if (gameplayInfoDto == null) {
             throw new EntityNotFoundException("Game not found with ID: " + gameId);
         }
-        logger.info("gameplayInfoDto.getId(), {}", gameplayInfoDto.getId());
+        logger.warn("gameplayInfoDto.getId(), {}", gameplayInfoDto.getId());
 
         gameplayInfoDto.setGameContents(getGameContents(gameId));
         //이미지 찾기

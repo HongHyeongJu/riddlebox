@@ -52,10 +52,10 @@ public class Game extends BaseEntity {
     @OneToMany(mappedBy = "game")
     private List<GameRecord> gameRecords = new ArrayList<>();
 
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<GameContent> gameContents = new ArrayList<>();
 
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<GameImage> gameImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "game")

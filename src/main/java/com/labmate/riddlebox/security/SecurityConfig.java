@@ -28,34 +28,39 @@ public class SecurityConfig {  //Spring Security의 보안 구성을 정의하�
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http    .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/game/**", "/api/games/**", "/support/inquiry/**",
-                                "/mypage/**","/mypage/record").hasRole("PLAYER")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/point/**", "/api/pay/**", "/kakaopay/**").hasRole("PAY_PLAYER")
-                        .requestMatchers("/logout").authenticated()
-                        .requestMatchers("/", "/index", "/games", "/resources/**",
-                                "/css/**", "/js/**", "/img/**", "/formlogin", "/test/**",
-                                "/supports/**", "/login", "/account/recovery", "/signup/**",
-                                "/oauth2/**", "/auth/**","/favicon.ico","/error/**","/health",
-                                "/search").permitAll())
-                .csrf((csrf) -> csrf.ignoringRequestMatchers("/","/index", "/games", "/login", "/supports/**",
-                                            "/oauth2/**", "/auth/**",
-                                            "/error/**","/test/**","/health", "/game/search/**","/api/games/search/**",
-                                            "/api/pay/**", "/kakaopay/**","/search",
-                                            "/api/games/**", "/game/**")) //"/api/games/**", "/signup/send-email", "/signup/validate-code", "/formlogin",
-                .addFilterBefore(new SecurityContextPersistenceFilter(), BasicAuthenticationFilter.class)
+        http.authorizeHttpRequests((requests) -> requests.anyRequest().permitAll())
+                .csrf((csrf) -> csrf.ignoringRequestMatchers("/**"));
 
-                .headers((headers) -> headers.addHeaderWriter(
-                        new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
 
-                .formLogin((formLogin) -> formLogin.loginPage("/login")
-                        .defaultSuccessUrl("/index"))
 
-                .logout((logout) -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .logoutSuccessUrl("/index")
-                        .invalidateHttpSession(true))
-        .exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedPage("/error/custom-403-page")); // Here
+//        http    .authorizeHttpRequests((requests) -> requests
+//                        .requestMatchers("/game/**", "/api/games/**", "/support/inquiry/**",
+//                                "/mypage/**","/mypage/record").hasRole("PLAYER")
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/point/**", "/api/pay/**", "/kakaopay/**").hasRole("PAY_PLAYER")
+//                        .requestMatchers("/logout").authenticated()
+//                        .requestMatchers("/", "/index", "/games", "/resources/**",
+//                                "/css/**", "/js/**", "/img/**", "/formlogin", "/test/**",
+//                                "/supports/**", "/login", "/account/recovery", "/signup/**",
+//                                "/oauth2/**", "/auth/**","/favicon.ico","/error/**","/health",
+//                                "/search").permitAll())
+//                .csrf((csrf) -> csrf.ignoringRequestMatchers("/","/index", "/games", "/login", "/supports/**",
+//                                            "/oauth2/**", "/auth/**",
+//                                            "/error/**","/test/**","/health", "/game/search/**","/api/games/search/**",
+//                                            "/api/pay/**", "/kakaopay/**","/search",
+//                                            "/api/games/**", "/game/**")) //"/api/games/**", "/signup/send-email", "/signup/validate-code", "/formlogin",
+//                .addFilterBefore(new SecurityContextPersistenceFilter(), BasicAuthenticationFilter.class)
+//
+//                .headers((headers) -> headers.addHeaderWriter(
+//                        new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
+//
+//                .formLogin((formLogin) -> formLogin.loginPage("/login")
+//                        .defaultSuccessUrl("/index"))
+//
+//                .logout((logout) -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+//                        .logoutSuccessUrl("/index")
+//                        .invalidateHttpSession(true))
+//        .exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedPage("/error/custom-403-page")); // Here
 
 
 

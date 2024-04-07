@@ -37,9 +37,8 @@ public class GameImage extends BaseEntity {
 
 
     /*    생성자    */
-    public GameImage(Game game, String fileOriginName, String fileSaveName, ImageType fileType,
+    public GameImage(String fileOriginName, String fileSaveName, ImageType fileType,
                      String filePath, Long fileSize, String fileUrl, String description) {
-        this.game = game;
         this.fileOriginName = fileOriginName;
         this.fileSaveName = fileSaveName;
         this.fileType = fileType;

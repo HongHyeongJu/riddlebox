@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "question", "answer","status"})  //"team"쓰면 무한루프 빠진다 조심
+@ToString(of = {"id", "question", "answer", "status"})  //"team"쓰면 무한루프 빠진다 조심
 public class GameContent extends BaseEntity {
 
     @Id
@@ -34,13 +34,16 @@ public class GameContent extends BaseEntity {
     private Integer ordering;  //문제의 순서를 제어
 
 
-
     /*   생성자   */
-    public GameContent(String question, String answer) {
+    public GameContent(String question, String answer, Integer ordering) {
         this.question = question;
         this.answer = answer;
         this.status = GameStatus.ACTIVE; // 초기 상태 설정
-        this.ordering = 1;
+        if (ordering == null) {
+            this.ordering = 1;
+        } else {
+            this.ordering = ordering;
+        }
     }
 
     /*    생성 메서드    */
@@ -76,10 +79,9 @@ public class GameContent extends BaseEntity {
     }
 
     //문제 List만 전달하기
-    public String getQuestion(){
+    public String getQuestion() {
         return question;
     }
-
 
 
     //삭제

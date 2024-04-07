@@ -58,8 +58,8 @@ public class GameSearchService {
             .select(game.count())
             .from(game)
             .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL))
-            .where(game.title.like("%" + keyword.toLowerCase() + "%")
-                   .or(game.description.like("%" + keyword.toLowerCase() + "%")))
+            .where(game.title.like("%" + keyword + "%")
+                   .or(game.description.like("%" + keyword + "%")))
             .fetchOne();
 
         return new PageImpl<>(results, pageable, total);
