@@ -1,4 +1,4 @@
-package com.labmate.riddlebox.dto;
+package com.labmate.riddlebox.admindto;
 
 import com.labmate.riddlebox.enumpackage.NoticeCategory;
 import com.labmate.riddlebox.enumpackage.NoticeStatus;

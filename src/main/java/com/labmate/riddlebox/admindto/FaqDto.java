@@ -1,9 +1,6 @@
-package com.labmate.riddlebox.dto;
+package com.labmate.riddlebox.admindto;
 
 import com.labmate.riddlebox.enumpackage.FaqCategory;
-import com.labmate.riddlebox.enumpackage.NoticeStatus;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,8 +12,6 @@ public class FaqDto {
     private FaqCategory faqCategory;  //카테고리(Enum)
     private String question;  //제목
     private String answer;  //답변
-    private NoticeStatus status;  //상태(Enum)
-    private int viewCount;  //조회수
 
 }
 

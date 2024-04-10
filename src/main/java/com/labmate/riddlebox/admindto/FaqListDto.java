@@ -1,4 +1,4 @@
-package com.labmate.riddlebox.dto;
+package com.labmate.riddlebox.admindto;
 
 import com.labmate.riddlebox.enumpackage.FaqCategory;
 import com.labmate.riddlebox.enumpackage.NoticeStatus;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FaqListDto {
 
-    private Long id;  //공지사항번호
+    private Long id;  //FAQ 번호
     private FaqCategory faqCategory;  //카테고리(Enum)
     private String question;  //제목
 

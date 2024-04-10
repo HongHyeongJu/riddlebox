@@ -1,7 +1,6 @@
-package com.labmate.riddlebox.dto;
+package com.labmate.riddlebox.admindto;
 
-import com.labmate.riddlebox.entity.Admin;
-import com.labmate.riddlebox.entity.Member;
+import com.labmate.riddlebox.entity.RBUser;
 import com.labmate.riddlebox.enumpackage.FaqCategory;
 import com.labmate.riddlebox.enumpackage.InquiryStatus;
 import lombok.Data;
@@ -14,7 +13,8 @@ import java.time.LocalDateTime;
 public class InquiryListDto {
 
     private Long id;  //문의번호
-    private Member member;  //회원번호
+    private RBUser inquirer;  //문의자 PK
+    private String inquirerNickname;  //문의자 닉네임
     private FaqCategory faqCategory;  //(Enum)이용문의,계정문의,게임컨텐츠문의,일반문의
     private String question;  //질문
     private LocalDateTime inquiryAt;  //문의일

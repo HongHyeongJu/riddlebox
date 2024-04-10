@@ -1,4 +1,4 @@
-package com.labmate.riddlebox.dto;
+package com.labmate.riddlebox.admindto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

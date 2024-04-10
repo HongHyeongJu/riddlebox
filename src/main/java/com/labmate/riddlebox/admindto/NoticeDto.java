@@ -1,4 +1,4 @@
-package com.labmate.riddlebox.dto;
+package com.labmate.riddlebox.admindto;
 
 import com.labmate.riddlebox.enumpackage.NoticeStatus;
 import com.labmate.riddlebox.enumpackage.NoticeCategory;
@@ -18,5 +18,8 @@ public class NoticeDto {
     private NoticeStatus status;  //상태(Enum)
     private LocalDateTime noticeDate;
     private int viewCount;  //조회수
+
+    private Long preNoticeId;  //이전 문의번호
+    private Long nextNoticeId;  //이전 문의번호
 
 }
