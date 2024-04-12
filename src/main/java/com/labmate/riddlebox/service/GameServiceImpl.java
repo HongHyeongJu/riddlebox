@@ -133,7 +133,6 @@ public class GameServiceImpl implements GameService {
 
         gameplayInfoDto.setGameContents(getGameContents(gameId));
         //이미지 찾기
-        gameplayInfoDto.setThumnailImgPath(getImagePath(gameId, ImageType.THUMBNAIL));
         gameplayInfoDto.setIllustrationImgPath(getImagePath(gameId, ImageType.ILLUSTRATION));
 
         return gameplayInfoDto;
@@ -198,7 +197,7 @@ public class GameServiceImpl implements GameService {
         return queryFactory
                 .select(gameImage.filePath)
                 .from(gameImage)
-                .where(gameImage.game.id.eq(gameId), gameImage.fileType.eq(type) ,gameImage.status.eq(GameStatus.ACTIVE))
+                .where(gameImage.game.id.eq(gameId), gameImage.imageType.eq(type) ,gameImage.status.eq(GameStatus.ACTIVE))
                 .fetchOne();
     }
 
@@ -213,7 +212,7 @@ public class GameServiceImpl implements GameService {
                         gameImage.fileUrl // 썸네일 이미지 URL
                 ))
                 .from(game)
-                .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL)) // 썸네일 이미지만 조인
+                .leftJoin(game.gameImages, gameImage).on(gameImage.imageType.eq(ImageType.THUMBNAIL)) // 썸네일 이미지만 조인
                 .where(
                         titleContains(condition.getTitle()),
                         descriptionContains(condition.getDescription()),
@@ -297,7 +296,7 @@ public class GameServiceImpl implements GameService {
                 .from(recommendGame)
                 .innerJoin(recommendGame.game, game) // recommendGame과 game을 조인
                 .leftJoin(game.gameImages, gameImage) // game과 gameImage를 조인
-                .on(gameImage.fileType.eq(ImageType.THUMBNAIL)) // THUMBNAIL 타입의 이미지만 선택
+                .on(gameImage.imageType.eq(ImageType.THUMBNAIL)) // THUMBNAIL 타입의 이미지만 선택
                 .where(recommendGame.game.status.eq(GameStatus.ACTIVE))
                 .fetch();
         return results;
@@ -364,6 +363,7 @@ public class GameServiceImpl implements GameService {
             case SNAPSHOT_DEDUCTION -> "snapshot";
             case SHORT_STORY -> "story";
             case EMOJI_GAME -> "emoji";
+            case TIME_LIMIT -> "timelimit";
             case MYSTERY -> null;
             case ADVENTURE -> null;
             case EVERYDAY -> null;
@@ -393,7 +393,7 @@ public class GameServiceImpl implements GameService {
                         gameImage.filePath.coalesce("img/sendstory.png"), // 이 부분은 QueryDSL에서 직접적으로 지원하지 않으므로, 대안을 모색해야 합니다.
                         gameText.text))
                 .from(gameText)
-                .leftJoin(gameImage).on(gameImage.game.eq(gameText.game).and(gameImage.fileType.eq(ILLUSTRATION))) // 조건에 맞는 이미지가 없으면, gameImage는 null이 될 수 있습니다.
+                .leftJoin(gameImage).on(gameImage.game.eq(gameText.game).and(gameImage.imageType.eq(ILLUSTRATION))) // 조건에 맞는 이미지가 없으면, gameImage는 null이 될 수 있습니다.
                 .where(gameText.game.id.eq(gameId))
                 .fetchOne();
     }

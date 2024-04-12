@@ -47,7 +47,7 @@ public class GameSearchService {
                         gameImage.fileUrl
             ))
             .from(game)
-            .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL))
+            .leftJoin(game.gameImages, gameImage).on(gameImage.imageType.eq(ImageType.THUMBNAIL))
             .where(game.title.like("%" + keyword + "%")
                    .or(game.description.like("%" + keyword + "%")))
             .offset(pageable.getOffset())
@@ -57,7 +57,7 @@ public class GameSearchService {
         long total = queryFactory
             .select(game.count())
             .from(game)
-            .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL))
+            .leftJoin(game.gameImages, gameImage).on(gameImage.imageType.eq(ImageType.THUMBNAIL))
             .where(game.title.like("%" + keyword + "%")
                    .or(game.description.like("%" + keyword + "%")))
             .fetchOne();
@@ -79,7 +79,7 @@ public class GameSearchService {
                         gameImage.fileUrl
             ))
             .from(game)
-            .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL))
+            .leftJoin(game.gameImages, gameImage).on(gameImage.imageType.eq(ImageType.THUMBNAIL))
             .where(game.gameCategory.subject.eq(gameCategoryEnum))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -87,7 +87,7 @@ public class GameSearchService {
 
         long total = queryFactory
             .select(game.count()).from(game)
-            .leftJoin(game.gameImages, gameImage).on(gameImage.fileType.eq(ImageType.THUMBNAIL))
+            .leftJoin(game.gameImages, gameImage).on(gameImage.imageType.eq(ImageType.THUMBNAIL))
             .where(game.gameCategory.subject.eq(gameCategoryEnum))
             .fetchOne();
 

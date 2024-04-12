@@ -44,6 +44,7 @@ public class GameListDto {
             case SNAPSHOT_DEDUCTION -> "snapshot";
             case SHORT_STORY -> "story";
             case EMOJI_GAME -> "emoji";
+            case TIME_LIMIT -> "timelimit";
             case MYSTERY -> null;
             case ADVENTURE -> null;
             case EVERYDAY -> null;

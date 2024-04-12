@@ -4,6 +4,7 @@ import com.labmate.riddlebox.dto.*;
 import com.labmate.riddlebox.repository.GameRepository;
 import com.labmate.riddlebox.service.GameSearchService;
 import com.labmate.riddlebox.service.GameService;
+import com.labmate.riddlebox.service.TimeLimitGameService;
 import com.labmate.riddlebox.util.GameScoreResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,11 +20,14 @@ public class WebGameController {
 
     private final GameService gameService;
     private final GameSearchService gameSearchService;
+    private final TimeLimitGameService timeLimitGameService;
     private final GameRepository gameRepository;
 
-    public WebGameController(GameService gameService, GameSearchService gameSearchService, GameRepository gameRepository) {
+    public WebGameController(GameService gameService, GameSearchService gameSearchService,
+                             TimeLimitGameService timeLimitGameService, GameRepository gameRepository) {
         this.gameService = gameService;
         this.gameSearchService = gameSearchService;
+        this.timeLimitGameService = timeLimitGameService;
         this.gameRepository = gameRepository;
     }
 
@@ -139,6 +143,22 @@ public class WebGameController {
         Long randomGameNumber = 14L;
 
         return "redirect:/game/" + randomGameNumber + "/snapshot";
+    }
+
+
+
+    /* 타임 리밋 게임 페이지 */
+    @GetMapping("/timelimit")
+    public String getTimeLimitGame(Model model) {
+        //이벤트 게임은 단 1개
+        Long timeLimitGameId = timeLimitGameService.getActiveTimeLimitGameId();
+        TimeLimitGameDto timeLimitGameDto = timeLimitGameService.getTimeLimitGameDto_SpringDataJPA(timeLimitGameId);
+        gameService.addGameViewCount(timeLimitGameId);
+        model.addAttribute("pageType", "timeLimit");
+        model.addAttribute("title", "timeLimit");
+        model.addAttribute("timeLimitGameDto", timeLimitGameDto);
+        return "layout/layout_base";
+
     }
 
 

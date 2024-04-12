@@ -42,15 +42,7 @@ public class ApiGameController {
     GameRepository gameRepository;
 
 
-    // 게임 목록 조회
-    @GetMapping
-    public ResponseEntity<Page<GameListDto>> getMoreGames(@ModelAttribute GameSearchCondition condition,
-                                                          @RequestParam int page,
-                                                          @RequestParam int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<GameListDto> games = gameService.searchGameSimple(condition, pageable);
-        return ResponseEntity.ok(games);
-    }
+
 
 
     @GetMapping("/{gameId}/getQuestions")
@@ -157,6 +149,20 @@ public class ApiGameController {
 
         return ResponseEntity.ok(response);
     }
+
+
+
+
+    // 게임 목록 상세 조회 (관리자용)
+    @GetMapping
+    public ResponseEntity<Page<GameListDto>> getMoreGames(@ModelAttribute GameSearchCondition condition,
+                                                          @RequestParam int page,
+                                                          @RequestParam int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<GameListDto> games = gameService.searchGameSimple(condition, pageable);
+        return ResponseEntity.ok(games);
+    }
+
 
 
 }

@@ -26,24 +26,22 @@ public class GameText extends BaseEntity {
     @Column(columnDefinition = "MEDIUMTEXT")
     private String text;  //내용
 
+    @Lob  // 긴 텍스트를 위한 애너테이션
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String explanation;  //해설
+
     @Enumerated(EnumType.STRING)
     private GameStatus status;  //상태
 
 
-    public GameText(Long id, Game game, String text, GameStatus status) {
-        this.id = id;
-        this.game = game;
+    public GameText(String text, String explanation) {
         this.text = text;
-        this.status = status;
+        this.explanation = explanation;
+        this.status = GameStatus.ACTIVE;
     }
 
     public void setGame(Game game) {
         this.game = game;
-
-        // 새로운 Game 엔티티와의 관계를 설정합니다.
-        if (game != null && game.getGameText() != this) {
-            game.setGameText(this);
-        }
     }
 
     public void updateText(String newText) {

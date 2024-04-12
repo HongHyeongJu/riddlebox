@@ -35,7 +35,6 @@ public class GameplayInfoDto {
     private LocalDateTime officialUpdateDate;  //게임수정일
 
     private List<GameContent> gameContents = new ArrayList<>();
-    private String thumnailImgPath;
     private String illustrationImgPath;
 
     @QueryProjection

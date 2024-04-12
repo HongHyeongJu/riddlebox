@@ -35,7 +35,7 @@ public class GameContent extends BaseEntity {
 
 
     /*   생성자   */
-    public GameContent(String question, String answer, Integer ordering) {
+    public GameContent(String question, String answer,  Integer ordering) {
         this.question = question;
         this.answer = answer;
         this.status = GameStatus.ACTIVE; // 초기 상태 설정

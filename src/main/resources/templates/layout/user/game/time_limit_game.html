@@ -1,0 +1,80 @@
+<div th:fragment="timeLimit" class="container mt-5">
+    <div class="row">
+        <div class="col-md-12" style="background-color: #f8f9fa;">
+
+            <!-- 게임 타이틀 -->
+            <!-- 기본적인 중앙 정렬에 대해 배경색, 패딩, 글자 색상, 그림자를 추가 -->
+            <th:block th:text="${timeLimitGameDto.gameTitle}"
+                      th:class="text-center mb-5 mt-4 p-3 bg-secondary text-white shadow"
+                      style="border-radius: 10px;"></th:block>
+
+            <input type="hidden" id="end-time" th:value="${timeLimitGameDto.gameEndTime}"/>
+
+            <!-- 게임 일러스트 이미지 -->
+            <div class="container">
+                <div class="row justify-content-center mt-2">
+                    <div class="col-md-6 img-thumbnail"> <!-- 부트스트랩 그리드 시스템을 사용하여 div의 너비를 절반으로 설정 -->
+                        <!-- 이미지 비율을 유지하면서 최대 너비를 div의 100% (즉, 전체 컨테이너의 50%)로 설정 -->
+                        <img th:src="@{${staticUrl} + ${timeLimitGameDto.illustrationImgPath}}" class="img-fluid"
+                             alt="게임 일러스트">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 게임 텍스트 -->
+
+            <div class="p-5 mt-3 text-dark" th:utext="${@commonUtil.markdownToHtml(timeLimitGameDto.text)}"></div>
+
+            <div id="timer" class="my-1">00:00:00</div>
+
+            <!-- 답 제출 버튼 및 입력칸 -->
+            <div class="d-flex justify-content-center mb-5 mt-2">
+                <form class="w-50"> <!-- Adjust width as needed -->
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="답변을 입력하세요">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">답 제출</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <!-- 댓글 -->
+            <div class="mt-5">
+                <h5 class="mb-3 ml-4 text-secondary">🗨️comment</h5>
+                <!-- 댓글 리스트 -->
+                <div id="comment-list">
+                    <!-- 댓글 반복 출력 -->
+                    <div th:each="comment : ${timeLimitGameDto.commentDtoList}"
+                         class="comment-box d-flex align-items-center mb-2">
+                        <div class="nickname text-primary-emphasis"><strong th:text="${comment.nickName}">닉네임</strong>
+                        </div>
+                        <div th:text="${comment.content}">댓글 내용</div>
+                    </div>
+                    <!-- 추가 댓글은 여기에 -->
+                </div>
+                <!-- 추가 댓글을 가져오는 버튼 -->
+                <button id="load-more-comments" class="btn btn-primary mt-3">댓글 더보기</button>
+            </div>
+
+
+            <!-- 새 댓글 입력 -->
+            <div class="mt-5">
+                <h5 class="mb-3 text-secondary ml-4">🗨️new comment</h5>
+                <form>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="댓글을 입력하세요"
+                               aria-label="Recipient's username" aria-describedby="button-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="button-addon2">댓글 달기</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+
+    </div>
+</div>

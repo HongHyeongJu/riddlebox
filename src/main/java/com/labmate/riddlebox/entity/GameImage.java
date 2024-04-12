@@ -25,7 +25,7 @@ public class GameImage extends BaseEntity {
     private String fileSaveName;  //파일저장이름
 
     @Enumerated(EnumType.STRING)
-    private ImageType fileType;  //파일타입
+    private ImageType imageType;  //파일타입
 
     private String filePath;  //파일경로
     private Long fileSize;  //파일크기
@@ -37,11 +37,11 @@ public class GameImage extends BaseEntity {
 
 
     /*    생성자    */
-    public GameImage(String fileOriginName, String fileSaveName, ImageType fileType,
+    public GameImage(String fileOriginName, String fileSaveName, ImageType imageType,
                      String filePath, Long fileSize, String fileUrl, String description) {
         this.fileOriginName = fileOriginName;
         this.fileSaveName = fileSaveName;
-        this.fileType = fileType;
+        this.imageType = imageType;
         this.filePath = filePath;
         this.fileSize = fileSize;
         this.fileUrl = fileUrl;
@@ -69,7 +69,7 @@ public class GameImage extends BaseEntity {
 
     //게임 이미지 수정 (Game에도 영향)
     public void updateGameContent(String newFileOriginName, String newFileSaveName,
-                                  ImageType newFileType, String newFilePath, Long newFileSize,
+                                  ImageType newImageType, String newFilePath, Long newFileSize,
                                   String newFileUrl, String newDescription,
                                   Game newGame) {
 
@@ -80,7 +80,7 @@ public class GameImage extends BaseEntity {
 
         this.fileOriginName = newFileOriginName;
         this.fileSaveName = newFileSaveName;
-        this.fileType = newFileType;
+        this.imageType = newImageType;
         this.filePath = newFilePath;
         this.fileSize = newFileSize;
         this.fileUrl = newFileUrl;

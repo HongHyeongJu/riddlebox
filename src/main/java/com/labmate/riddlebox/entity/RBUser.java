@@ -65,6 +65,12 @@ public class RBUser extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<GameEvent> gameEvents = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<GameSolver> gameSolvers = new ArrayList<>();
+
 
     /*   생성자   */
     @Builder
@@ -147,6 +153,26 @@ public class RBUser extends BaseEntity {
         gameEvent.setUser(null);
     }
 
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        comment.setUser(this);
+    }
+
+    public void removeComment(Comment comment) {
+        this.comments.remove(comment);
+        comment.setUser(null);
+    }
+
+
+    public void addGameSolver(GameSolver gameSolver) {
+        this.gameSolvers.add(gameSolver);
+        gameSolver.setUser(this);
+    }
+
+    public void removeGameSolver(GameSolver gameSolver) {
+        this.gameSolvers.remove(gameSolver);
+        gameSolver.setUser(null);
+    }
 
     // UserPoint 리스트에 새로운 포인트를 추가하는 헬퍼 메소드
     public void addUserPoint(UserPoint userPoint) {

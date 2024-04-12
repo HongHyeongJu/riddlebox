@@ -64,6 +64,13 @@ public class Game extends BaseEntity {
     @OneToMany(mappedBy = "game")
     private List<GameEvent> gameEvents = new ArrayList<>();
 
+    @OneToMany(mappedBy = "game")
+    private List<Comment> comments = new ArrayList<>();
+
+
+    @OneToOne(mappedBy = "game", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private GameSolver gameSolver;
+
 
     /*   생성자   */
     public Game(GameCategory gameCategory, String title, String description, GameLevel gameLevel, String author) {
@@ -85,64 +92,109 @@ public class Game extends BaseEntity {
     }
 
     public void removeGameRecord(GameRecord gameRecord) {
-        this.gameRecords.add(gameRecord);
+        this.gameRecords.remove(gameRecord);
         gameRecord.setGame(null);
     }
+
     public void addGameContent(GameContent gameContent) {
         this.gameContents.add(gameContent);
         gameContent.setGame(this);
     }
 
     public void removeGameContent(GameContent gameContent) {
-        this.gameContents.add(gameContent);
+        this.gameContents.remove(gameContent);
         gameContent.setGame(null);
     }
+
     public void addGameImage(GameImage gameImage) {
         this.gameImages.add(gameImage);
         gameImage.setGame(this);
     }
 
     public void removeGameImage(GameImage gameImage) {
-        this.gameImages.add(gameImage);
+        this.gameImages.remove(gameImage);
         gameImage.setGame(null);
     }
+
     public void addRecommendGame(RecommendGame recommendGame) {
         this.recommendGames.add(recommendGame);
         recommendGame.setGame(this);
     }
 
     public void removeRecommendGame(RecommendGame recommendGame) {
-        this.recommendGames.add(recommendGame);
+        this.recommendGames.remove(recommendGame);
         recommendGame.setGame(null);
     }
+
     public void addGameEvent(GameEvent gameEvent) {
         this.gameEvents.add(gameEvent);
         gameEvent.setGame(this);
     }
 
     public void removeGameEvent(GameEvent gameEvent) {
-        this.gameEvents.add(gameEvent);
+        this.gameEvents.remove(gameEvent);
         gameEvent.setGame(null);
     }
 
+
+    // 댓글 추가
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        if (comment.getGame() != this) {
+            comment.setGame(this);
+        }
+    }
+
+    // 댓글 제거
+    public void removeComment(Comment comment) {
+        this.comments.remove(comment);
+        if (comment.getGame() == this) {
+            comment.setGame(null);
+        }
+    }
+
+    public void setGameSolver(GameSolver gameSolver) {
+        // 현재 게임 솔버가 이미 설정되어 있는지 검사
+        if (this.gameSolver != null) {
+            // 기존 게임 솔버가 있다면, 연관 관계를 제거
+            this.gameSolver.setGame(null);
+        }
+
+        // 새로운 게임 솔버 설정
+        this.gameSolver = gameSolver;
+
+        if (gameSolver != null && gameSolver.getGame() != this) {
+            // GameSolver 내부에서 Game을 설정하지 않습니다.
+            // 이 방법으로 무한 루프를 방지합니다.
+            gameSolver.setGame(this);
+        }
+    }
+
+
+    public void setGameText(GameText gameText) {
+        // 현재 게임 솔버가 이미 설정되어 있는지 검사
+        if (this.gameText != null) {
+            // 기존 게임 솔버가 있다면, 연관 관계를 제거
+            this.gameText.setGame(null);
+        }
+
+        // 새로운 게임 솔버 설정
+        this.gameText = gameText;
+
+        if (gameText != null && gameText.getGame() != this) {
+            // GameSolver 내부에서 Game을 설정하지 않습니다.
+            // 이 방법으로 무한 루프를 방지합니다.
+            gameText.setGame(this);
+        }
+    }
+
     public void setGameCategory(GameCategory gameCategory) {
-        if (this.gameCategory != null) {
-            this.gameCategory.getGames().remove(this);
+        if (gameCategory != null) {
+            gameCategory.getGames().add(this);
         }
         this.gameCategory = gameCategory;
     }
 
-    public void setGameText(GameText gameText) {
-        if (gameText == null) {
-            if (this.gameText != null) {
-                this.gameText.setGame(null);
-            }
-            this.gameText = null;
-        } else {
-            gameText.setGame(this);
-            this.gameText = gameText;
-        }
-    }
 
 
     /*    변경 메서드    */
@@ -176,7 +228,7 @@ public class Game extends BaseEntity {
     }
 
     //게임 생성일, 공개일 수정
-    public void updateGameofficialDate(LocalDateTime newOfficialReleaseDate, LocalDateTime newOfficialUpdateDate){
+    public void updateGameofficialDate(LocalDateTime newOfficialReleaseDate, LocalDateTime newOfficialUpdateDate) {
         this.officialReleaseDate = newOfficialReleaseDate;
         this.officialUpdateDate = newOfficialUpdateDate;
     }
