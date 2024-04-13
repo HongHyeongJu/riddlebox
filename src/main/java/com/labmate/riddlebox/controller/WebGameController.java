@@ -6,6 +6,9 @@ import com.labmate.riddlebox.service.GameSearchService;
 import com.labmate.riddlebox.service.GameService;
 import com.labmate.riddlebox.service.TimeLimitGameService;
 import com.labmate.riddlebox.util.GameScoreResult;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -146,21 +149,42 @@ public class WebGameController {
     }
 
 
-
     /* 타임 리밋 게임 페이지 */
-    @GetMapping("/timelimit")
-    public String getTimeLimitGame(Model model) {
+    @GetMapping("/timelimit-nopaging-jpa")
+    public String viewTimeLimitGameNopaging(@RequestParam(defaultValue = "0", name = "page") int page, Model model) {
         //이벤트 게임은 단 1개
         Long timeLimitGameId = timeLimitGameService.getActiveTimeLimitGameId();
-        TimeLimitGameDto timeLimitGameDto = timeLimitGameService.getTimeLimitGameDto_SpringDataJPA(timeLimitGameId);
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate").descending());
+        TimeLimitGameDto gameDto = timeLimitGameService.getTimeLimitGameDto_SpringDataJPA(timeLimitGameId);
+
         gameService.addGameViewCount(timeLimitGameId);
         model.addAttribute("pageType", "timeLimit");
         model.addAttribute("title", "timeLimit");
-        model.addAttribute("timeLimitGameDto", timeLimitGameDto);
-        return "layout/layout_base";
+        model.addAttribute("timeLimitGameDto", gameDto);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", gameDto.getTotalPages());
 
+        return "layout/layout_base";
     }
 
+
+//    @GetMapping("/timelimit")
+//    public String viewTimeLimitGame(@RequestParam(defaultValue = "0", name = "page") int page, Model model) {
+//        //이벤트 게임은 단 1개
+//        Long timeLimitGameId = timeLimitGameService.getActiveTimeLimitGameId();
+//        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate").descending());
+//        TimeLimitGameDto gameDto = timeLimitGameService.getTimeLimitGameDto_SpringDataJPA(timeLimitGameId, pageable);
+//
+//        gameService.addGameViewCount(timeLimitGameId);
+//        model.addAttribute("pageType", "timeLimit");
+//        model.addAttribute("title", "timeLimit");
+//        model.addAttribute("timeLimitGameDto", gameDto);
+//        model.addAttribute("currentPage", page);
+//        model.addAttribute("totalPages", gameDto.getTotalPages());
+//
+//        return "layout/layout_base";
+//
+//    }
 
 
 }

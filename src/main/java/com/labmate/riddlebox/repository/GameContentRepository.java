@@ -9,4 +9,6 @@ import java.util.Optional;
 
 public interface GameContentRepository extends JpaRepository<GameContent, Long> {
     Optional<GameContent> findByIdAndStatus(Long id, GameStatus status);
+
+    Optional<GameContent> findByGame_IdAndStatus(Long gameId, GameStatus status);
 }

@@ -11,10 +11,16 @@ import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.labmate.riddlebox.enumpackage.ImageType.ILLUSTRATION;
 
@@ -62,27 +68,71 @@ public class TimeLimitGameService {
     //[1]차 Spring Data JPA의 기본 메서드를 사용Spring Data JPA의 기본 메서드를 사용
     @Transactional(readOnly = true)
     public TimeLimitGameDto getTimeLimitGameDto_SpringDataJPA(Long gameId) {
-        logger.info("current method : {}", "getTimeLimitGameDto_SpringDataJPA");
-        Game game = gameRepository.findById(gameId).get();
-        GameSolver solver = gameSolverRepository.findById(gameId).get();
-        RBUser user = userRepository.findById(solver.getUser().getId()).get();
-        GameContent content = gameContentRepository.findByIdAndStatus(gameId, GameStatus.ACTIVE).get();
-        GameImage image = gameImageRepository.findByIdAndImageType(gameId, ILLUSTRATION).get();
-        List<Comment> commentList = commentRepository.findByGameIdAndStatusOrderByCreatedDateDesc(gameId, GameStatus.ACTIVE);
+        logger.info("Retrieving game details for gameId: {}", gameId);
 
-        List<CommentDto> commentDtoList = commentList.stream().map(a -> new CommentDto(a.getCommentId(), a.getUser().getNickname(), a.getContent())).toList();
-        TimeLimitGameDto timeLimitGameDto = new TimeLimitGameDto(game.getTitle(),
-                                                                image.getFilePath(),
-                                                                content.getQuestion(),
-                                                                solver.getEndDateTime(),
-                                                                commentDtoList,
-                                                                user.getNickname());
+        Game game = gameRepository.findById(gameId).orElseThrow(() ->
+                new IllegalArgumentException("Game not found for ID: " + gameId));
+        GameText gameText = gameTextRepository.findByGame_Id(gameId).orElseThrow(() ->
+                new IllegalArgumentException("GameText not found for ID: " + gameId));
+        GameImage image = gameImageRepository.findByGame_IdAndImageType(gameId, ILLUSTRATION).orElseThrow(() ->
+                new IllegalArgumentException("GameImage not found for ID: " + gameId));
+        GameContent gameContent = gameContentRepository.findByGame_IdAndStatus(gameId, GameStatus.ACTIVE).orElseThrow(() ->
+                new IllegalArgumentException("GameContent not found for ID: " + gameId));
+        GameSolver solver = gameSolverRepository.findByGame_Id(gameId).orElseThrow(() ->
+                new IllegalArgumentException("GameSolver not found for ID: " + gameId));
 
+        String nickname = null;
+        if (solver.getUser() != null) {
+            RBUser user = userRepository.findById(solver.getUser().getId()).orElseThrow(() ->
+                    new IllegalArgumentException("User not found for ID: " + solver.getUser().getId()));
+            nickname = user.getNickname();
+        }
+
+        List<Comment> comments = commentRepository.findByGameIdAndStatusOrderByCreatedDateDesc(gameId, GameStatus.ACTIVE);
+        List<CommentDto> commentDtoList = comments.stream()
+                .map(a -> new CommentDto(a.getCommentId(), a.getUser().getId(), a.getUser().getNickname(), a.getContent()))
+                .collect(Collectors.toList());
+
+        TimeLimitGameDto timeLimitGameDto = new TimeLimitGameDto(
+                game.getId(),
+                game.getTitle(),
+                image.getFilePath(),
+                gameText.getText(),
+                gameContent.getAnswer(),
+                solver.getEndDateTime(),
+                commentDtoList,
+                nickname
+        );
+
+        logger.info("Successfully retrieved TimeLimitGameDto with comments for gameId: {}", gameId);
         return timeLimitGameDto;
     }
-    //[2]차 queryDsl
+
+
+    //[2]차 queryDsl + fetchJoin
+//    @Transactional(readOnly = true)
+//    public TimeLimitGameDto getTimeLimitGameDto_QueryDslAndFetchJoin(Long gameId, Pageable pageable){
+//        var fetchResult = queryFactory
+//                .select(game)
+//                .from(game)
+//                .leftJoin(game.gameText, gameText).fetchJoin()
+//                .leftJoin(game.gameImages, gameImage).fetchJoin()
+//                .leftJoin(game.gameContents, gameContent).fetchJoin()
+//                .leftJoin(game.gameSolver, gameSolver).fetchJoin()
+//                .leftJoin(gameSolver.user, QUser.user).fetchJoin()
+//                .leftJoin(game.comments, comment).fetchJoin()
+//                .leftJoin(comment.user, QUser.user).fetchJoin()
+//                .where(game.id.eq(gameId))
+//                .fetchOne();
+//
+//        // 데이터 변환 로직 (fetchResult를 TimeLimitGameDto로 변환)
+//        // 변환된 TimeLimitGameDto 반환
+//    }
     //[3]차 queryDsl + fetchJoin
-    //[4]차 queryDsl + fetchJoin
+//    @Transactional(readOnly = true)
+//    public TimeLimitGameDto getTimeLimitGameDto_QueryDslVer2(Long gameId, Pageable pageable){
+//
+//    }
 
 
     // TimeLimit Game 생성
@@ -93,8 +143,8 @@ public class TimeLimitGameService {
                 .orElseThrow(() -> new EntityNotFoundException("GameCategory not found"));
         // Game 인스턴스 생성
         Game timeLimitGame = new Game(gameCategory, createGameDto.getGameTitle(),
-                                    createGameDto.getGameDescription(),
-                                    createGameDto.getGameLevelType(), createGameDto.getAuthor());
+                createGameDto.getGameDescription(),
+                createGameDto.getGameLevelType(), createGameDto.getAuthor());
         // Game 저장
         gameRepository.save(timeLimitGame);
 
@@ -118,7 +168,7 @@ public class TimeLimitGameService {
 
         // GameImage 인스턴스 생성.
         GameImage gameImage = new GameImage(createImageDto.getFileOriginName(), createImageDto.getFileSaveName(), createImageDto.getImageType(),
-                                        createImageDto.getFilePath(), createImageDto.getFileSize(), createImageDto.getFileUrl(), createImageDto.getDescription());
+                createImageDto.getFilePath(), createImageDto.getFileSize(), createImageDto.getFileUrl(), createImageDto.getDescription());
         gameImage.setGame(timeLimitGame);
         // GameImage 저장
         gameImageRepository.save(gameImage);
@@ -161,17 +211,72 @@ public class TimeLimitGameService {
     }
 
 
-
     // TimeLimit 문제 푼 유저 기록
     @Transactional
-    public void recordTimeLimitSolver(Long gameId, Long userId){
+    public void recordTimeLimitSolver(Long gameId, Long userId) {
         GameSolver gameSolver = gameSolverRepository.findByGame_Id(gameId)
-            .orElseThrow(() -> new EntityNotFoundException("GameSolver not found with gameId: " + gameId));
+                .orElseThrow(() -> new EntityNotFoundException("GameSolver not found with gameId: " + gameId));
         RBUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
         gameSolver.setGameSolveUser(user);
     }
 
 
+    //댓글 페이징 데이터 전달
+    public Page<CommentDto> getOtherCommentsByGameId(Long gameId, Pageable pageable) {
+        // Page 객체 내부의 Comment 엔티티를 CommentDto로 변환
+        return commentRepository.findByGameIdAndStatusOrderByCreatedDateDesc(gameId, GameStatus.ACTIVE, pageable)
+                .map(comment -> new CommentDto(
+                        comment.getCommentId(),
+                        comment.getUser().getId(),
+                        comment.getUser().getNickname(),
+                        comment.getContent()
+                ));
+    }
+
+
 }
 
+//    @Transactional(readOnly = true)
+//    public TimeLimitGameDto getTimeLimitGameDto_SpringDataJPA(Long gameId, Pageable pageable) {
+//        logger.info("Retrieving game details for gameId: {}", gameId);
+//
+//        Game game = gameRepository.findById(gameId).orElseThrow(() ->
+//                new IllegalArgumentException("Game not found for ID: " + gameId));
+//        GameText gameText = gameTextRepository.findByGame_Id(gameId).orElseThrow(() ->
+//                new IllegalArgumentException("GameText not found for ID: " + gameId));
+//        GameImage image = gameImageRepository.findByGame_IdAndImageType(gameId, ILLUSTRATION).orElseThrow(() ->
+//                new IllegalArgumentException("GameImage not found for ID: " + gameId));
+//        GameContent gameContent = gameContentRepository.findByGame_IdAndStatus(gameId, GameStatus.ACTIVE).orElseThrow(() ->
+//                new IllegalArgumentException("GameContent not found for ID: " + gameId));
+//        GameSolver solver = gameSolverRepository.findByGame_Id(gameId).orElseThrow(() ->
+//                new IllegalArgumentException("GameSolver not found for ID: " + gameId));
+//
+//        String nickname = null;
+//        if (solver.getUser() != null) {
+//            RBUser user = userRepository.findById(solver.getUser().getId()).orElseThrow(() ->
+//                    new IllegalArgumentException("User not found for ID: " + solver.getUser().getId()));
+//            nickname = user.getNickname();
+//        }
+//
+//        Page<Comment> commentPage = commentRepository.findByGameIdAndStatusOrderByCreatedDateDesc(gameId, GameStatus.ACTIVE, pageable);
+//        List<CommentDto> commentDtoList = commentPage.getContent().stream()
+//                .map(a -> new CommentDto(a.getCommentId(), a.getUser().getId(), a.getUser().getNickname(), a.getContent()))
+//                .collect(Collectors.toList());
+//
+//        TimeLimitGameDto timeLimitGameDto = new TimeLimitGameDto(
+//                game.getId(),
+//                game.getTitle(),
+//                image.getFilePath(),
+//                gameText.getText(),
+//                gameContent.getAnswer(),
+//                solver.getEndDateTime(),
+//                commentDtoList,
+//                nickname,
+//                commentPage.getNumber(),
+//                commentPage.getTotalPages()
+//        );
+//
+//        logger.info("Successfully retrieved TimeLimitGameDto with comments for gameId: {}", gameId);
+//        return timeLimitGameDto;
+//    }

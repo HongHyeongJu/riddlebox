@@ -1,12 +1,12 @@
-<div th:fragment="timeLimit" class="container mt-5">
+<div th:fragment="timeLimit" class="container mt-5" xmlns="http://www.w3.org/1999/html">
     <div class="row">
         <div class="col-md-12" style="background-color: #f8f9fa;">
 
             <!-- 게임 타이틀 -->
             <!-- 기본적인 중앙 정렬에 대해 배경색, 패딩, 글자 색상, 그림자를 추가 -->
-            <th:block th:text="${timeLimitGameDto.gameTitle}"
-                      th:class="text-center mb-5 mt-4 p-3 bg-secondary text-white shadow"
-                      style="border-radius: 10px;"></th:block>
+            <h2 th:text="${timeLimitGameDto.gameTitle}" class="text-center mb-5 mt-3 p-2 bg-secondary text-white shadow"
+                style="border-radius: 10px; font-family: 'Orbitron', serif; "></h2>
+
 
             <input type="hidden" id="end-time" th:value="${timeLimitGameDto.gameEndTime}"/>
 
@@ -23,7 +23,8 @@
 
             <!-- 게임 텍스트 -->
 
-            <div class="p-5 mt-3 text-dark" th:utext="${@commonUtil.markdownToHtml(timeLimitGameDto.text)}"></div>
+            <div class="p-5 mt-3 mb-5 bg-light text-dark" style="border-radius: 10px; font-size: 1.0rem; font-family: 'Roboto', sans-serif;"
+                 th:utext="${@commonUtil.markdownToHtml(timeLimitGameDto.gameText)}"></div>
 
             <div id="timer" class="my-1">00:00:00</div>
 
@@ -40,23 +41,40 @@
             </div>
 
 
-            <!-- 댓글 -->
-            <div class="mt-5">
-                <h5 class="mb-3 ml-4 text-secondary">🗨️comment</h5>
-                <!-- 댓글 리스트 -->
-                <div id="comment-list">
-                    <!-- 댓글 반복 출력 -->
-                    <div th:each="comment : ${timeLimitGameDto.commentDtoList}"
-                         class="comment-box d-flex align-items-center mb-2">
-                        <div class="nickname text-primary-emphasis"><strong th:text="${comment.nickName}">닉네임</strong>
-                        </div>
-                        <div th:text="${comment.content}">댓글 내용</div>
-                    </div>
-                    <!-- 추가 댓글은 여기에 -->
-                </div>
-                <!-- 추가 댓글을 가져오는 버튼 -->
-                <button id="load-more-comments" class="btn btn-primary mt-3">댓글 더보기</button>
+<!-- 댓글 -->
+<div class="mt-5">
+    <h5 class="mb-3 ml-4 text-secondary">🗨️ Comments</h5>
+    <!-- 댓글 리스트 -->
+    <div id="comment-list">
+        <!-- 댓글 반복 출력 -->
+        <div th:each="comment : ${timeLimitGameDto.commentDtoList}" class="comment-box d-flex align-items-center mb-2">
+            <div class="nickname text-primary-emphasis">
+                <strong th:text="${comment.nickName}">Nickname</strong>
             </div>
+            <div th:text="${comment.content}">Comment content</div>
+        </div>
+    </div>
+    <!-- 페이지 네비게이션 -->
+<!--    <nav aria-label="Page navigation example" class="mt-3">-->
+<!--        <ul class="pagination justify-content-center">-->
+<!--            <li th:classappend="${timeLimitGameDto.currentPage == 0} ? 'disabled' : ''" class="page-item">-->
+<!--                <a class="page-link" data-page="${timeLimitGameDto.currentPage - 1}" onclick="fetchComments(this, event)" aria-label="Previous">-->
+<!--                    <span aria-hidden="true">&laquo;</span>-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            <li th:each="i : ${#numbers.sequence(0, timeLimitGameDto.totalPages - 1)}" th:classappend="${i == timeLimitGameDto.currentPage} ? 'active' : ''" class="page-item">-->
+<!--                <a class="page-link" th:text="${i + 1}" data-page="${i}" onclick="fetchComments(this)"></a>-->
+<!--            </li>-->
+<!--            <li th:classappend="${timeLimitGameDto.currentPage + 1 == timeLimitGameDto.totalPages} ? 'disabled' : ''" class="page-item">-->
+<!--                <a class="page-link" data-page="${timeLimitGameDto.currentPage + 1}" onclick="fetchComments(this, event)" aria-label="Next">-->
+<!--                    <span aria-hidden="true">&raquo;</span>-->
+<!--                </a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </nav>-->
+</div>
+
+
 
 
             <!-- 새 댓글 입력 -->
@@ -64,10 +82,10 @@
                 <h5 class="mb-3 text-secondary ml-4">🗨️new comment</h5>
                 <form>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="댓글을 입력하세요"
+                        <input type="text" class="form-control" placeholder="댓글을 입력하세요" id="new-comment-btn"
                                aria-label="Recipient's username" aria-describedby="button-addon2">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" id="button-addon2">댓글 달기</button>
+                            <button class="btn btn-outline-secondary" type="button" id="button-addon2">등록</button>
                         </div>
                     </div>
                 </form>

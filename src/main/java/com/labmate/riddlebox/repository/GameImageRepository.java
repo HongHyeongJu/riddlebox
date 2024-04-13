@@ -10,5 +10,5 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface GameImageRepository extends JpaRepository<GameImage, Long> {
-    Optional<GameImage> findByIdAndImageType(Long gameId, ImageType imageType);
+    Optional<GameImage> findByGame_IdAndImageType(Long gameId, ImageType imageType);
 }

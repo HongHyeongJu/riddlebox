@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CommentDto {
     private Long commentId;
+    private Long userId;
     private String nickName;
     private String content;
     private Long parentId;
@@ -20,7 +21,7 @@ public class CommentDto {
     private int likesCount;
 
     //원댓 생성
-    public CommentDto(Long commentId, String nickName, String content) {
+    public CommentDto(Long commentId, Long userId, String nickName, String content) {
         this.commentId = commentId;
         this.nickName = nickName;
         this.content = content;
