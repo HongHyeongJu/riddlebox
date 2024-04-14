@@ -5,6 +5,7 @@ import com.labmate.riddlebox.dto.*;
 import com.labmate.riddlebox.entity.*;
 import com.labmate.riddlebox.enumpackage.*;
 import com.labmate.riddlebox.repository.*;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,9 +20,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.labmate.riddlebox.entity.QComment.comment;
+import static com.labmate.riddlebox.entity.QGame.game;
+import static com.labmate.riddlebox.entity.QGameContent.gameContent;
+import static com.labmate.riddlebox.entity.QGameImage.gameImage;
+import static com.labmate.riddlebox.entity.QGameSolver.gameSolver;
+import static com.labmate.riddlebox.entity.QGameText.gameText;
+import static com.labmate.riddlebox.entity.QRBUser.rBUser;
 import static com.labmate.riddlebox.enumpackage.ImageType.ILLUSTRATION;
 
 @Service
@@ -110,24 +120,55 @@ public class TimeLimitGameService {
 
 
     //[2]차 queryDsl + fetchJoin
-//    @Transactional(readOnly = true)
-//    public TimeLimitGameDto getTimeLimitGameDto_QueryDslAndFetchJoin(Long gameId, Pageable pageable){
-//        var fetchResult = queryFactory
-//                .select(game)
-//                .from(game)
-//                .leftJoin(game.gameText, gameText).fetchJoin()
-//                .leftJoin(game.gameImages, gameImage).fetchJoin()
-//                .leftJoin(game.gameContents, gameContent).fetchJoin()
-//                .leftJoin(game.gameSolver, gameSolver).fetchJoin()
-//                .leftJoin(gameSolver.user, QUser.user).fetchJoin()
-//                .leftJoin(game.comments, comment).fetchJoin()
-//                .leftJoin(comment.user, QUser.user).fetchJoin()
-//                .where(game.id.eq(gameId))
-//                .fetchOne();
-//
-//        // 데이터 변환 로직 (fetchResult를 TimeLimitGameDto로 변환)
-//        // 변환된 TimeLimitGameDto 반환
-//    }
+    @Transactional(readOnly = true)
+    public TimeLimitGameDto getTimeLimitGameDto_QueryDslAndFetchJoin(Long gameId) {
+        // 기본 게임 데이터와 일부 관련 엔티티를 가져오지만, 문제가 되는 컬렉션은 제외
+        Game game = queryFactory.selectFrom(QGame.game)
+                .leftJoin(QGame.game.gameText, QGameText.gameText).fetchJoin()
+                .leftJoin(QGame.game.gameSolver, QGameSolver.gameSolver).fetchJoin()
+                .leftJoin(QGameSolver.gameSolver.user, QRBUser.rBUser).fetchJoin()
+                .where(QGame.game.id.eq(gameId))
+                .fetchOne();
+
+        // 게임 이미지 및 콘텐츠는 별도의 쿼리로 가져옴
+        GameImage gameImages = queryFactory
+                .selectFrom(QGameImage.gameImage)
+                .where(QGameImage.gameImage.game.id.eq(gameId), gameImage.imageType.eq(ILLUSTRATION), gameImage.status.eq(GameStatus.ACTIVE))
+                .fetchFirst();
+
+        GameContent gameContents = queryFactory
+                .selectFrom(QGameContent.gameContent)
+                .where(QGameContent.gameContent.game.id.eq(gameId), gameContent.status.eq(GameStatus.ACTIVE))
+                .fetchFirst();
+
+        List<CommentDto> commentDtoList = queryFactory
+                .selectFrom(QComment.comment)
+                .leftJoin(QComment.comment.user, QRBUser.rBUser)
+                .where(QComment.comment.game.id.eq(gameId), comment.status.eq(GameStatus.ACTIVE) )
+                .fetch()
+                .stream()
+                .map(comment -> new CommentDto(
+                        comment.getCommentId(),
+                        comment.getUser().getId(),
+                        comment.getUser().getNickname(),
+                        comment.getContent()
+                ))
+                .collect(Collectors.toList());
+
+        String nickname = game.getGameSolver().getUser() != null ? game.getGameSolver().getUser().getNickname() : null;
+
+        return new TimeLimitGameDto(
+                game.getId(),
+                game.getTitle(),
+                gameImages.getFilePath(),
+                game.getGameText().getText(),
+                gameContents.getAnswer(),
+                game.getGameSolver().getEndDateTime(),
+                commentDtoList,
+                nickname
+        );
+    }
+
     //[3]차 queryDsl + fetchJoin
 //    @Transactional(readOnly = true)
 //    public TimeLimitGameDto getTimeLimitGameDto_QueryDslVer2(Long gameId, Pageable pageable){

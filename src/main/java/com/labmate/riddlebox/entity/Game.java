@@ -12,7 +12,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -32,7 +34,7 @@ public class Game extends BaseEntity {
     private String title;  //제목
 
     @Lob  // 긴 텍스트를 위한 애너테이션
-    private String description;  //설명
+    private String descript;  //설명
 
     @Enumerated(EnumType.STRING)
     private GameLevel gameLevel;  //게임 난이도
@@ -56,7 +58,7 @@ public class Game extends BaseEntity {
     private List<GameContent> gameContents = new ArrayList<>();
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<GameImage> gameImages = new ArrayList<>();
+    private Set<GameImage> gameImages = new HashSet<>();
 
     @OneToMany(mappedBy = "game")
     private List<RecommendGame> recommendGames = new ArrayList<>();
@@ -73,10 +75,10 @@ public class Game extends BaseEntity {
 
 
     /*   생성자   */
-    public Game(GameCategory gameCategory, String title, String description, GameLevel gameLevel, String author) {
+    public Game(GameCategory gameCategory, String title, String descript, GameLevel gameLevel, String author) {
         this.gameCategory = gameCategory;
         this.title = title;
-        this.description = description;
+        this.descript = descript;
         this.gameLevel = gameLevel;
         this.status = GameStatus.ACTIVE; // 초기 상태 설정
         this.viewCount = 0; // 조회수 초기화
@@ -205,11 +207,11 @@ public class Game extends BaseEntity {
 
     //게임 내용 수정 (GameCategory 에도 영향)
     @PreAuthorize("hasRole('TEAM_LEADER')")   //메서드 레벨 보안 적용
-    public void updateGame(String newTitle, String newDescription,
+    public void updateGame(String newTitle, String newDescript,
                            GameLevel newGameLevel, String newAuthor,
                            GameCategory newGameCategory) {
 
-        if (newTitle == null || newTitle.isEmpty() || newDescription == null || newDescription.isEmpty()) {
+        if (newTitle == null || newTitle.isEmpty() || newDescript == null || newDescript.isEmpty()) {
             throw new IllegalArgumentException("제목과 설명을 모두 작성해주세요");
         }
 
@@ -219,7 +221,7 @@ public class Game extends BaseEntity {
         }
 
         this.title = newTitle;
-        this.description = newDescription;
+        this.descript = newDescript;
         this.gameLevel = newGameLevel;
         this.author = newAuthor;
         this.gameCategory = newGameCategory;

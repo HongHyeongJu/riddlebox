@@ -151,23 +151,32 @@ public class WebGameController {
 
     /* 타임 리밋 게임 페이지 */
     @GetMapping("/timelimit-nopaging-jpa")
-    public String viewTimeLimitGameNopaging(@RequestParam(defaultValue = "0", name = "page") int page, Model model) {
+    public String viewTimeLimitGameNopaging_jpa(Model model) {
         //이벤트 게임은 단 1개
         Long timeLimitGameId = timeLimitGameService.getActiveTimeLimitGameId();
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdDate").descending());
         TimeLimitGameDto gameDto = timeLimitGameService.getTimeLimitGameDto_SpringDataJPA(timeLimitGameId);
 
         gameService.addGameViewCount(timeLimitGameId);
         model.addAttribute("pageType", "timeLimit");
         model.addAttribute("title", "timeLimit");
         model.addAttribute("timeLimitGameDto", gameDto);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", gameDto.getTotalPages());
 
         return "layout/layout_base";
     }
 
+    @GetMapping("/timelimit-nopaging-querydsl")
+    public String viewTimeLimitGameNopaging_querydsl(Model model) {
+        //이벤트 게임은 단 1개
+        Long timeLimitGameId = timeLimitGameService.getActiveTimeLimitGameId();
+        TimeLimitGameDto gameDto = timeLimitGameService.getTimeLimitGameDto_QueryDslAndFetchJoin(timeLimitGameId);
 
+        gameService.addGameViewCount(timeLimitGameId);
+        model.addAttribute("pageType", "timeLimit");
+        model.addAttribute("title", "timeLimit");
+        model.addAttribute("timeLimitGameDto", gameDto);
+
+        return "layout/layout_base";
+    }
 //    @GetMapping("/timelimit")
 //    public String viewTimeLimitGame(@RequestParam(defaultValue = "0", name = "page") int page, Model model) {
 //        //이벤트 게임은 단 1개
