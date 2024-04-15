@@ -49,7 +49,7 @@ public class GameSearchService {
             .from(game)
             .leftJoin(game.gameImages, gameImage).on(gameImage.imageType.eq(ImageType.THUMBNAIL))
             .where(game.title.like("%" + keyword + "%")
-                   .or(game.description.like("%" + keyword + "%")))
+                   .or(game.descript.like("%" + keyword + "%")))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -59,7 +59,7 @@ public class GameSearchService {
             .from(game)
             .leftJoin(game.gameImages, gameImage).on(gameImage.imageType.eq(ImageType.THUMBNAIL))
             .where(game.title.like("%" + keyword + "%")
-                   .or(game.description.like("%" + keyword + "%")))
+                   .or(game.descript.like("%" + keyword + "%")))
             .fetchOne();
 
         return new PageImpl<>(results, pageable, total);

@@ -23,7 +23,8 @@
 
             <!-- 게임 텍스트 -->
 
-            <div class="p-5 mt-3 mb-5 bg-light text-dark" style="border-radius: 10px; font-size: 1.0rem; font-family: 'Roboto', sans-serif;"
+            <div class="p-5 mt-3 mb-5 bg-light text-dark"
+                 style="border-radius: 10px; font-size: 1.0rem; font-family: 'Roboto', sans-serif;"
                  th:utext="${@commonUtil.markdownToHtml(timeLimitGameDto.gameText)}"></div>
 
             <div id="timer" class="my-1">00:00:00</div>
@@ -41,40 +42,43 @@
             </div>
 
 
-<!-- 댓글 -->
-<div class="mt-5">
-    <h5 class="mb-3 ml-4 text-secondary">🗨️ Comments</h5>
-    <!-- 댓글 리스트 -->
-    <div id="comment-list">
-        <!-- 댓글 반복 출력 -->
-        <div th:each="comment : ${timeLimitGameDto.commentDtoList}" class="comment-box d-flex align-items-center mb-2">
-            <div class="nickname text-primary-emphasis">
-                <strong th:text="${comment.nickName}">Nickname</strong>
+            <!-- 댓글 -->
+            <div class="mt-5">
+                <h5 class="mb-3 ml-4 text-secondary">🗨️ Comments</h5>
+                <!-- 댓글 리스트 -->
+                <div id="comment-list">
+                    <!-- 댓글 반복 출력 -->
+                    <div th:each="comment : ${timeLimitGameDto.commentDtoList}"
+                         class="comment-box d-flex align-items-center mb-2">
+                        <div class="nickname text-primary-emphasis">
+                            <strong th:text="${comment.nickName}">Nickname</strong>
+                        </div>
+                        <div th:text="${comment.content}">Comment content</div>
+                    </div>
+                </div>
+                <!--     페이지 네비게이션-->
+<nav aria-label="Page navigation example" class="mt-3">
+    <ul class="pagination justify-content-center">
+        <li th:classappend="${currentPage == 0} ? 'disabled' : ''" class="page-item">
+            <a class="page-link" th:href="@{/game/timelimit-paging(page=${currentPage - 1}, size=${size})}" onclick="fetchComments(this, event)" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <!-- 페이지네비게이션 계산 -->
+        <li th:each="i : ${#numbers.sequence(currentPage - 4 > 0 ? currentPage - 4 : 0, currentPage + 4 < totalPages ? currentPage + 4 : totalPages - 1)}"
+            th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
+            <a class="page-link" th:href="@{/game/timelimit-paging(page=${i}, size=${size})}" th:text="${i + 1}" onclick="fetchComments(this, event)"></a>
+        </li>
+        <li th:classappend="${currentPage + 1 == totalPages} ? 'disabled' : ''" class="page-item">
+            <a class="page-link" th:href="@{/game/timelimit-paging(page=${currentPage + 1}, size=${size})}" onclick="fetchComments(this, event)" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+
             </div>
-            <div th:text="${comment.content}">Comment content</div>
-        </div>
-    </div>
-    <!-- 페이지 네비게이션 -->
-<!--    <nav aria-label="Page navigation example" class="mt-3">-->
-<!--        <ul class="pagination justify-content-center">-->
-<!--            <li th:classappend="${timeLimitGameDto.currentPage == 0} ? 'disabled' : ''" class="page-item">-->
-<!--                <a class="page-link" data-page="${timeLimitGameDto.currentPage - 1}" onclick="fetchComments(this, event)" aria-label="Previous">-->
-<!--                    <span aria-hidden="true">&laquo;</span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--            <li th:each="i : ${#numbers.sequence(0, timeLimitGameDto.totalPages - 1)}" th:classappend="${i == timeLimitGameDto.currentPage} ? 'active' : ''" class="page-item">-->
-<!--                <a class="page-link" th:text="${i + 1}" data-page="${i}" onclick="fetchComments(this)"></a>-->
-<!--            </li>-->
-<!--            <li th:classappend="${timeLimitGameDto.currentPage + 1 == timeLimitGameDto.totalPages} ? 'disabled' : ''" class="page-item">-->
-<!--                <a class="page-link" data-page="${timeLimitGameDto.currentPage + 1}" onclick="fetchComments(this, event)" aria-label="Next">-->
-<!--                    <span aria-hidden="true">&raquo;</span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--        </ul>-->
-<!--    </nav>-->
-</div>
-
-
 
 
             <!-- 새 댓글 입력 -->

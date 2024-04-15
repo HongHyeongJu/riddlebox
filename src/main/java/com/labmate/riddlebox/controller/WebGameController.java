@@ -6,6 +6,8 @@ import com.labmate.riddlebox.service.GameSearchService;
 import com.labmate.riddlebox.service.GameService;
 import com.labmate.riddlebox.service.TimeLimitGameService;
 import com.labmate.riddlebox.util.GameScoreResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,6 +27,8 @@ public class WebGameController {
     private final GameSearchService gameSearchService;
     private final TimeLimitGameService timeLimitGameService;
     private final GameRepository gameRepository;
+
+    private final Logger logger = LoggerFactory.getLogger(WebGameController.class);
 
     public WebGameController(GameService gameService, GameSearchService gameSearchService,
                              TimeLimitGameService timeLimitGameService, GameRepository gameRepository) {
@@ -177,6 +181,77 @@ public class WebGameController {
 
         return "layout/layout_base";
     }
+
+
+    @GetMapping("/timelimit-nopaging-caching")
+    public String viewTimeLimitGameNopaging_caching(Model model) {
+        //이벤트 게임은 단 1개
+        Long timeLimitGameId = timeLimitGameService.getActiveTimeLimitGameId();
+        TimeLimitGameDto gameDto = timeLimitGameService.getTimeLimitGameDto_caching(timeLimitGameId);
+
+        gameService.addGameViewCount(timeLimitGameId);
+        model.addAttribute("pageType", "timeLimit");
+        model.addAttribute("title", "timeLimit");
+        model.addAttribute("timeLimitGameDto", gameDto);
+
+        return "layout/layout_base";
+    }
+
+
+    @GetMapping("/timelimit-paging")
+    public String viewTimeLimitGame_paging(@RequestParam(name = "page", defaultValue = "0") int page,
+                                           @RequestParam(name = "size", defaultValue = "10") int size, Model model) {
+
+        // 이벤트 게임은 단 1개, 페이지 정보 포함하여 조회
+        Long timeLimitGameId = timeLimitGameService.getActiveTimeLimitGameId();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        TimeLimitGameDto gameDto = timeLimitGameService.getTimeLimitGameDto_commentPaging(timeLimitGameId, pageable);
+
+        gameService.addGameViewCount(timeLimitGameId);
+        model.addAttribute("pageType", "timeLimit");
+        model.addAttribute("title", "timeLimit");
+        model.addAttribute("timeLimitGameDto", gameDto);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", gameDto.getTotalPages());
+
+
+        return "layout/layout_base";
+    }
+
+
+   @GetMapping("/timelimit-indexing")
+    public String viewTimeLimitGame_Indexing(@RequestParam(name = "page", defaultValue = "0") int page,
+                                           @RequestParam(name = "size", defaultValue = "10") int size, Model model) {
+
+        // 이벤트 게임은 단 1개, 페이지 정보 포함하여 조회
+        Long timeLimitGameId = timeLimitGameService.getActiveTimeLimitGameId();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        TimeLimitGameDto gameDto = timeLimitGameService.getTimeLimitGameDto_commentUseIndex(timeLimitGameId, pageable);
+
+        gameService.addGameViewCount(timeLimitGameId);
+        model.addAttribute("pageType", "timeLimit");
+        model.addAttribute("title", "timeLimit");
+        model.addAttribute("timeLimitGameDto", gameDto);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", gameDto.getTotalPages());
+
+
+        return "layout/layout_base";
+    }
+
+
+
+    @GetMapping("/CommentQuery")
+    public String viewCommentQuery(@RequestParam(name = "page", defaultValue = "0") int page,
+                                   @RequestParam(name = "size", defaultValue = "10") int size, Model model) {
+        Long timeLimitGameId = timeLimitGameService.getActiveTimeLimitGameId();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        timeLimitGameService.getGameCommentsPaging(timeLimitGameId,pageable );
+        return "/CommentQuery";
+    }
+
+
+
 //    @GetMapping("/timelimit")
 //    public String viewTimeLimitGame(@RequestParam(defaultValue = "0", name = "page") int page, Model model) {
 //        //이벤트 게임은 단 1개

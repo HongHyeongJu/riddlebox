@@ -88,7 +88,7 @@ public class GameServiceImpl implements GameService {
         if (gameDescription == null || gameDescription.isEmpty()) {
             return null;
         }
-        return QGame.game.description.containsIgnoreCase(gameDescription);
+        return QGame.game.descript.containsIgnoreCase(gameDescription);
     }
 
     private BooleanExpression gameCategoryEquals(GameCategory gameCategory) {
@@ -177,7 +177,7 @@ public class GameServiceImpl implements GameService {
     @Transactional(readOnly = true)
     public GameplayInfoDto getGameplayInfoDto(Long gameId) {
         return queryFactory
-                .select(new QGameplayInfoDto(game.id, game.gameCategory, game.title, game.description, game.gameLevel,
+                .select(new QGameplayInfoDto(game.id, game.gameCategory, game.title, game.descript, game.gameLevel,
                         game.status, game.viewCount, game.author, game.officialReleaseDate, game.officialUpdateDate))
                 .from(game)
                 .where(gameIdEquals(gameId), gameIsActive())
@@ -385,12 +385,12 @@ public class GameServiceImpl implements GameService {
 
 
     @Override
-    @Cacheable(value = "gameStoryCache", key = "#gameId")
+    @Cacheable(value = "gameStoryCache")
     public GameStoryDto findGameStoryContent(Long gameId) {
         return queryFactory
                 .select(Projections.constructor(GameStoryDto.class,
                         gameText.game.id,
-                        gameImage.filePath.coalesce("img/sendstory.png"), // 이 부분은 QueryDSL에서 직접적으로 지원하지 않으므로, 대안을 모색해야 합니다.
+                        gameImage.filePath.coalesce("img/sendstory.png"),
                         gameText.text))
                 .from(gameText)
                 .leftJoin(gameImage).on(gameImage.game.eq(gameText.game).and(gameImage.imageType.eq(ILLUSTRATION))) // 조건에 맞는 이미지가 없으면, gameImage는 null이 될 수 있습니다.

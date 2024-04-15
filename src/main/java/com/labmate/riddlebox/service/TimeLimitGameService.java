@@ -1,28 +1,23 @@
 package com.labmate.riddlebox.service;
 
-import com.labmate.riddlebox.api.ApiUserController;
 import com.labmate.riddlebox.dto.*;
 import com.labmate.riddlebox.entity.*;
 import com.labmate.riddlebox.enumpackage.*;
 import com.labmate.riddlebox.repository.*;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.labmate.riddlebox.entity.QComment.comment;
@@ -37,6 +32,8 @@ import static com.labmate.riddlebox.enumpackage.ImageType.ILLUSTRATION;
 @Service
 public class TimeLimitGameService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
     private final JPAQueryFactory queryFactory;
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
@@ -48,7 +45,7 @@ public class TimeLimitGameService {
     private final CommentRepository commentRepository;
     private final GameSolverRepository gameSolverRepository;
 
-    private final Logger logger = LoggerFactory.getLogger(ApiUserController.class);
+    private final Logger logger = LoggerFactory.getLogger(TimeLimitGameService.class);
 
     @Autowired
     public TimeLimitGameService(EntityManager em, GameRepository gameRepository,
@@ -141,19 +138,21 @@ public class TimeLimitGameService {
                 .where(QGameContent.gameContent.game.id.eq(gameId), gameContent.status.eq(GameStatus.ACTIVE))
                 .fetchFirst();
 
-        List<CommentDto> commentDtoList = queryFactory
+        List<Comment> comments = queryFactory
                 .selectFrom(QComment.comment)
-                .leftJoin(QComment.comment.user, QRBUser.rBUser)
-                .where(QComment.comment.game.id.eq(gameId), comment.status.eq(GameStatus.ACTIVE) )
-                .fetch()
-                .stream()
+                .leftJoin(QComment.comment.user, QRBUser.rBUser).fetchJoin()
+                .where(QComment.comment.game.id.eq(gameId), QComment.comment.status.eq(GameStatus.ACTIVE))
+                .orderBy(QComment.comment.createdDate.desc())
+                .fetch();
+
+        List<CommentDto> commentDtos = comments.stream()
                 .map(comment -> new CommentDto(
                         comment.getCommentId(),
                         comment.getUser().getId(),
                         comment.getUser().getNickname(),
-                        comment.getContent()
-                ))
+                        comment.getContent()))
                 .collect(Collectors.toList());
+
 
         String nickname = game.getGameSolver().getUser() != null ? game.getGameSolver().getUser().getNickname() : null;
 
@@ -164,17 +163,161 @@ public class TimeLimitGameService {
                 game.getGameText().getText(),
                 gameContents.getAnswer(),
                 game.getGameSolver().getEndDateTime(),
-                commentDtoList,
+                commentDtos,
                 nickname
         );
     }
 
-    //[3]차 queryDsl + fetchJoin
-//    @Transactional(readOnly = true)
-//    public TimeLimitGameDto getTimeLimitGameDto_QueryDslVer2(Long gameId, Pageable pageable){
-//
-//    }
+    //[3]차 게임 데이터 캐싱
+    @Transactional(readOnly = true)
+    public TimeLimitGameDto getTimeLimitGameDto_caching(Long gameId) {
+        GameDataDto getGameData = getGameData(gameId);
+        List<CommentDto> commentDtoList = getGameComments(gameId);
 
+        return new TimeLimitGameDto(getGameData, commentDtoList);
+    }
+
+    @Cacheable(value = "gameDataCache", key = "#gameId")
+    @Transactional(readOnly = true)
+    public GameDataDto getGameData(Long gameId) {
+        // 기본 게임 데이터와 일부 관련 엔티티를 가져오지만, 문제가 되는 컬렉션은 제외
+        Game game = queryFactory.selectFrom(QGame.game)
+                .leftJoin(QGame.game.gameText, QGameText.gameText).fetchJoin()
+                .leftJoin(QGame.game.gameSolver, QGameSolver.gameSolver).fetchJoin()
+                .leftJoin(QGameSolver.gameSolver.user, QRBUser.rBUser).fetchJoin()
+                .where(QGame.game.id.eq(gameId))
+                .fetchOne();
+
+        // 게임 이미지 및 콘텐츠는 별도의 쿼리로 가져옴
+        GameImage gameImages = queryFactory
+                .selectFrom(QGameImage.gameImage)
+                .where(QGameImage.gameImage.game.id.eq(gameId), gameImage.imageType.eq(ILLUSTRATION), gameImage.status.eq(GameStatus.ACTIVE))
+                .fetchFirst();
+
+        GameContent gameContents = queryFactory
+                .selectFrom(QGameContent.gameContent)
+                .where(QGameContent.gameContent.game.id.eq(gameId), gameContent.status.eq(GameStatus.ACTIVE))
+                .fetchFirst();
+
+        String nickname = game.getGameSolver().getUser() != null ? game.getGameSolver().getUser().getNickname() : null;
+
+        return new GameDataDto(game.getId(),
+                game.getTitle(),
+                gameImages.getFilePath(),
+                game.getGameText().getText(),
+                gameContents.getAnswer(),
+                game.getGameSolver().getEndDateTime(),
+                nickname);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentDto> getGameComments(Long gameId) {
+        // 댓글 데이터 조회
+        List<Comment> comments = queryFactory
+                .selectFrom(QComment.comment)
+                .leftJoin(QComment.comment.user, QRBUser.rBUser).fetchJoin()
+                .where(QComment.comment.game.id.eq(gameId), QComment.comment.status.eq(GameStatus.ACTIVE))
+                .orderBy(QComment.comment.createdDate.desc())
+                .fetch();
+
+        List<CommentDto> commentDtos = comments.stream()
+                .map(comment -> new CommentDto(
+                        comment.getCommentId(),
+                        comment.getUser().getId(),
+                        comment.getUser().getNickname(),
+                        comment.getContent()))
+                .collect(Collectors.toList());
+
+
+        return commentDtos;
+    }
+
+
+    //[4]차 댓글 페이징
+    @Transactional(readOnly = true)
+    public TimeLimitGameDto getTimeLimitGameDto_commentPaging(Long gameId, Pageable pageable) {
+        GameDataDto getGameData = getGameData(gameId);
+        Page<CommentDto> commentPage = getGameCommentsPaging(gameId, pageable);
+
+        return new TimeLimitGameDto(getGameData, commentPage.getContent(), commentPage.getNumber(), commentPage.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CommentDto> getGameCommentsPaging(Long gameId, Pageable pageable) {
+        List<Comment> comments = queryFactory
+            .selectFrom(QComment.comment)
+            .leftJoin(QComment.comment.user, QRBUser.rBUser).fetchJoin()
+            .where(QComment.comment.game.id.eq(gameId), comment.status.eq(GameStatus.ACTIVE))  // status 대신 is_active를 사용
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(QComment.comment.createdDate.desc())
+            .fetch();
+
+
+        List<CommentDto> commentDtos = comments.stream()
+                .map(comment -> new CommentDto(
+                        comment.getCommentId(),
+                        comment.getUser().getId(),
+                        comment.getUser().getNickname(),
+                        comment.getContent()))
+                .collect(Collectors.toList());
+
+
+        long count = queryFactory
+                .select(comment.commentId.count())
+                .from(QComment.comment)
+                .where(QComment.comment.game.id.eq(gameId), comment.status.eq(GameStatus.ACTIVE))
+                .fetchOne();
+
+        return new PageImpl<>(commentDtos, pageable, count);
+    }
+
+
+
+
+    //[5]차 댓글 테이블 인덱스 생성 및 이용
+    @Transactional(readOnly = true)
+    public TimeLimitGameDto getTimeLimitGameDto_commentUseIndex(Long gameId, Pageable pageable) {
+        GameDataDto getGameData = getGameData(gameId);
+        Page<CommentDto> commentPage = getGameCommentsUseIndex(gameId, pageable);
+
+        return new TimeLimitGameDto(getGameData, commentPage.getContent(), commentPage.getNumber(), commentPage.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CommentDto> getGameCommentsUseIndex(Long gameId, Pageable pageable) {
+        List<Comment> comments = queryFactory
+            .selectFrom(QComment.comment)
+            .leftJoin(QComment.comment.user, QRBUser.rBUser).fetchJoin()
+            .where(QComment.comment.game.id.eq(gameId), comment.isActive.eq(true))  // status 대신 is_active를 사용
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(QComment.comment.createdDate.desc())
+            .fetch();
+
+
+        List<CommentDto> commentDtos = comments.stream()
+                .map(comment -> new CommentDto(
+                        comment.getCommentId(),
+                        comment.getUser().getId(),
+                        comment.getUser().getNickname(),
+                        comment.getContent()))
+                .collect(Collectors.toList());
+
+
+//        String sql = "SELECT COUNT(comment_id) FROM comment USE INDEX (idx_game_id_is_active) WHERE game_id = ?1 AND is_active = 1";
+//        Query nativeQuery = entityManager.createNativeQuery(sql);
+//        nativeQuery.setParameter(1, gameId);
+//        long count = ((Number) nativeQuery.getSingleResult()).longValue();
+
+        long count = queryFactory
+                .select(comment.commentId.count())
+                .from(QComment.comment)
+                .where(QComment.comment.game.id.eq(gameId), comment.isActive.eq(true))
+                .fetchOne();
+
+        return new PageImpl<>(commentDtos, pageable, count);
+    }
 
     // TimeLimit Game 생성
     @Transactional

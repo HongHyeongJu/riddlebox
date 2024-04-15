@@ -38,6 +38,8 @@ public class Comment extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private GameStatus status;  //상태
+    @Column(name = "is_active", insertable = false, updatable = false)
+    private Boolean isActive; //부분 인덱스
 
     @Column(nullable = false)
     private int depth;
@@ -72,12 +74,12 @@ public class Comment extends BaseEntity {
         return reply;
     }
 
-    public void deleteComment(){
+    public void deleteComment() {
         this.status = GameStatus.DELETED;
         this.modifiedDate = LocalDateTime.now();
     }
 
-    public void modifyComment(String newContent){
+    public void modifyComment(String newContent) {
         this.content = newContent;
         this.modifiedDate = LocalDateTime.now();
     }

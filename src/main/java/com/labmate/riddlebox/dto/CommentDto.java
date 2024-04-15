@@ -1,6 +1,7 @@
 package com.labmate.riddlebox.dto;
 
 import com.labmate.riddlebox.entity.BaseEntity;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,7 @@ public class CommentDto {
     private int likesCount;
 
     //원댓 생성
+    @QueryProjection
     public CommentDto(Long commentId, Long userId, String nickName, String content) {
         this.commentId = commentId;
         this.nickName = nickName;

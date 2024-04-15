@@ -1,73 +1,89 @@
 window.onload = function () {
+    // 숨겨진 입력에서 종료 시간을 파싱합니다
+    const endTime = document.getElementById('end-time').value;
+    const end = new Date(endTime).getTime();
 
-    // CSRF 토큰 값과 헤더 이름 가져오기
-    const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
-    const csrfHeaderName = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+    // 1초마다 카운트다운을 업데이트합니다
+    const interval = setInterval(function () {
+        const now = new Date().getTime();
+        const distance = end - now;
+
+        // 시간, 분, 초 계산
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // id="timer"인 요소에 결과를 출력합니다
+        document.getElementById("timer").textContent =
+            (hours < 10 ? '0' : '') + hours + ":" +
+            (minutes < 10 ? '0' : '') + minutes + ":" +
+            (seconds < 10 ? '0' : '') + seconds;
+
+        // 카운트다운이 끝나면 /index로 리디렉트합니다
+        if (distance < 0) {
+            clearInterval(interval);
+            document.getElementById("timer").textContent = "EXPIRED";
+            window.location.href = '/index';
+        }
+    }, 1000);
 
 
-// 게임 시작 시간을 기록
-    let gameStartTime = new Date();
+    //댓글 작성 비동기 API
+    let newCommentButton = document.getElementById("new-comment-btn");
 
+    loadMoreButton.addEventListener("click", function () {
 
-// 숨겨진 필드에서 게임 ID 읽기 = 게임 PK
-    const gameId = document.getElementById('gameId').textContent;
-
-    // '게임 나가기' 버튼에 이벤트 리스너 추가
-    document.getElementById('exitGame').addEventListener('click', function () {
-        // 게임 종료 시간을 기록
-        let gameEndTime = new Date();
-
-        // 플레이 타임 계산 (초 단위)
-        let playTime = (gameEndTime - gameStartTime) / 1000;
-
-        //결과 설정
-        let gameResult = "ABANDONED"; // 게임 중도 포기
-
-        // 서버에 기록을 전송하는 함수 호출
-        sendGameRecord(gameId, playTime, gameResult);
-
+        // 서버에서 댓글 데이터를 비동기적으로 가져오는 요청을 보냅니다.
+        fetch("/load-more-comments")
+            .then(response => response.json())
+            .then(data => {
+                // 받아온 데이터를 기존 댓글 목록에 추가합
+                let commentList = document.getElementById("comment-list");
+                data.forEach(comment => {
+                    var commentHTML = "<div class='comment-box d-flex align-items-center mb-2'>" +
+                        "<div class='nickname text-primary-emphasis'><strong>" + comment.nickName + "</strong></div>" +
+                        "<div>" + comment.content + "</div>" +
+                        "</div>";
+                    commentList.innerHTML += commentHTML;
+                });
+            })
+            .catch(error => console.error("Error loading more comments:", error));
     });
 
 
-    // 게임 기록을 서버에 전송하는 함수
-    function sendGameRecord(gamePK, playTime, gameResult) {
-        // console.log(`게임 PK: ${gamePK}, 플레이 시간: ${playTime}ms, 결과: ${gameResult}`);
+    //댓글 작성
 
-        fetch('/api/games/user_exit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeaderName]: csrfToken
-            },
-            body: JSON.stringify({
-                gamePK: gamePK,
-                playTime: playTime,
-                gameResult: gameResult
-            }),
-        })
+
+    //댓글 페이지 이동
+    function fetchComments(element, event) {
+        event.preventDefault(); // 링크 기본 동작 방지
+        let page = element.getAttribute('data-page'); // 페이지 번호 가져오기
+
+        fetch(`/your-endpoint?gameId=${gameId}&page=${page}`) // 적절한 엔드포인트 설정 필요
             .then(response => response.json())
             .then(data => {
-                if (data.redirectUrl) {
-                    setupBeforeUnloadListener(false); // 경고 비활성화
-                    console.log("data.redirectUrl "+ data.redirectUrl)
-                    window.location.href = data.redirectUrl; // 서버에서 받은 URL로 페이지 리디렉션
-                }
+                // `data`에는 새로운 댓글 리스트가 포함되어 있습니다.
+                updateCommentSection(data);
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error loading new comments:', error));
     }
 
-    function beforeUnloadHandler(event) {
-        event.returnValue = "변경사항이 저장되지 않을 수 있습니다.";
-        return event.returnValue;
+    function updateCommentSection(data) {
+        let commentListDiv = document.getElementById('comment-list');
+        commentListDiv.innerHTML = ''; // 기존 댓글 내용 지우기
+
+        data.commentDtoList.forEach(comment => {
+            let commentDiv = document.createElement('div');
+            commentDiv.className = 'comment-box d-flex align-items-center mb-2';
+            commentDiv.innerHTML = `
+            <div class="nickname text-primary-emphasis">
+                <strong>${comment.nickName}</strong>
+            </div>
+            <div>${comment.content}</div>
+        `;
+            commentListDiv.appendChild(commentDiv);
+        });
     }
 
-    function setupBeforeUnloadListener(shouldWarn) {
-        window.removeEventListener('beforeunload', beforeUnloadHandler);
 
-        if (shouldWarn) {
-            window.addEventListener('beforeunload', beforeUnloadHandler);
-        }
-    }
-
-
-}
+};

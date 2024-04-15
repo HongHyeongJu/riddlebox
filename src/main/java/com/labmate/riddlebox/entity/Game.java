@@ -19,7 +19,6 @@ import java.util.Set;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "title", "description", "gameLevel"})  //"team"쓰면 무한루프 빠진다 조심
 public class Game extends BaseEntity {
 
     @Id
