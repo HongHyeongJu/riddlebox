@@ -1,5 +1,5 @@
 
-# 🧙🏻 Riddle Box
+# 🎲 Riddle Box
 
 
 ### 🎞️프로젝트 제목
@@ -17,8 +17,7 @@
 - 사용자는 이메일 회원가입 혹은 구글/네이버/카카오 계정으로 회원가입 및 로그인 할 수 있습니다.
 - 다양한 게임을 즐기며, 게임 포인트를 카카오페이를 통해 구매할 수 있습니다.
 - **프로젝트 기록**
-
-[T-story](https://labmate-dev.tistory.com/category/%F0%9F%93%BD%EF%B8%8F%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8)
+- [📑T-story ](https://labmate-dev.tistory.com/category/%F0%9F%93%BD%EF%B8%8F%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8)
 
 
 <br>
@@ -42,7 +41,7 @@
 
 <br>
 
-### 🐻‍❄️주요 기능
+### 📱️️주요 기능
 - **Spring Security 적용**: 사용자 인증 및 보안 강화를 위해 Spring Security 6를 도입했습니다.
 - **OAuth 2.0 통합**: Google, Naver, Kakao 등 다양한 플랫폼과의 통합을 통해 사용자의 편리한 로그인을 지원합니다.
 - **Kakao Pay 결제 기능**: 안전하고 신속한 결제를 가능하게 하는 Kakao Pay API를 통한 포인트 결제 기능을 구현하였습니다.
@@ -59,7 +58,7 @@
 
 <br>
 
-### 👻기술적 성과
+### 💡기술적 성과
 - **인증 로직 최적화**: 프로젝트 전반에 걸친 사용자 인증 로직을 공통 컴포넌트로 분리하여 재사용성을 높이고 유지보수를 용이하게 했습니다.
 - **역할 기반 접근 제어 강화**: Spring Security를 활용하여 다양한 사용자 역할에 따라 세분화된 URL 접근 권한을 설정하였습니다.
 - **보안 강화**: 최신 Spring Security 설정을 적용하여 XSS, CSRF 등의 웹 보안 취약점을 방지했습니다.
