@@ -6,7 +6,7 @@
 - 퀴즈 게임 사이트 **Riddle Box** 
 - https://www.riddle-box.com (일시중지 - 2024/04/16 배포 수정중)
 
-![서비스 아키텍처](readme_img/index_page.png)
+![홈페이지 이미지](readme_img/index_page.png)
 
 <br>
 
