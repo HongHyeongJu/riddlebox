@@ -91,19 +91,17 @@
 
 ![대체 텍스트](readme_img/login.gif)
 
-- 로그인
+- 카카오페이 결제
 
 ![카카오페이 결제](readme_img/kakaopay.gif)
 
-- 로그인
+- 게임
 
 ![게임_1](readme_img/game-(0).gif)
 
-- 로그인
-
 ![게임_2](readme_img/game-(1).gif)
 
-- 로그인
+- support
 
 ![support](readme_img/support.gif)
 
@@ -117,3 +115,6 @@
 
 ### ✉️연락처
 - 프로젝트 문의 및 제안 : `hhju0270@gmail.com`
+
+<br>
+
