@@ -13,4 +13,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Page<Comment> findByGameIdAndStatusOrderByCreatedDateDesc(Long gameId, GameStatus status, Pageable pageable);
 
+    List<Comment> findByGameIdAndStatusOrderByCreatedDateAsc(Long gameId, GameStatus gameStatus);
+
+    Page<Comment> findByGameIdAndStatusOrderByCreatedDateAsc(Long gameId, GameStatus status, Pageable pageable);
+
 }

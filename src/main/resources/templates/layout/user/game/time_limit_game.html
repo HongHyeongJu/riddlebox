@@ -56,26 +56,34 @@
                         <div th:text="${comment.content}">Comment content</div>
                     </div>
                 </div>
+
+
                 <!--     페이지 네비게이션-->
-<nav aria-label="Page navigation example" class="mt-3">
-    <ul class="pagination justify-content-center">
-        <li th:classappend="${currentPage == 0} ? 'disabled' : ''" class="page-item">
-            <a class="page-link" th:href="@{/game/timelimit-paging(page=${currentPage - 1}, size=${size})}" onclick="fetchComments(this, event)" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        <!-- 페이지네비게이션 계산 -->
-        <li th:each="i : ${#numbers.sequence(currentPage - 4 > 0 ? currentPage - 4 : 0, currentPage + 4 < totalPages ? currentPage + 4 : totalPages - 1)}"
-            th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
-            <a class="page-link" th:href="@{/game/timelimit-paging(page=${i}, size=${size})}" th:text="${i + 1}" onclick="fetchComments(this, event)"></a>
-        </li>
-        <li th:classappend="${currentPage + 1 == totalPages} ? 'disabled' : ''" class="page-item">
-            <a class="page-link" th:href="@{/game/timelimit-paging(page=${currentPage + 1}, size=${size})}" onclick="fetchComments(this, event)" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    </ul>
-</nav>
+
+                <nav aria-label="Page navigation example" class="mt-3">
+                    <ul class="pagination justify-content-center">
+                        <li th:classappend="${currentPage == 0} ? 'disabled' : ''" class="page-item">
+                            <a class="page-link"
+                               th:href="@{/game/timelimit-paging(page=${currentPage - 1}, size=${size})}"
+                               onclick="fetchComments(this, event)" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <!-- 페이지네비게이션 계산 -->
+                        <li th:each="i : ${#numbers.sequence(currentPage - 4 > 0 ? currentPage - 4 : 0, currentPage + 4 < totalPages ? currentPage + 4 : totalPages - 1)}"
+                            th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
+                            <a class="page-link" th:href="@{/game/timelimit-paging(page=${i}, size=${size})}"
+                               th:text="${i + 1}" onclick="fetchComments(this, event)"></a>
+                        </li>
+                        <li th:classappend="${currentPage + 1 == totalPages} ? 'disabled' : ''" class="page-item">
+                            <a class="page-link"
+                               th:href="@{/game/timelimit-paging(page=${currentPage + 1}, size=${size})}"
+                               onclick="fetchComments(this, event)" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
 
 
             </div>

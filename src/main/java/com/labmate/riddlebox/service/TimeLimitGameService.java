@@ -95,7 +95,7 @@ public class TimeLimitGameService {
             nickname = user.getNickname();
         }
 
-        List<Comment> comments = commentRepository.findByGameIdAndStatusOrderByCreatedDateDesc(gameId, GameStatus.ACTIVE);
+        List<Comment> comments = commentRepository.findByGameIdAndStatusOrderByCreatedDateAsc(gameId, GameStatus.ACTIVE);
         List<CommentDto> commentDtoList = comments.stream()
                 .map(a -> new CommentDto(a.getCommentId(), a.getUser().getId(), a.getUser().getNickname(), a.getContent()))
                 .collect(Collectors.toList());
@@ -142,7 +142,7 @@ public class TimeLimitGameService {
                 .selectFrom(QComment.comment)
                 .leftJoin(QComment.comment.user, QRBUser.rBUser).fetchJoin()
                 .where(QComment.comment.game.id.eq(gameId), QComment.comment.status.eq(GameStatus.ACTIVE))
-                .orderBy(QComment.comment.createdDate.desc())
+                .orderBy(QComment.comment.createdDate.asc())
                 .fetch();
 
         List<CommentDto> commentDtos = comments.stream()
@@ -217,7 +217,7 @@ public class TimeLimitGameService {
                 .selectFrom(QComment.comment)
                 .leftJoin(QComment.comment.user, QRBUser.rBUser).fetchJoin()
                 .where(QComment.comment.game.id.eq(gameId), QComment.comment.status.eq(GameStatus.ACTIVE))
-                .orderBy(QComment.comment.createdDate.desc())
+                .orderBy(QComment.comment.createdDate.asc())
                 .fetch();
 
         List<CommentDto> commentDtos = comments.stream()
@@ -250,7 +250,7 @@ public class TimeLimitGameService {
             .where(QComment.comment.game.id.eq(gameId), comment.status.eq(GameStatus.ACTIVE))  // status 대신 is_active를 사용
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .orderBy(QComment.comment.createdDate.desc())
+            .orderBy(QComment.comment.createdDate.asc())
             .fetch();
 
 
@@ -292,7 +292,7 @@ public class TimeLimitGameService {
             .where(QComment.comment.game.id.eq(gameId), comment.isActive.eq(true))  // status 대신 is_active를 사용
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .orderBy(QComment.comment.createdDate.desc())
+            .orderBy(QComment.comment.createdDate.asc())
             .fetch();
 
 
@@ -303,12 +303,6 @@ public class TimeLimitGameService {
                         comment.getUser().getNickname(),
                         comment.getContent()))
                 .collect(Collectors.toList());
-
-
-//        String sql = "SELECT COUNT(comment_id) FROM comment USE INDEX (idx_game_id_is_active) WHERE game_id = ?1 AND is_active = 1";
-//        Query nativeQuery = entityManager.createNativeQuery(sql);
-//        nativeQuery.setParameter(1, gameId);
-//        long count = ((Number) nativeQuery.getSingleResult()).longValue();
 
         long count = queryFactory
                 .select(comment.commentId.count())
@@ -409,7 +403,7 @@ public class TimeLimitGameService {
     //댓글 페이징 데이터 전달
     public Page<CommentDto> getOtherCommentsByGameId(Long gameId, Pageable pageable) {
         // Page 객체 내부의 Comment 엔티티를 CommentDto로 변환
-        return commentRepository.findByGameIdAndStatusOrderByCreatedDateDesc(gameId, GameStatus.ACTIVE, pageable)
+        return commentRepository.findByGameIdAndStatusOrderByCreatedDateAsc(gameId, GameStatus.ACTIVE, pageable)
                 .map(comment -> new CommentDto(
                         comment.getCommentId(),
                         comment.getUser().getId(),
