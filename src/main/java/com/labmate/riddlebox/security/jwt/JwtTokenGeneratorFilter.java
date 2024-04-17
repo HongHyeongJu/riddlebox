@@ -47,7 +47,10 @@ public class JwtTokenGeneratorFilter extends OncePerRequestFilter {
                     .signWith(key).compact(); // 서명 알고리즘과 키를 사용하여 토큰을 서명하고 압축
 
             // 생성된 JWT 토큰을 HTTP 응답 헤더에 추가
-            response.setHeader(SecurityConstants.JWT_HEADER, jwt);
+//            response.setHeader(SecurityConstants.JWT_HEADER, jwt);  //Bearer 빠졌네
+            // 생성된 JWT 토큰을 HTTP 응답 헤더에 추가
+            response.setHeader(SecurityConstants.JWT_HEADER, "Bearer " + jwt);
+
         }
 
         // 나머지 필터 체인을 계속 실행
@@ -61,13 +64,13 @@ public class JwtTokenGeneratorFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         AntPathMatcher pathMatcher = new AntPathMatcher();
         return pathMatcher.match("/css/**", request.getServletPath()) ||
-               pathMatcher.match("/js/**", request.getServletPath()) ||
-               pathMatcher.match("/img/**", request.getServletPath()) ||
-               pathMatcher.match("/supports/**", request.getServletPath())||
-               pathMatcher.match("/login/**", request.getServletPath())||
-               pathMatcher.match("/signup/**", request.getServletPath()) ||
-               pathMatcher.match("/index", request.getServletPath()) ||
-               pathMatcher.match("/", request.getServletPath());
+                pathMatcher.match("/js/**", request.getServletPath()) ||
+                pathMatcher.match("/img/**", request.getServletPath()) ||
+                pathMatcher.match("/supports/**", request.getServletPath()) ||
+                pathMatcher.match("/login/**", request.getServletPath()) ||
+                pathMatcher.match("/signup/**", request.getServletPath()) ||
+                pathMatcher.match("/index", request.getServletPath()) ||
+                pathMatcher.match("/", request.getServletPath());
     }
 
 
