@@ -241,6 +241,7 @@ public class GameServiceImpl implements GameService {
     // todo: 2024-01-17 현재는 MariaDB 이용하기. 나중에 동시성 문제 고려해서 Redis로 변경하기
     /*단건 질문 채점*/
     @Override
+    @Transactional(readOnly = true)
     public boolean checkAnswer(Long gameContentId, String userAnswer, Long memberId) {
         //UserAnswerDto: Long gameId; Long gameContentId; String userAnswer; boolean isCorrect;
 
@@ -283,6 +284,7 @@ public class GameServiceImpl implements GameService {
 
 
     /*홈페이지 추천 게임*/
+    @Transactional(readOnly = true)
     @Override
     public List<GameListDto> fetchRecommendedGamesForHomepage() {
         List<GameListDto> results = queryFactory
