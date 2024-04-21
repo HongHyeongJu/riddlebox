@@ -17,8 +17,9 @@
    - 사용자는 이메일 회원가입 혹은 구글/네이버/카카오 계정으로 회원가입 및 로그인 할 수 있습니다.
    - 다양한 게임을 즐기며, 게임 포인트를 카카오페이를 통해 구매할 수 있습니다.
 - **프로젝트 기록**
-   - [📑T-story ](https://labmate-dev.tistory.com/category/%F0%9F%93%BD%EF%B8%8F%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8)
-
+   - [📑T-story 프로젝트 기록 ](https://labmate-dev.tistory.com/category/%F0%9F%93%BD%EF%B8%8F%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8)
+- **프로젝트 페이지 소개**
+  - [📑T-story 페이지 소개 ](https://labmate-dev.tistory.com/239)
 
 <br>
 
