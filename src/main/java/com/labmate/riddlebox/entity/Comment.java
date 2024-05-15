@@ -19,12 +19,10 @@ public class Comment extends BaseEntity {
     @Column(name = "comment_id")
     private Long commentId;
 
-    // 문의자 - 사용자 역할
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private RBUser user;
 
-    // 문의자 - 사용자 역할
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id")
     private Game game;

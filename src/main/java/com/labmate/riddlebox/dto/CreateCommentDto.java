@@ -15,6 +15,7 @@ public class CreateCommentDto {
     private String content;
     private Long parentId;
     private int depth;
+    private Long gameId;  // 게임 ID 추가
 
     public CreateCommentDto(String content, Long parentId, int depth) {
         this.content = content;
@@ -24,6 +25,13 @@ public class CreateCommentDto {
 
     public CreateCommentDto(String content) {
         this.content = content;
+        this.parentId = null;
+        this.depth = 0;
+    }
+
+    public CreateCommentDto(String content, Long gameId) {
+        this.content = content;
+        this.gameId = gameId;
         this.parentId = null;
         this.depth = 0;
     }
