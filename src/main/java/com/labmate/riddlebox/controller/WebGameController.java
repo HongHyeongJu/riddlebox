@@ -235,7 +235,6 @@ public class WebGameController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", gameDto.getTotalPages());
 
-
         return "layout/layout_base";
     }
 

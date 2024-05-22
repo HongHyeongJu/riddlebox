@@ -2,16 +2,11 @@ package com.labmate.riddlebox.api;
 
 import com.labmate.riddlebox.admindto.Question;
 import com.labmate.riddlebox.dto.*;
-import com.labmate.riddlebox.entity.Game;
-import com.labmate.riddlebox.enumpackage.GameResultType;
 import com.labmate.riddlebox.repository.GameRepository;
 import com.labmate.riddlebox.security.PrincipalDetails;
+import com.labmate.riddlebox.security.SecurityUtils;
 import com.labmate.riddlebox.service.GameSearchService;
 import com.labmate.riddlebox.service.GameService;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -44,7 +38,7 @@ public class ApiGameController {
 
 
 
-
+    // 게임 ID에 대한 질문리스트 응답
     @GetMapping("/{gameId}/getQuestions")
     @ResponseBody
     public ResponseEntity<List<Question>> getQuestions(@PathVariable("gameId") Long gameId) {
@@ -53,42 +47,34 @@ public class ApiGameController {
     }
 
 
+    //todo: 서비스에서 오답은 따로 기록해서 오답률 높은 문제 확인하기
+
     // 답 단건 제출 및 채점 [3-1]
     @PostMapping("/submitAnswer")
     public ResponseEntity<?> submitAnswer(@RequestBody UserAnswerDto userAnswer) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = 1001L;
-        if (auth != null && auth.getPrincipal() instanceof PrincipalDetails) {
-            PrincipalDetails principalDetails = (PrincipalDetails) auth.getPrincipal();
-            userId = principalDetails.getUserPK();
-        }
+        Long userId = SecurityUtils.getCurrentUserId();
+        if(userId==null) userId =1001L;
 
-
-        //제출 답 채점(서비스에서 오답은 따로 기록해두기)
+        //제출 답 채점
         boolean isCorrect = gameService.checkAnswer(userAnswer.getGameContentId(), userAnswer.getUserAnswer(), userId);
         //응답하기
         return ResponseEntity.ok(Collections.singletonMap("isCorrect", isCorrect));
     }
 
 
+
     /* [4] 게임 결과 기록 */
     @PostMapping("/{gameId}/result")
     public ResponseEntity<?> recordGameResult(@PathVariable("gameId") Long gameId,
                                               @RequestBody GameCompletionRequest gameCompletionRequest) {
-
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = 1001L;
-        if (auth != null && auth.getPrincipal() instanceof PrincipalDetails) {
-            PrincipalDetails principalDetails = (PrincipalDetails) auth.getPrincipal();
-            userId = principalDetails.getUserPK();
-        }
+        Long userId = SecurityUtils.getCurrentUserId();
+        if(userId==null) userId = 1001L;
 
         // 게임 결과 기록
         gameService.recordGameResult(userId, gameId, gameCompletionRequest.getPlayTime(),
-                gameCompletionRequest.getTotalQuestions(),
-                gameCompletionRequest.getCorrectAnswersCount(),
-                gameCompletionRequest.isFail());
+                                    gameCompletionRequest.getTotalQuestions(),
+                                    gameCompletionRequest.getCorrectAnswersCount(),
+                                    gameCompletionRequest.isFail());
 
         String result = gameCompletionRequest.isFail() ? "fail" : "success";
 
@@ -100,8 +86,6 @@ public class ApiGameController {
                 gameId);
 
         return ResponseEntity.ok(Collections.singletonMap("redirectUrl", redirectUrl));
-
-
     }
 
 

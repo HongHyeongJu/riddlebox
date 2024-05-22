@@ -2,18 +2,20 @@ package com.labmate.riddlebox.service;
 
 import com.labmate.riddlebox.dto.*;
 import com.labmate.riddlebox.entity.*;
-import com.labmate.riddlebox.enumpackage.*;
+import com.labmate.riddlebox.enumpackage.GameStatus;
+import com.labmate.riddlebox.enumpackage.GameSubject;
 import com.labmate.riddlebox.repository.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +23,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.labmate.riddlebox.entity.QComment.comment;
-import static com.labmate.riddlebox.entity.QGame.game;
 import static com.labmate.riddlebox.entity.QGameContent.gameContent;
 import static com.labmate.riddlebox.entity.QGameImage.gameImage;
-import static com.labmate.riddlebox.entity.QGameSolver.gameSolver;
-import static com.labmate.riddlebox.entity.QGameText.gameText;
-import static com.labmate.riddlebox.entity.QRBUser.rBUser;
 import static com.labmate.riddlebox.enumpackage.ImageType.ILLUSTRATION;
 
 @Service
@@ -68,7 +66,13 @@ public class TimeLimitGameService {
     // TimeLimit Game 은 단 1건
     @Transactional(readOnly = true)
     public Long getActiveTimeLimitGameId() {
-        return gameRepository.findFirstByGameCategory_IdAndStatusOrderByCreatedDateDesc(8L, GameStatus.ACTIVE).get().getId();
+
+          Game game = queryFactory.selectFrom(QGame.game)
+                .where(QGame.game.gameCategory.id.eq(8L), QGame.game.status.eq(GameStatus.ACTIVE))
+                .fetchOne();
+
+        return game.getId();
+//        return gameRepository.findFirstByGameCategory_IdAndStatusOrderByCreatedDateDesc(8L, GameStatus.ACTIVE).get().getId();
     }
 
     // TimeLimit Game 조회
@@ -189,11 +193,12 @@ public class TimeLimitGameService {
                 .fetchOne();
 
         // 게임 이미지 및 콘텐츠는 별도의 쿼리로 가져옴
-        GameImage gameImages = queryFactory
+        GameImage gameImage = queryFactory
                 .selectFrom(QGameImage.gameImage)
-                .where(QGameImage.gameImage.game.id.eq(gameId), gameImage.imageType.eq(ILLUSTRATION), gameImage.status.eq(GameStatus.ACTIVE))
+                .where(QGameImage.gameImage.game.id.eq(gameId), QGameImage.gameImage.status.eq(GameStatus.ACTIVE))
                 .fetchFirst();
 
+        System.out.println(gameImage.getImageType());
         GameContent gameContents = queryFactory
                 .selectFrom(QGameContent.gameContent)
                 .where(QGameContent.gameContent.game.id.eq(gameId), gameContent.status.eq(GameStatus.ACTIVE))
@@ -203,7 +208,7 @@ public class TimeLimitGameService {
 
         return new GameDataDto(game.getId(),
                 game.getTitle(),
-                gameImages.getFilePath(),
+                gameImage.getFilePath(),
                 game.getGameText().getText(),
                 gameContents.getAnswer(),
                 game.getGameSolver().getEndDateTime(),

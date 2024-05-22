@@ -255,16 +255,20 @@ public class GameServiceImpl implements GameService {
 
         boolean isCorrect = count > 0;
 
+        return isCorrect;
+    }
+
+
         // TODO: 2024-01-15 오답 기록을 위한 Table 생성하고 기록 추가하기. gameContentId, 사용자 오답, 시스템컬럼
         /* TODO: 사용자가 뒤로 가기나 새로고침을 통해 이전 페이지로 돌아갔을 때 중복된 게임 결과 기록을 방지하기
          *        사용자가 게임에 참여할 때, 해당 게임 세션에 대한 상태를 서버에 저장하기
-         *        ex)예를 들어, "진행 중", "완료됨" 등의 상태를 관리해서 진행중 일때만 기록하기!!  */
-        if (!isCorrect) {
-            // memberId와 오답 정보를 사용하여 오답 기록
-        }
+         *        ex)예를 들어, "진행 중", "완료됨" 등의 상태를 관리해서 진행중 일때만 기록하기!!
+         * if (!isCorrect) {
+                // memberId와 오답 정보를 사용하여 오답 기록
+            }
+         * */
 
-        return isCorrect;
-    }
+
 
 
     /*List 채점*/

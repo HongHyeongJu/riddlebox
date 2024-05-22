@@ -25,8 +25,8 @@ window.onload = function () {
 
     // 게임의 문제들을 서버에서 가져오는 함수
     async function fetchQuestions() {
-        const solveStartBtn = document.getElementById('solveStartBtn');
-        solveStartBtn.disabled = true; // 버튼을 비활성화
+        const solveStartBtn = document.getElementById('solveStartBtn'); // [START 버튼] 클릭
+        solveStartBtn.disabled = true; // [START 버튼]을 비활성화
         solveStartBtn.classList.remove('shine-button'); // shine-button 클래스를 제거하여 반짝임 효과를 제거
 
         try {
@@ -39,11 +39,12 @@ window.onload = function () {
             });
             if (!response.ok) throw new Error('Network response was not ok');
 
-            const questions = await response.json();
-            totalQuestions = questions.length;
+            const questions = await response.json(); // 질문 리스트 -> JSON 배열로 받기
+            totalQuestions = questions.length; // 전체 질문 개수 변수 대입
 
             // questions.forEach((question, index) => processQuestion(question, index));
-            await processQuestionsSequentially(questions); // 순차적으로 문제를 처리하는 함수 호출
+            // await processQuestionsSequentially(questions); // 순차적으로 문제를 처리하는 함수 호출
+            processQuestionsSequentially(questions); // 순차적으로 문제를 처리하는 함수 호출
 
         } catch (error) {
             console.error('There has been a problem with your fetch operation:', error);
@@ -62,6 +63,7 @@ window.onload = function () {
                 break;
             case 'HARD':
                 lifeCount = 2;
+                lifeCount = 2;
                 break;
             default:
                 lifeCount = 0; // 기본값 설정, 또는 오류 처리
@@ -71,8 +73,9 @@ window.onload = function () {
     // 문제를 순차적으로 처리하는 함수
     async function processQuestionsSequentially(questions) {
         for (let i = 0; i < questions.length; i++) {
-            // 현재 문제를 처리하고, 처리가 완료될 때까지 기다립니다.
+            // 현재 문제를 처리하고, 처리가 완료될 때까지 기다리기
             await processQuestion(questions[i], i + 1);
+            // processQuestion(questions[i], i + 1);  await 없으면 문제 한번에 출제됨;;
         }
 
         let numberOfQuestions = currentCorrectAnswers + currentIncorrectAnswers;
@@ -89,36 +92,36 @@ window.onload = function () {
 
     // 개별 문제를 처리하는 함수
     async function processQuestion(question, index) {
-        createQuestionTag(question, index );
+        // 질문 태그 만들기
+        createQuestionTag(question, index);
         const gameContentId = question.gameContentId;
-        // Promise를 반환하는 함수를 사용하여 사용자의 입력을 기다림
+
+        // Promise를 반환하는 함수를 사용해서 사용자의 입력을 기다림
         await new Promise((resolve, reject) => {
+            // 사용자 입력 태그의 엘리먼트 추출
             const inputTagElement = document.getElementById('questionInput' + (index));
+
+                                                // keyup : 불필요한 이벤트 처리 최소화
             inputTagElement.addEventListener('keyup', async function (event) {
-                if (event.key === 'Enter') {
-                    // 앞뒤 공백 제거
-                    const trimmedAnswer = this.value.trim();
-                    // 입력값이 비어있는지 확인
-                    if (trimmedAnswer === '') {
+                if (event.key === 'Enter') { //Enter 키를 눌렀을 때만 실행하도록 제어
+                    const trimmedAnswer = this.value.trim(); // 앞뒤 공백 제거
+                    if (trimmedAnswer === '') { // 입력값이 비어있는지 확인
                         return; // 입력값이 비어있으면 함수 실행 중단
                     }
-                    const answerResponse = await submitUserAnswerEvent(gameContentId, this.value, this);
-                    // console.log('isCorrect ' + answerResponse.correct);
 
-                    if (answerResponse) {
+                    // 답 제출 함수 실행 (submitUserAnswerEvent)
+                    const answerResponse = await submitUserAnswerEvent(gameContentId, this.value, this);                     // console.log('isCorrect ' + answerResponse.correct);
+
+                    if (answerResponse) { //채점 결과에 따라 현재 정답수/오답수 증가
                         currentCorrectAnswers++;
                     } else {
                         currentIncorrectAnswers++;
-
-                        console.log('틀림 ' + lifeCount);
-                        onWrongAnswerDeleteOneLife();
+                        onWrongAnswerDeleteOneLife(); // 틀렸을 경우 생명 아이콘 차감
                     }
 
                     const inputElement = document.getElementById('questionInput' + (index));
-                    displayResult(answerResponse, inputElement);
-                    resolve();
-
-
+                    displayResult(answerResponse, inputElement); // 결과 태그 출력
+                    resolve(); // resolve() : Promise를 성공적으로 완료했음을 알리고, Promise의 결과 값을 반환하는 역할~
                 }
             });
         });
@@ -167,7 +170,6 @@ window.onload = function () {
         answerInput.classList.add("form-control");
         answerInput.placeholder = "정답을 입력하고 Enter";
 
-
         // 질문 레이블과 입력 필드를 새로운 div에 추가
         newQuestionDiv.appendChild(questionLabel);
         newQuestionDiv.appendChild(answerInput);
@@ -190,7 +192,7 @@ window.onload = function () {
                         'Content-Type': 'application/json',
                         [csrfHeaderName]: csrfToken
                     },
-
+                                                //컨텐츠 ID 와 사용자 답변 전송 (-입력값-)
                     body: JSON.stringify({gameContentId: gameContentId, userAnswer: '-' + userAnswer + '-'})
                 });
 
@@ -215,11 +217,11 @@ window.onload = function () {
         resultTag.classList.add("form-label", "mt-2", "pl-1");
 
         if (isCorrect) {
-            //inputTagElement 아래에 정답입니다.
+            //inputTagElement 아래에 "정답입니다."
             // resultTag.classList.add("text-secondary"); // 회색 텍스트
             resultTag.textContent = "정답";
         } else {
-            //inputTagElement 아래에 틀렸습니다.
+            //inputTagElement 아래에 "틀렸습니다."
             resultTag.classList.add("text-danger", "fst-italic"); // 빨간색, 기울인 텍스트
             resultTag.textContent = "틀렸습니다";
             //그로인해 생명기회 차감
@@ -298,24 +300,24 @@ window.onload = function () {
             .catch(error => console.error('Error:', error));
     }
 
-    // 결과 페이지로 리다이렉트 시키는 함수
+    //결과 페이지로 리다이렉트 시키는 함수
     function redirectToGameResultPage(redirectUrl) {
         setupBeforeUnloadListener(false); // 경고 비활성화
         window.location.href = redirectUrl; // 서버에서 받은 URL로 페이지 리디렉션
     }
 
-
-    //페이지 이동 관련 함수
+    //페이지 이동 관련 함수 (웹 페이지를 닫거나 다른 페이지로 이동할 시도를 할 때 호출)
     function beforeUnloadHandler(event) {
         event.returnValue = "변경사항이 저장되지 않을 수 있습니다.";
         return event.returnValue;
     }
 
+    //페이지 떠날 때 경고 추가/삭제 (결과 페이지로 리다리엑트시 경고 삭제)
     function setupBeforeUnloadListener(shouldWarn) {
-        window.removeEventListener('beforeunload', beforeUnloadHandler);
-
         if (shouldWarn) {
             window.addEventListener('beforeunload', beforeUnloadHandler);
+        } else {
+            window.removeEventListener('beforeunload', beforeUnloadHandler);
         }
     }
 
